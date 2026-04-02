@@ -89,6 +89,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Invalid action. Use ?action=signup|signin|me' });
   } catch (error: any) {
     console.error('[AUTH] Error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({
+      error: 'Internal server error',
+      detail: error?.message || String(error),
+      code: error?.code,
+    });
   }
 }
