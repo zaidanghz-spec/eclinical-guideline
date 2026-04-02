@@ -72,7 +72,7 @@ export function WhitelistPage() {
         return;
       }
 
-      const res = await fetch(`${API_BASE}/whitelist/add`, {
+      const res = await fetch(`${API_BASE}/whitelist?action=add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export function WhitelistPage() {
 
   const handleRemoveEmail = async (entry: WhitelistEntry) => {
     try {
-      const res = await fetch(`${API_BASE}/whitelist/remove`, {
+      const res = await fetch(`${API_BASE}/whitelist?action=remove`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

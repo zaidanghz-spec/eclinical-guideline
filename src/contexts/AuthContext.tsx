@@ -41,7 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAdmin = user?.role === 'admin';
 
-  // Restore session from localStorage on mount
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (token) {
@@ -54,14 +53,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const validateToken = async (token: string) => {
     try {
-      const res = await fetch(`${API_BASE}/auth/me`, {
+      const res = await fetch(`${API_BASE}/auth?action=me`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
-
-      if (!res.ok) {
-        throw new Error('Invalid token');
-      }
-
+      if (!res.ok) throw new Error('Invalid token');
       const data = await res.json();
       setUser(data.user);
       setAccessToken(token);
@@ -77,20 +72,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<boolean> => {
     try {
-      const res = await fetch(`${API_BASE}/auth/signin`, {
+      const res = await fetch(`${API_BASE}/auth?action=signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         toast.error(data.error || 'Failed to sign in');
         return false;
       }
-
-      // Save token
       localStorage.setItem('auth_token', data.access_token);
       setAccessToken(data.access_token);
       setUser(data.user);
@@ -104,26 +95,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (
-    name: string,
-    email: string,
-    password: string,
-    title?: string,
-    institution?: string
+    name: string, email: string, password: string, title?: string, institution?: string
   ): Promise<boolean> => {
     try {
-      const res = await fetch(`${API_BASE}/auth/signup`, {
+      const res = await fetch(`${API_BASE}/auth?action=signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, title, institution }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         toast.error(data.error || 'Failed to create account');
         return false;
       }
-
       toast.success(data.message || 'Account created successfully!');
       return true;
     } catch (error: any) {

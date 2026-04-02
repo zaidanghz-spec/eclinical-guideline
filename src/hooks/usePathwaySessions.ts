@@ -27,8 +27,6 @@ export interface PathwaySession {
   notes: Record<string, string>;
   startedAt: string;
   completedAt: string | null;
-
-  // Legacy snake_case aliases for backward compatibility
   user_id?: string;
   disease_id?: string;
   disease_name?: string;
@@ -54,7 +52,6 @@ function mapSession(raw: any): PathwaySession {
     notes: raw.notes || {},
     startedAt: raw.startedAt || raw.started_at || '',
     completedAt: raw.completedAt || raw.completed_at || null,
-    // Legacy aliases
     user_id: raw.userId || raw.user_id,
     disease_id: raw.diseaseId || raw.disease_id,
     disease_name: raw.diseaseName || raw.disease_name,
@@ -83,16 +80,12 @@ export function usePathwaySessions() {
     if (!user || !accessToken) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/pathway/sessions`, {
-        headers: getHeaders(),
-      });
+      const res = await fetch(`${API_BASE}/pathway`, { headers: getHeaders() });
       const data = await res.json();
-
       if (!res.ok) {
         if (res.status === 401) setAuthError(true);
         throw new Error(data.error || 'Failed to fetch sessions');
       }
-
       setSessions((data.sessions || []).map(mapSession));
     } catch (error: any) {
       console.error('Error fetching sessions:', error);
@@ -103,25 +96,16 @@ export function usePathwaySessions() {
   }, [user, accessToken, getHeaders]);
 
   const createSession = async (
-    diseaseId: string,
-    diseaseName: string,
-    _patientCode?: string
+    diseaseId: string, diseaseName: string, _patientCode?: string
   ): Promise<PathwaySession | null> => {
-    if (!user || !accessToken) {
-      toast.error('Please sign in to save progress');
-      return null;
-    }
-
+    if (!user || !accessToken) { toast.error('Please sign in to save progress'); return null; }
     try {
-      const res = await fetch(`${API_BASE}/pathway/create`, {
-        method: 'POST',
-        headers: getHeaders(),
+      const res = await fetch(`${API_BASE}/pathway?action=create`, {
+        method: 'POST', headers: getHeaders(),
         body: JSON.stringify({ diseaseId, diseaseName, patientCode: _patientCode }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to create session');
-
       const session = mapSession(data.session);
       setCurrentSession(session);
       await fetchSessions();
@@ -136,15 +120,12 @@ export function usePathwaySessions() {
   const updateSession = async (sessionId: string, updates: Partial<PathwaySession>): Promise<boolean> => {
     if (!user || !accessToken) return false;
     try {
-      const res = await fetch(`${API_BASE}/pathway/update`, {
-        method: 'PUT',
-        headers: getHeaders(),
+      const res = await fetch(`${API_BASE}/pathway?action=update`, {
+        method: 'PUT', headers: getHeaders(),
         body: JSON.stringify({ sessionId, ...updates }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to update session');
-
       const session = mapSession(data.session);
       setCurrentSession(session);
       return true;
@@ -155,32 +136,17 @@ export function usePathwaySessions() {
   };
 
   const saveDraft = async (
-    sessionId: string,
-    checklist: Record<string, boolean>,
-    notes: Record<string, string>,
-    currentNodeId: string,
-    pathwayHistory: Array<{ nodeId: string; nodeName: string }>,
-    decisions: any[]
+    sessionId: string, checklist: Record<string, boolean>, notes: Record<string, string>,
+    currentNodeId: string, pathwayHistory: Array<{ nodeId: string; nodeName: string }>, decisions: any[]
   ): Promise<boolean> => {
     if (!user || !accessToken) return false;
     try {
-      const res = await fetch(`${API_BASE}/pathway/update`, {
-        method: 'PUT',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          sessionId,
-          checklist,
-          notes,
-          currentNodeId,
-          pathwayHistory,
-          decisions,
-          status: 'in_progress',
-        }),
+      const res = await fetch(`${API_BASE}/pathway?action=update`, {
+        method: 'PUT', headers: getHeaders(),
+        body: JSON.stringify({ sessionId, checklist, notes, currentNodeId, pathwayHistory, decisions, status: 'in_progress' }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save draft');
-
       const session = mapSession(data.session);
       setCurrentSession(session);
       toast.success('Draft saved successfully!');
@@ -196,15 +162,12 @@ export function usePathwaySessions() {
   const completeSession = async (sessionId: string): Promise<boolean> => {
     if (!user || !accessToken) return false;
     try {
-      const res = await fetch(`${API_BASE}/pathway/complete`, {
-        method: 'POST',
-        headers: getHeaders(),
+      const res = await fetch(`${API_BASE}/pathway?action=complete`, {
+        method: 'POST', headers: getHeaders(),
         body: JSON.stringify({ sessionId }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to complete session');
-
       setCurrentSession(null);
       await fetchSessions();
       toast.success('Pathway completed successfully!');
@@ -218,13 +181,8 @@ export function usePathwaySessions() {
 
   const loadSession = async (sessionId: string): Promise<PathwaySession | null> => {
     if (!user || !accessToken) return null;
-    // Find from existing sessions list
     const found = sessions.find(s => s.id === sessionId);
-    if (found) {
-      setCurrentSession(found);
-      return found;
-    }
-    // Fallback: refetch and find
+    if (found) { setCurrentSession(found); return found; }
     await fetchSessions();
     return null;
   };
@@ -234,25 +192,12 @@ export function usePathwaySessions() {
   };
 
   useEffect(() => {
-    if (user && accessToken) {
-      fetchSessions();
-    } else {
-      setSessions([]);
-    }
+    if (user && accessToken) { fetchSessions(); } else { setSessions([]); }
   }, [user, accessToken, fetchSessions]);
 
   return {
-    sessions,
-    loading,
-    currentSession,
-    authError,
-    setCurrentSession,
-    createSession,
-    updateSession,
-    saveDraft,
-    completeSession,
-    loadSession,
-    getSessionsByPatientCode,
-    refreshSessions: fetchSessions,
+    sessions, loading, currentSession, authError, setCurrentSession,
+    createSession, updateSession, saveDraft, completeSession, loadSession,
+    getSessionsByPatientCode, refreshSessions: fetchSessions,
   };
 }

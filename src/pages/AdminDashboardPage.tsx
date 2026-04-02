@@ -47,7 +47,7 @@ export default function AdminDashboardPage() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/admin/users`, {
+      const res = await fetch(`${API_BASE}/admin`, {
         headers: { 'Authorization': `Bearer ${accessToken}` }
       });
       const data = await res.json();
@@ -77,7 +77,7 @@ export default function AdminDashboardPage() {
 
     setProcessingId(targetUser.id);
     try {
-      const res = await fetch(`${API_BASE}/admin/toggle-role`, {
+      const res = await fetch(`${API_BASE}/admin?action=toggle-role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export default function AdminDashboardPage() {
 
     setProcessingId(targetUser.id);
     try {
-      const res = await fetch(`${API_BASE}/admin/delete-user`, {
+      const res = await fetch(`${API_BASE}/admin?action=delete-user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
