@@ -1,4 +1,4 @@
-const { getDb, verifyToken } = require('./_lib/db');
+const { query, verifyToken } = require('./_lib/db');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,13 +11,12 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Admin access required' });
   }
 
-  const sql = getDb();
   const action = req.query.action;
   const body = req.body || {};
 
   try {
     if (req.method === 'GET') {
-      const rows = await sql`SELECT email, added_at FROM whitelist ORDER BY added_at DESC`;
+      const rows = await query('SELECT email, added_at FROM whitelist ORDER BY added_at DESC', []);
       return res.status(200).json({ whitelist: rows.map(r => ({ email: r.email, addedAt: r.added_at })) });
     }
 
@@ -28,14 +27,14 @@ module.exports = async function handler(req, res) {
     const normalizedEmail = email.toLowerCase().trim();
 
     if (action === 'add') {
-      await sql`INSERT INTO whitelist (email, added_by) VALUES (${normalizedEmail}, ${payload.userId}) ON CONFLICT (email) DO NOTHING`;
-      const rows = await sql`SELECT email, added_at FROM whitelist ORDER BY added_at DESC`;
+      await query('INSERT INTO whitelist (email, added_by) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING', [normalizedEmail, payload.userId]);
+      const rows = await query('SELECT email, added_at FROM whitelist ORDER BY added_at DESC', []);
       return res.status(200).json({ message: 'Email added', whitelist: rows.map(r => ({ email: r.email, addedAt: r.added_at })) });
     }
 
     if (action === 'remove') {
-      await sql`DELETE FROM whitelist WHERE email = ${normalizedEmail}`;
-      const rows = await sql`SELECT email, added_at FROM whitelist ORDER BY added_at DESC`;
+      await query('DELETE FROM whitelist WHERE email = $1', [normalizedEmail]);
+      const rows = await query('SELECT email, added_at FROM whitelist ORDER BY added_at DESC', []);
       return res.status(200).json({ message: 'Email removed', whitelist: rows.map(r => ({ email: r.email, addedAt: r.added_at })) });
     }
 

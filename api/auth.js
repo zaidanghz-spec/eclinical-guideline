@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { getDb, verifyToken, createToken } = require('./_lib/db');
+const { query, verifyToken, createToken } = require('./_lib/db');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,8 +15,7 @@ module.exports = async function handler(req, res) {
       const payload = verifyToken(req.headers.authorization || null);
       if (!payload) return res.status(401).json({ error: 'Unauthorized' });
 
-      const sql = getDb();
-      const users = await sql`SELECT id, email, name, title, institution, role FROM users WHERE id = ${payload.userId}`;
+      const users = await query('SELECT id, email, name, title, institution, role FROM users WHERE id = $1', [payload.userId]);
       if (users.length === 0) return res.status(401).json({ error: 'User not found' });
       return res.status(200).json({ user: users[0] });
     }
@@ -31,17 +30,16 @@ module.exports = async function handler(req, res) {
       if (!name || !email || !password) return res.status(400).json({ error: 'Name, email and password are required' });
       if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
 
-      const sql = getDb();
       const normalizedEmail = email.toLowerCase().trim();
 
-      const existing = await sql`SELECT id FROM users WHERE email = ${normalizedEmail}`;
+      const existing = await query('SELECT id FROM users WHERE email = $1', [normalizedEmail]);
       if (existing.length > 0) return res.status(400).json({ error: 'Email already registered' });
 
-      const countResult = await sql`SELECT COUNT(*) as count FROM users`;
+      const countResult = await query('SELECT COUNT(*) as count FROM users', []);
       const isFirstUser = parseInt(countResult[0].count) === 0;
 
       if (!isFirstUser) {
-        const whitelisted = await sql`SELECT id FROM whitelist WHERE email = ${normalizedEmail}`;
+        const whitelisted = await query('SELECT id FROM whitelist WHERE email = $1', [normalizedEmail]);
         if (whitelisted.length === 0) {
           return res.status(403).json({ error: 'Email not authorized. Contact administrator to be added to whitelist.' });
         }
@@ -50,11 +48,13 @@ module.exports = async function handler(req, res) {
       const passwordHash = await bcrypt.hash(password, 10);
       const role = isFirstUser ? 'admin' : 'user';
 
-      const result = await sql`
-        INSERT INTO users (email, password_hash, name, title, institution, role)
-        VALUES (${normalizedEmail}, ${passwordHash}, ${name}, ${title || ''}, ${institution || ''}, ${role})
-        RETURNING id, email, name, title, institution, role, created_at
-      `;
+      const result = await query(
+        `INSERT INTO users (email, password_hash, name, title, institution, role)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING id, email, name, title, institution, role, created_at`,
+        [normalizedEmail, passwordHash, name, title || '', institution || '', role]
+      );
+
       const user = result[0];
       const token = createToken(user.id, user.email, user.role);
 
@@ -70,9 +70,11 @@ module.exports = async function handler(req, res) {
       const { email, password } = body;
       if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
 
-      const sql = getDb();
       const normalizedEmail = email.toLowerCase().trim();
-      const users = await sql`SELECT id, email, password_hash, name, title, institution, role FROM users WHERE email = ${normalizedEmail}`;
+      const users = await query(
+        'SELECT id, email, password_hash, name, title, institution, role FROM users WHERE email = $1',
+        [normalizedEmail]
+      );
       if (users.length === 0) return res.status(400).json({ error: 'Invalid email or password' });
 
       const user = users[0];
@@ -90,10 +92,6 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('[AUTH ERROR]', error);
-    return res.status(500).json({
-      error: 'Server error',
-      detail: error.message,
-      code: error.code
-    });
+    return res.status(500).json({ error: 'Server error', detail: error.message, code: error.code });
   }
 };

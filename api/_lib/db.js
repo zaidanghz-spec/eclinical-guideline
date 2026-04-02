@@ -1,12 +1,28 @@
-const { neon } = require('@neondatabase/serverless');
+const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 
-function getDb() {
-  const url = (process.env.DATABASE_URL || '')
-    .replace('&channel_binding=require', '')
-    .replace('?channel_binding=require&', '?')
-    .replace('?channel_binding=require', '');
-  return neon(url);
+let pool;
+
+function getPool() {
+  if (!pool) {
+    const connectionString = (process.env.DATABASE_URL || '')
+      .replace('&channel_binding=require', '')
+      .replace('?channel_binding=require&', '?')
+      .replace('?channel_binding=require', '');
+
+    pool = new Pool({
+      connectionString,
+      ssl: { rejectUnauthorized: false },
+      max: 1,
+    });
+  }
+  return pool;
+}
+
+async function query(text, params) {
+  const client = getPool();
+  const result = await client.query(text, params);
+  return result.rows;
 }
 
 function verifyToken(authHeader) {
@@ -22,4 +38,4 @@ function createToken(userId, email, role) {
   return jwt.sign({ userId, email, role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 }
 
-module.exports = { getDb, verifyToken, createToken };
+module.exports = { query, verifyToken, createToken };
