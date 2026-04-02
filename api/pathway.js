@@ -1,7 +1,6 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getDb, verifyToken } from './_lib/db';
+const { getDb, verifyToken } = require('./_lib/db');
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -11,18 +10,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!payload) return res.status(401).json({ error: 'Unauthorized' });
 
   const sql = getDb();
-  const { action } = req.query;
+  const action = req.query.action;
+  const body = req.body || {};
 
   try {
-    // GET /api/pathway — list sessions
     if (req.method === 'GET') {
       const sessions = await sql`SELECT * FROM pathway_sessions WHERE user_id = ${payload.userId} ORDER BY started_at DESC`;
       return res.status(200).json({ sessions });
     }
 
-    // PUT /api/pathway?action=update
     if (req.method === 'PUT' && action === 'update') {
-      const { sessionId, checklist, notes, currentNodeId, pathwayHistory, decisions, variations, status } = req.body;
+      const { sessionId, checklist, notes, currentNodeId, pathwayHistory, decisions, variations, status } = body;
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
 
       const existing = await sql`SELECT id FROM pathway_sessions WHERE id = ${sessionId} AND user_id = ${payload.userId}`;
@@ -30,12 +28,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const result = await sql`
         UPDATE pathway_sessions SET
-          checklist = COALESCE(${JSON.stringify(checklist || null)}::jsonb, checklist),
-          notes = COALESCE(${JSON.stringify(notes || null)}::jsonb, notes),
+          checklist = COALESCE(${checklist ? JSON.stringify(checklist) : null}::jsonb, checklist),
+          notes = COALESCE(${notes ? JSON.stringify(notes) : null}::jsonb, notes),
           current_node_id = COALESCE(${currentNodeId || null}, current_node_id),
-          pathway_history = COALESCE(${JSON.stringify(pathwayHistory || null)}::jsonb, pathway_history),
-          decisions = COALESCE(${JSON.stringify(decisions || null)}::jsonb, decisions),
-          variations = COALESCE(${JSON.stringify(variations || null)}::jsonb, variations),
+          pathway_history = COALESCE(${pathwayHistory ? JSON.stringify(pathwayHistory) : null}::jsonb, pathway_history),
+          decisions = COALESCE(${decisions ? JSON.stringify(decisions) : null}::jsonb, decisions),
+          variations = COALESCE(${variations ? JSON.stringify(variations) : null}::jsonb, variations),
           status = COALESCE(${status || null}, status),
           updated_at = NOW()
         WHERE id = ${sessionId} AND user_id = ${payload.userId}
@@ -46,11 +44,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    // POST /api/pathway?action=create
     if (action === 'create') {
-      const { diseaseId, diseaseName, patientCode } = req.body;
+      const { diseaseId, diseaseName, patientCode } = body;
       if (!diseaseId || !diseaseName) return res.status(400).json({ error: 'diseaseId and diseaseName are required' });
-
       const result = await sql`
         INSERT INTO pathway_sessions (user_id, disease_id, disease_name, patient_code)
         VALUES (${payload.userId}, ${diseaseId}, ${diseaseName}, ${patientCode || ''})
@@ -59,11 +55,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ session: result[0] });
     }
 
-    // POST /api/pathway?action=complete
     if (action === 'complete') {
-      const { sessionId } = req.body;
+      const { sessionId } = body;
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
-
       const result = await sql`
         UPDATE pathway_sessions SET status = 'completed', completed_at = NOW(), updated_at = NOW()
         WHERE id = ${sessionId} AND user_id = ${payload.userId}
@@ -73,9 +67,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ session: result[0] });
     }
 
-    return res.status(400).json({ error: 'Invalid action. Use ?action=create|update|complete' });
-  } catch (error: any) {
-    console.error('[PATHWAY] Error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(400).json({ error: 'Invalid action' });
+  } catch (error) {
+    console.error('[PATHWAY ERROR]', error);
+    return res.status(500).json({ error: 'Server error', detail: error.message });
   }
-}
+};

@@ -1,14 +1,13 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getDb, verifyToken, createToken } from './_lib/db';
-import bcrypt from 'bcryptjs';
+const bcrypt = require('bcryptjs');
+const { getDb, verifyToken, createToken } = require('./_lib/db');
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  const { action } = req.query;
+  const action = req.query.action;
 
   try {
     // GET /api/auth?action=me
@@ -19,15 +18,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const sql = getDb();
       const users = await sql`SELECT id, email, name, title, institution, role FROM users WHERE id = ${payload.userId}`;
       if (users.length === 0) return res.status(401).json({ error: 'User not found' });
-
       return res.status(200).json({ user: users[0] });
     }
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+    const body = req.body || {};
+
     // POST /api/auth?action=signup
     if (action === 'signup') {
-      const { name, email, password, title, institution } = req.body;
+      const { name, email, password, title, institution } = body;
       if (!name || !email || !password) return res.status(400).json({ error: 'Name, email and password are required' });
       if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
 
@@ -37,13 +37,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const existing = await sql`SELECT id FROM users WHERE email = ${normalizedEmail}`;
       if (existing.length > 0) return res.status(400).json({ error: 'Email already registered' });
 
-      const userCount = await sql`SELECT COUNT(*) as count FROM users`;
-      const isFirstUser = parseInt(userCount[0].count) === 0;
+      const countResult = await sql`SELECT COUNT(*) as count FROM users`;
+      const isFirstUser = parseInt(countResult[0].count) === 0;
 
       if (!isFirstUser) {
         const whitelisted = await sql`SELECT id FROM whitelist WHERE email = ${normalizedEmail}`;
         if (whitelisted.length === 0) {
-          return res.status(403).json({ error: 'Email not authorized. Please contact administrator to add your email to the whitelist.' });
+          return res.status(403).json({ error: 'Email not authorized. Contact administrator to be added to whitelist.' });
         }
       }
 
@@ -59,7 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const token = createToken(user.id, user.email, user.role);
 
       return res.status(200).json({
-        message: isFirstUser ? 'Admin account created successfully! You are the first user.' : 'Account created successfully.',
+        message: isFirstUser ? 'Admin account created! You are the first user.' : 'Account created successfully.',
         access_token: token,
         user: { id: user.id, email: user.email, name: user.name, title: user.title, institution: user.institution, role: user.role }
       });
@@ -67,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // POST /api/auth?action=signin
     if (action === 'signin') {
-      const { email, password } = req.body;
+      const { email, password } = body;
       if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
 
       const sql = getDb();
@@ -86,13 +86,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    return res.status(400).json({ error: 'Invalid action. Use ?action=signup|signin|me' });
-  } catch (error: any) {
-    console.error('[AUTH] Error:', error);
+    return res.status(400).json({ error: 'Invalid action' });
+
+  } catch (error) {
+    console.error('[AUTH ERROR]', error);
     return res.status(500).json({
-      error: 'Internal server error',
-      detail: error?.message || String(error),
-      code: error?.code,
+      error: 'Server error',
+      detail: error.message,
+      code: error.code
     });
   }
-}
+};
