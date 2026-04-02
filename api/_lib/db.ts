@@ -8,7 +8,9 @@ export interface JwtPayload {
 }
 
 export function getDb() {
-  const sql = neon(process.env.DATABASE_URL!);
+  // Remove channel_binding parameter which is not supported by @neondatabase/serverless
+  const url = (process.env.DATABASE_URL || '').replace('&channel_binding=require', '').replace('?channel_binding=require', '');
+  const sql = neon(url);
   return sql;
 }
 
