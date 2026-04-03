@@ -1,9 +1,8 @@
 // ============================================================
-// UMBRELLA SINDROM KORONER AKUT & ANGINA PEKTORIS STABIL
+// UMBRELLA SINDROM KORONER AKUT & ANGINA PEKTORIS STABIL (SETTING FKTP/KLINIK)
 // ============================================================
-// Sumber: Pedoman Tata Laksana Sindrom Koroner Akut Edisi ke-5 (PERKI 2024)
-//         & PNPK Kemenkes 2023 untuk Angina Pektoris Stabil
-// Penyakit: Angina Pectoris Stabil, Angina Pectoris Tidak Stabil (APTS / UAP), NSTEMI, STEMI
+// Fasilitas Tersedia: TTV (Tensi, Termometer, Oxymeter), EKG, Suction, Nebulizer
+// Keterbatasan: TIDAK ADA Lab Darah (Troponin, dll), TIDAK ADA fasilitas Cath Lab (PCI), TIDAK ADA Echo
 // ============================================================
 
 import { DynamicPathway } from '../dynamicPathways';
@@ -11,7 +10,7 @@ import { apsPathway } from './aps'; // Import APS pathway untuk di-merge
 
 export const skaPathway: DynamicPathway = {
   diseaseId: 'sindrom-koroner-akut',
-  diseaseName: 'Sindrom Koroner Akut (termasuk Angina Pektoris Stabil)',
+  diseaseName: 'Sindrom Koroner Akut (Klinik Dasar / Terbatas Alat)',
   startNodeId: 'coronary-umbrella-decision',
   nodes: {
 
@@ -29,7 +28,7 @@ export const skaPathway: DynamicPathway = {
         {
           id: 'branch-ska',
           title: 'Sindrom Koroner Akut (UAP / NSTEMI / STEMI)',
-          description: 'Nyeri dada akut >20 menit saat istirahat, nyeri dada baru yang berat, atau perburukan progresif. Merujuk pada Pedoman PERKI 2024.',
+          description: 'Nyeri dada akut >20 menit saat istirahat, nyeri dada baru yang berat, pucat/keringat dingin. (Emergency)',
           color: 'red',
           nextNodeId: 'ska-initial-assessment',
           riskLevel: 'high'
@@ -37,7 +36,7 @@ export const skaPathway: DynamicPathway = {
         {
           id: 'branch-aps',
           title: 'Angina Pektoris Stabil (APS)',
-          description: 'Nyeri dada diprovokasi oleh aktivitas fisik/stres, hilang saat istirahat dalam hitungan menit,<10 menit. Pola sudah stabil. Merujuk pada PNPK Kemenkes 2023.',
+          description: 'Nyeri dada diprovokasi oleh aktivitas fisik/stres, hilang saat istirahat <10 menit. Pola sudah stabil.',
           color: 'blue',
           nextNodeId: 'aps-anamnesis',
           riskLevel: 'medium'
@@ -45,54 +44,54 @@ export const skaPathway: DynamicPathway = {
       ]
     },
 
-    // NODE 1: INITIAL ASSESSMENT SKA
+    // NODE 1: INITIAL ASSESSMENT SKA (ADJUSTED FOR CLINIC)
     'ska-initial-assessment': {
       id: 'ska-initial-assessment',
       type: 'checklist',
-      title: 'Triase dan Diagnosis Awal SKA (Dalam 10 Menit)',
-      description: 'PERKI 2024 BAB 1: Diagnosis kerja SKA ditegakkan berdasarkan keluhan angina tipikal (berat/tertekan di dada >20 menit) dan pemeriksaan EKG 12 sadapan yang direkam dalam 10 menit pertama sejak Kontak Medis Pertama (KMP).',
+      title: 'Triase dan Diagnosis Awal SKA (Dalam 10 Menit di Klinik)',
+      description: 'PERKI 2024: Diagnosis SKA. Lakukan penanganan dengan alat yang tersedia (TTV, Oxymeter, EKG, Suction).',
       items: [
         {
-          id: 'ska-ecg-10min',
-          title: 'EKG 12-Sadapan < 10 Menit (Wajib)',
-          description: 'Lakukan EKG 12 sadapan dalam 10 menit. Jika mencurigakan iskemia inferior/posterior, rekam juga V3R-V4R dan V7-V9. Evaluasi elevasi segmen ST, depresi segmen ST, atau inversi gelombang T.',
+          id: 'ska-ttv-check',
+          title: 'Cek TTV (Tensi, Suhu, Oxymeter)',
+          description: 'Segera ukur tekanan darah (antisipasi syok / hipertensi darurat), pantau oksigenasi melalui Oxymeter, dan cek suhu dengan Termometer.',
           required: true,
           category: 'assessment'
         },
         {
+          id: 'ska-ecg-10min',
+          title: 'EKG 12-Sadapan < 10 Menit (SANGAT KRUSIAL)',
+          description: 'EKG adalah satu-satunya alat penentu STEMI di fasilitas Anda. Evaluasi segmen ST segera dalam 10 menit.',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'ska-airway-clearance',
+          title: 'Manajemen Jalan Napas (Jika Diperlukan)',
+          description: 'Jika ada tanda distres napas berat dengan sekret/muntahan, gunakan SUCTION. Nebulizer DITUNDA dan TIDAK RUTIN untuk SKA, kecuali ada koinfeksi eksaserbasi asma/PPOK (hati-hati karena agonis beta meningkatkan denyut jantung).',
+          required: false,
+          category: 'action'
+        },
+        {
           id: 'ska-aspirin-loading',
           title: 'Aspirin Loading Dose (160-320 mg)',
-          description: 'Berikan Aspirin 160-320 mg (sebaiknya dikunyah) SEGERA setelah diagnosis kerja SKA ditegakkan, diikuti dosis rumatan 80-100 mg 1x/hari.',
+          description: 'JIKA TERSEDIA: Berikan Aspirin (sebaiknya dikunyah) segera setelah curiga gejala klinis SKA.',
           required: true,
           category: 'medication'
         },
         {
           id: 'ska-oxygen',
-          title: 'Oksigen (Hanya Jika SpO2 <90%)',
-          description: 'Suplementasi oksigen DIREKOMENDASIKAN HANYA JIKA pasien hipoksemia (Saturasi O2 < 90%). Oksigen rutin pada SpO2 normal TIDAK disarankan.',
+          title: 'Oksigen Suplemental (Panduan Oxymeter)',
+          description: 'Hanya berikan O2 tabung JIKA angka pada Oxymeter <90% atau pasien tampak sangat sesak (hipoksemia).',
           required: true,
           category: 'action'
         },
         {
-          id: 'ska-nitrate',
-          title: 'Nitrat Sublingual (Untuk Gejala)',
-          description: 'Nitrogliserin sublingual untuk meredakan nyeri iskemik. KONTRAINDIKASI: Hipotensi, bradikardia/takikardia ekstrim, curiga infark ventrikel kanan (RV infarct), pemakaian PDE-5 inhibitor (sildenafil 24j/tadalafil 48j).',
-          required: false,
-          category: 'medication'
-        },
-        {
-          id: 'ska-morphine',
-          title: 'Morfin IV (Untuk Nyeri Berat)',
-          description: 'Morfin 5-10 mg intravena jika nyeri tidak teratasi. Hati-hati: Morfin dapat menunda absorpsi antiplatelet oral dan menyebabkan mual muntah.',
-          required: false,
-          category: 'medication'
-        },
-        {
-          id: 'ska-cardiac-biomarkers',
-          title: 'Ambil Sampel hs-cTn (High-Sensitivity Troponin)',
-          description: 'Pengukuran biomarka jantung (hs-cTn) direkomendasikan pada semua pasien dugaan SKA. Gunakan algoritma 0h/1h atau 0h/2h untuk triase cepat (Rule-in / Rule-out). JANGAN tunda terapi reperfusi (jika STEMI) demi menunggu hasil troponin.',
+          id: 'ska-lab-rujuk',
+          title: 'Pemeriksaan Biomarka Lab (hs-cTn) -> WAJIB RUJUK',
+          description: 'Keterbatasan Alat: Klinik tidak memiliki troponin. KARENA ITU, tidak dapat menyingkirkan NSTEMI secara tuntas di sini. Persiapkan rujukan sambil observasi EKG.',
           required: true,
-          category: 'assessment'
+          category: 'safety'
         }
       ],
       nextNodeId: 'ska-ecg-decision'
@@ -102,321 +101,157 @@ export const skaPathway: DynamicPathway = {
     'ska-ecg-decision': {
       id: 'ska-ecg-decision',
       type: 'decision',
-      title: 'Interpretasi EKG & Pembagian Algoritma',
-      description: 'PERKI 2024: Tentukan klasifikasi awal SKA berdasarkan EKG. Apakah ada Elevasi Segmen ST persisten atau Ekuivalen?',
+      title: 'Interpretasi Hasil EKG Klinik',
+      description: 'Menentukan jalur rujukan. (Fasilitas tidak memadai untuk penanganan definitif).',
       warningLevel: 'critical',
       branches: [
         {
           id: 'ska-stemi-branch',
-          title: 'STEMI (ST-Elevation MI)',
-          description: 'Elevasi segmen ST persisten di >=2 sadapan bersebelahan, atau LBBB baru, atau EKG ekuivalen (contoh: posterior MI di V7-V9). Membutuhkan REPERFUSI CITO!',
+          title: 'Hasil EKG: STEMI (Ada ST Elevasi)',
+          description: 'Elevasi segmen ST persisten atau LBBB baru terdeteksi di EKG. Ini adalah darurat bedah IKP / Reperfusi.',
           color: 'red',
-          nextNodeId: 'ska-stemi-reperfusion-decision',
+          nextNodeId: 'ska-stemi-rujukan-decision',
           riskLevel: 'high'
         },
         {
           id: 'ska-nstemi-uap-branch',
-          title: 'SKA-NEST (NSTEMI / APTS / UAP)',
-          description: 'ST Depresi, gelombang T inversi persisten, atau EKG normal. Gejala angina progresif/istirahat. Diperlukan stratifikasi risiko untuk waktu angiografi.',
+          title: 'Hasil EKG: NSTEMI / UAP (Depresi ST / T Inversi / Normal)',
+          description: 'EKG tidak menunjukkan ST elevasi, namun karena fasilitas terbatas (tanpa Lab hs-cTn), tetap harus dirujuk ke IGD.',
           color: 'orange',
-          nextNodeId: 'ska-nest-risk-stratification',
-          riskLevel: 'medium'
+          nextNodeId: 'ska-nest-rujukan',
+          riskLevel: 'high'
         }
       ]
     },
 
     // ==========================================
-    // STEMI PATHWAY BRANCH (PERKI 2024 - Bab 3)
+    // STEMI PATHWAY BRANCH
     // ==========================================
-    'ska-stemi-reperfusion-decision': {
-      id: 'ska-stemi-reperfusion-decision',
+    'ska-stemi-rujukan-decision': {
+      id: 'ska-stemi-rujukan-decision',
       type: 'decision',
-      title: 'STEMI: Keputusan Strategi Reperfusi (Time is Muscle)',
-      description: 'Tentukan kemampuan fasilitas dan waktu yang dibutuhkan untuk mencapai wire-crossing IKP Primer (Fasilitas PCI).',
+      title: 'STEMI: Keputusan Destinasi Rujukan (Time is Muscle)',
+      description: 'Fokus klinik Anda adalah MENSTABILKAN dan MENENTUKAN RUMAH SAKIT TUJUAN RUJUKAN tertepat dengan waktu tempuh transportasi.',
       warningLevel: 'critical',
       branches: [
         {
-          id: 'ska-primary-pci',
-          title: 'IKP Primer (PCI < 120 Menit)',
-          description: 'Target waktu diagnosis hingga IKP (wire-crossing) < 120 menit (ideal <90 menit jika datang langsung ke RS PCI). Reperfusi Tipe Utama.',
+          id: 'ska-rujuk-pci',
+          title: 'RUJUKAN CITO: RS dengan Fasilitas Cath Lab (Waktu <120 Menit)',
+          description: 'Ambulans + perjalanan diperkirakan sampai ke pusat bedah IKP Primer dalam waktu kurang dari 120 menit.',
           color: 'blue',
-          nextNodeId: 'ska-stemi-pci',
-          riskLevel: 'low'
+          nextNodeId: 'ska-persiapan-rujukan-stemi',
+          riskLevel: 'high'
         },
         {
-          id: 'ska-fibrinolysis',
-          title: 'Fibrinolitik Terlebih Dahulu (PCI > 120 Menit)',
-          description: 'Waktu transfer/tunggu IKP diprediksi > 120 menit. Berikan fibrinolitik dalam 30 menit (Door-to-needle < 30 menit) kecuali ada kontraindikasi.',
+          id: 'ska-rujuk-fibrinolitik',
+          title: 'RUJUKAN CITO: RS Terdekat (Untuk Fibrinolitik)',
+          description: 'Perjalanan ke RS khusus Cath Lab akan memakan waktu LAMA (>120 menit). Rujuk ke RSUD Terdekat agar pasien dapat menerima obat Fibrinolitik secepatnya (Target <30 mnt).',
           color: 'orange',
-          nextNodeId: 'ska-stemi-fibrinolysis',
-          riskLevel: 'medium'
+          nextNodeId: 'ska-persiapan-rujukan-stemi',
+          riskLevel: 'high'
         }
       ]
     },
 
-    'ska-stemi-pci': {
-      id: 'ska-stemi-pci',
+    'ska-persiapan-rujukan-stemi': {
+      id: 'ska-persiapan-rujukan-stemi',
       type: 'checklist',
-      title: 'Tatalaksana STEMI - IKP Primer (PCI)',
-      description: 'Tatalaksana medikamentosa peri-prosedural untuk pasien yang akan menjalani IKP Primer (PERKI 2024 BAB 3.2.1.1).',
+      title: 'Persiapan Transportasi & Rujukan STEMI',
+      description: 'Tindakan yang harus diselesaikan PADA SAAT/SEBELUM ambulans datang ke fasilitas klinik Anda.',
       items: [
         {
-          id: 'ska-stemi-pci-dapt',
-          title: 'P2Y12 Inhibitor Loading Dose',
-          description: 'Ticagrelor (Loading 180mg, rumatan 90mg 2x1) ATAU Prasugrel (Loading 60mg, rumatan 10mg 1x1). Clopidogrel 600mg dipertimbangkan JIKA Tic/Pras tidak tersedia/kontraindikasi.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-stemi-pci-anticoag',
-          title: 'Antikoagulan IV Intra-prosedural',
-          description: 'UFH (bolus 70-100 U/kg) ATAU Enoxaparin (0.5 mg/kg IV bolus). Fondaparinux TIDAK DISARANKAN untuk IKP Primer rutin.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-stemi-pci-radial',
-          title: 'Akses Radial Direkomendasikan',
-          description: 'Akses arteri radialis direkomendasikan dibanding femoralis untuk menurunkan risiko perdarahan.',
+          id: 'ska-hubungi-igd',
+          title: 'Hubungi IGD Rumah Sakit Tujuan Terlebih Dahulu',
+          description: 'Laporkan "Ada pasien kemungkinan STEMI di klinik kami sedang dirujuk." Jika memungkinkan pasang IV line dari klinik (sebelum naik ambulans).',
           required: true,
           category: 'action'
         },
         {
-          id: 'ska-stemi-pci-des',
-          title: 'Penggunaan Stent DES',
-          description: 'Penggunaan DES (Drug-Eluting Stent) generasi terbaru direkomendasikan lebih utama dibanding BMS.',
-          required: true,
-          category: 'action'
-        }
-      ],
-      nextNodeId: 'ska-long-term-management'
-    },
-
-    'ska-stemi-fibrinolysis': {
-      id: 'ska-stemi-fibrinolysis',
-      type: 'checklist',
-      title: 'Tatalaksana STEMI - Fibrinolisis',
-      description: 'Pemberian obat fibrinolitik jika IKP Primer akan tertunda > 120 menit. (PERKI 2024 BAB 3.2.2).',
-      items: [
-        {
-          id: 'ska-lytic-contraindications',
-          title: 'Cek Kontraindikasi Absolut Fibrinolisis',
-          description: 'Eksklusi: Stroke hemoragik kapanpun, Stroke iskemik dalam 3 bulan, tumor SSP, malformasi AV, curiga diseksi aorta, perdarahan aktif (kecuali mens).',
+          id: 'ska-transport-monitor',
+          title: 'Pantau Vitals Selama Transfer',
+          description: 'Bawa serta Tensimeter dan Oxymeter ke dalam ambulans pengangkut (jika mendampingi pasien). Siapkan Suction portable jika pasien terlihat tersedak muntahan/sekret dalam perjalanan.',
           required: true,
           category: 'safety'
         },
         {
-          id: 'ska-lytic-agent',
-          title: 'Pemberian Fibrinolitik (Target < 30 Menit)',
-          description: 'Obat spesifik fibrin (Tenekteplase/Alteplase) lebih disarankan dari Streptokinase. Streptokinase 1.5 Juta U IV selama 30-60 menit.',
+          id: 'ska-bawa-ekg',
+          title: 'BAWA HASIL CETAKAN EKG',
+          description: 'Sangat krusial. Cetakan kertas EKG asli atau foto digital yang jelas HASIL DARI KLINIK HARUS disertakan kepada dokter IGD penerima.',
           required: true,
-          category: 'medication'
+          category: 'documentation'
         },
         {
-          id: 'ska-lytic-clopidogrel',
-          title: 'P2Y12: Clopidogrel (Bukan Ticagrelor/Prasugrel)',
-          description: 'Untuk pasien STEMI yang mendapat Terapi Fibrinolisis, Clopidogrel diberikan (Loading 300 mg jika usia <75 thn, 75 mg jika >75 thn). Ticagrelor/Prasugrel belum cukup bukti aman untuk fibrinolisis akut.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-lytic-anticoag',
-          title: 'Antikoagulan Penyerta (Hingga Revaskularisasi / 8 Hari)',
-          description: 'Enoxaparin (bolus 30 mg IV, dilanjut dosis SC) lebih dipilih dibandingkan UFH, ATAU Fondaparinux. Diberikan hingga revaskularisasi tercapai atau s.d masa perawatan. Dosis disesuaikan usia.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-lytic-evaluation',
-          title: 'Evaluasi Keberhasilan (60-90 Menit)',
-          description: 'Fibrinolisis BERHASIL: Resolusi segmen ST >=50% & gejala membaik. GAGAL: ST menetap / gejala nyeri dada rekuren -> Indikasi RESCUE PCI.',
-          required: true,
-          category: 'assessment'
-        },
-        {
-          id: 'ska-lytic-pharmaco-invasive',
-          title: 'Lanjutkan Strategi Farmako-invasif',
-          description: 'Segera transfer ke center IKP setelah fibrinolisis, rencanakan rutin angiografi dini dalam waktu 2-24 jam walau respon fibrinolitik sukses.',
-          required: true,
-          category: 'action'
-        }
-      ],
-      nextNodeId: 'ska-long-term-management'
-    },
-
-
-    // ==========================================
-    // SKA-NEST PATHWAY BRANCH (APTS/NSTEMI - PERKI 2024 Bab 2)
-    // ==========================================
-    'ska-nest-risk-stratification': {
-      id: 'ska-nest-risk-stratification',
-      type: 'decision',
-      title: 'Stratifikasi Risiko SKA-NEST (NSTEMI / APTS)',
-      description: 'Gunakan GRACE Risk Score, kriteria klinis (hemodinamik), dan risiko perdarahan ARC-HBR untuk menentukan waktu IKP (Strategi Invasif).',
-      warningLevel: 'warning',
-      branches: [
-        {
-          id: 'ska-nest-very-high-risk',
-          title: 'Risiko Sangat Tinggi (Invasif Segera < 2 Jam)',
-          description: 'Kriteria: Syok kardiogenik, nyeri dada refrakter/berulang berat, gagal jantung akut akibat SKA, VT/VF, komplikasi mekanik, atau depresi ST >1mm di 6+ lead + elevasi ST di aVR/V1.',
-          color: 'red',
-          nextNodeId: 'ska-nest-invasive-immediate',
-          riskLevel: 'high'
-        },
-        {
-          id: 'ska-nest-high-risk',
-          title: 'Risiko Tinggi (Invasif Dini < 24 Jam)',
-          description: 'Kriteria: Terbukti ada NSTEMI (hs-cTn positif rise & fall), GRACE score > 140, ada perubahan dinamis segmen ST.',
-          color: 'orange',
-          nextNodeId: 'ska-nest-invasive-early',
-          riskLevel: 'high'
-        },
-        {
-          id: 'ska-nest-low-risk',
-          title: 'Risiko Rendah / Tidak Tinggi (Invasif Selektif)',
-          description: 'Tidak memenuhi kriteria sangat tinggi/tinggi. Angina Pektoris Tidak Stabil (APTS) probabilitas rendah, troponin negatif. Lakukan Invasif Selektif apabila tes iskemis mencurigakan atau rawat jalan konservatif.',
-          color: 'blue',
-          nextNodeId: 'ska-nest-invasive-selective',
-          riskLevel: 'medium'
-        }
-      ]
-    },
-
-    'ska-nest-invasive-immediate': {
-      id: 'ska-nest-invasive-immediate',
-      type: 'checklist',
-      title: 'Tata Laksana SKA-NEST Ekstrem (Invasif Segera < 2 Jam)',
-      description: 'Risiko Sangat Tinggi. Siapkan Cath Lab darurat selayaknya STEMI.',
-      items: [
-        {
-          id: 'ska-nest-imm-antiplatelet',
-          title: 'P2Y12 + Aspirin',
-          description: 'Diberikan Aspirin (160-320mg). Dosis loading P2Y12 (Prasugrel/Ticagrelor) diberikan. Catatan: Pada SKA-NEST rutinitas pre-treatment dengan P2Y12 SEBELUM angiografi sering tak dianjurkan, NAMUN jika prosedur <2 jam bisa menyesuaikan operasional dokter intervensi.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-nest-imm-anticoag',
-          title: 'Pemberian Antikoagulan UFH',
-          description: 'UFH (Heparin) diutamakan untuk persiapan IKP cito. Hindari fondaparinux jika akan PCI segera karena risiko kateter trombosis (butuh bolus UFH tambahan).',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-nest-imm-cath',
-          title: 'Aktivasi Tim Kateterisasi (Target <2 Jam)',
-          description: 'Segera pindahkan ke ruang kateterisasi (Invasif Segera). Akses radial disarankan.',
-          required: true,
-          category: 'action'
-        }
-      ],
-      nextNodeId: 'ska-long-term-management'
-    },
-
-    'ska-nest-invasive-early': {
-      id: 'ska-nest-invasive-early',
-      type: 'checklist',
-      title: 'Tata Laksana SKA-NEST - Invasif Dini (< 24 Jam)',
-      description: 'Risiko Tinggi (hs-cTn positif, GRACE >140, EKG depresi ST).',
-      items: [
-        {
-          id: 'ska-nest-early-dapt-timing',
-          title: 'P2Y12: Jangan Pre-treatment Rutin',
-          description: 'PERKI 2024: Loading P2Y12 (Prasugrel 60mg / Ticagrelor 180mg) DIANJURKAN DILAKUKAN SAAT IKP (setelah angiografi diketahui), TIDAK sebagai terapi rutin sebelum angiografi (Pre-treatment) bila pasien dijadwalkan Invasif Dini <24 jam.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-nest-early-anticoag',
-          title: 'Pemberian Antikoagulan (Fondaparinux / Enox / UFH)',
-          description: 'Fondaparinux (2.5 mg SC) lebih direkomendasikan jika intervensi ditunda, NAMUN harus tambah UFH bolus penuh saat meja PCI. Alternatif: Enoxaparin / UFH untuk bridging sebelum angiografi.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-nest-early-cath',
-          title: 'Jadwalkan Angiografi Koroner dalam 24 Jam',
-          description: 'Transfer ke ruang rawat intensif (ICCU) dan jadwalkan ke Cath Lab.',
-          required: true,
-          category: 'action'
-        }
-      ],
-      nextNodeId: 'ska-long-term-management'
-    },
-
-    'ska-nest-invasive-selective': {
-      id: 'ska-nest-invasive-selective',
-      type: 'checklist',
-      title: 'Tata Laksana APTS / NSTEMI Risiko Rendah (Invasif Selektif)',
-      description: 'Angina pektoris tidak stabil (APTS) kemungkinan rendah / observasi. Tata laksana non-invasif.',
-      items: [
-        {
-          id: 'ska-nest-sel-observation',
-          title: 'Penggunaan Algoritma 0h/1h atau 0h/2h hs-cTn',
-          description: 'Tentukan jalur Rule-Out atau Observasi menggunakan parameter troponin. Observasi perubahan di jam 1/jam 2/jam 3.',
-          required: true,
-          category: 'assessment'
-        },
-        {
-          id: 'ska-nest-sel-pretreatment',
-          title: 'Pre-treatment P2Y12 (Bila Terapi Konservatif)',
-          description: 'Pemberian Clopidogrel / Ticagrelor / Prasugrel dapat diperimbangkan jika dikelola secara konservatif penuh ATAU bila risiko perdarahan rendah.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-nest-sel-testing',
-          title: 'Pemeriksaan Stress Test atau MSCT',
-          description: 'Bila iskemia tidak terbukti dan pasien bebas nyeri, jadwalkan uji latih (exercise test), Ecocardiography Stres, atau CCTA secara elektif.',
+          id: 'ska-loading-p2y12',
+          title: 'Pemberian P2Y12 Inhibitor (Opsional, Bila Dokter Meresepkan & Tersedia)',
+          description: 'Clopidogrel (300mg/600mg) ATAU Ticagrelor (180mg). Jika stok APOTEK KLINIK terbatas/tidak ada, tinggalkan untuk RS.',
           required: false,
-          category: 'assessment'
+          category: 'medication'
         }
       ],
       nextNodeId: 'ska-long-term-management'
     },
 
+    // ==========================================
+    // SKA-NEST PATHWAY BRANCH (APTS/NSTEMI)
+    // ==========================================
+    'ska-nest-rujukan': {
+      id: 'ska-nest-rujukan',
+      type: 'checklist',
+      title: 'Tata Laksana & Stabilisasi SKA-NEST (NSTEMI / UAP)',
+      description: 'Tidak ada STEMI di EKG. NAMUN risiko infark miokard tak ber-elevasi ST dapat sangat tinggi. Tanpa pemeriksaan hs-cTn dari Lab, KLINIK TIDAK BOLEH memulangkan pasien.',
+      items: [
+        {
+          id: 'ska-nest-rujuk-segera',
+          title: 'Persiapkan Rujukan Tanpa Menunggu Konfirmasi GRACE Score',
+          description: 'Risiko pasti (High/Very High Risk) membutuhkan Troponin dan kreatinin, yang tidak ada. Asumsikan pasien dalam risiko tinggi.',
+          required: true,
+          category: 'action'
+        },
+        {
+          id: 'ska-nest-serial-ekg',
+          title: 'Lakukan EKG Serial Sambil Menunggu Ambulans',
+          description: 'Jika ambulans terlambat, ulangi rekam EKG setiap 15-30 menit ATAU bila keluhan nyeri dada pasien bertambah berat. Pastikan depresi ST tidak berubah menjadi Elevasi ST.',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'ska-nest-meds',
+          title: 'Siapkan Obat Dasar (Jika Ada)',
+          description: 'Lanjutkan Aspirin loading, pantau dengan Oxymeter, pastikan kenyamanan (Tirah Baring 100%).',
+          required: true,
+          category: 'medication'
+        }
+      ],
+      nextNodeId: 'ska-persiapan-rujukan-stemi' // Routing ke instruksi ambulans yang sama
+    },
 
     // ==========================================
-    // LONG TERM MANAGEMENT (PERKI 2024 Bab 6)
+    // LONG TERM MANAGEMENT
     // ==========================================
     'ska-long-term-management': {
       id: 'ska-long-term-management',
       type: 'checklist',
-      title: 'Manajemen Jangka Panjang Pasca-Koroner',
-      description: 'PERKI 2024: Terapi medis pasca evakuasi iskemik untuk menurunkan kejadian kardiovaskular.',
+      title: 'Pemantauan Rawat Jalan Paska Kepulangan dari RS Lanjutan',
+      description: 'Fasilitas klinik / FKTP berperan sangat besar paska operasi/rujukan RS (secondary prevention).',
       items: [
         {
-          id: 'ska-dapt-12months',
-          title: 'DAPT (Dual Antiplatelet Therapy) 12 Bulan',
-          description: 'Aspirin (80-100 mg/hari) SEUMUR HIDUP. Ditambah P2Y12 inhibitor (Ticagrelor 90mg 2x1 / Prasugrel 10mg 1x1 / Clopidogrel 75mg 1x1) selama 12 BULAN standar, kecuali risiko perdarahan tinggi (> 1 kriteria mayor ARC-HBR).',
+          id: 'ska-fktp-dapt',
+          title: 'Kontrol Kepatuhan Minum Obat DAPT & Statin',
+          description: 'Cek tensimeter rutin. Ingatkan pasien: Aspirin + P2Y12 (12 Bulan), dan statin agar diminum secara disiplin.',
           required: true,
-          category: 'medication'
+          category: 'action'
         },
         {
-          id: 'ska-af-oac',
-          title: 'Jika Pasien Memiliki Indikasi OAC (Misal FA)',
-          description: 'Kurangi durasi TAT (Triple Therapy: NOAC + DAPT) menjadi sependek mungkin (1 minggu). Lanjutkan DAT (NOAC + Clopidogrel) selama 6-12 bulan, disusul NOAC tunggal.',
+          id: 'ska-fktp-ekg-kontrol',
+          title: 'EKG Kontrol Rutin di Klinik',
+          description: 'Gunakan fasilitas EKG Anda saat pasien kontrol untuk pengecekan perubahan dasar irama jika ada komplain palpitasi atau nyeri tersisa.',
           required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-lipid-target',
-          title: 'Kontrol Lipid Agresif (Statin + Ezetimibe)',
-          description: 'Gunakan Statin Intensitas Tinggi. Target LDL-C < 55 mg/dL AND reduksi >= 50% dari baseline. Jika target tak capai dalam 4-6 minggu, tambah Ezetimibe.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'ska-beta-blocker-ace',
-          title: 'Penyekat Beta & ACE-i',
-          description: 'Beta-blocker dilanjutkan rutin bila ada tanda disfungsi ventrikel (EF <40%). ACE Inhibitor rutin untuk EF <40%, DM, hipertensi, CKD.',
-          required: true,
-          category: 'medication'
+          category: 'assessment'
         },
         {
           id: 'ska-post-rehab-lifestyle',
-          title: 'Rehabilitasi Kardiovaskular & Modifikasi Hidup',
-          description: 'Berhenti merokok MUTLAK. Program rehabilitasi jantung komprehensif, olahraga aktivitas ringan-sedang (>150 jam/minggu), pengaturan berat badan (IMT normal).',
+          title: 'Rutin Edukasi Gaya Hidup',
+          description: 'Berhenti merokok MUTLAK. Pengaturan berat badan dan kontrol tekanan darah dengan Tensimeter secara pro-aktif.',
           required: true,
           category: 'action'
         }
