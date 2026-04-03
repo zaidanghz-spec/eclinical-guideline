@@ -8,18 +8,15 @@ import {
   CheckCircle2,
   PlayCircle,
   FileText,
-  Trash2,
   AlertCircle,
   Activity,
   TrendingUp,
   History,
   Filter,
-  Search,
-  Download
+  Search
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions, PathwaySession } from '../hooks/usePathwaySessions';
-import { toast } from 'sonner';
 import Navbar from '../components/Navbar';
 
 export default function PathwayHistoryPage() {
@@ -387,9 +384,9 @@ function SessionCard({
           <div className="flex-1">
             {/* Disease Name */}
             <h3 className="text-xl font-bold text-slate-900 mb-1">{session.diseaseName}</h3>
-            {(session.patient_code || session.patientCode) && (
+            {(session.patient_code || (session as any).patientCode) && (
               <div className="text-sm text-teal-600 font-medium mb-2">
-                Patient: {session.patient_code || session.patientCode}
+                Patient: {session.patient_code || (session as any).patientCode}
               </div>
             )}
 

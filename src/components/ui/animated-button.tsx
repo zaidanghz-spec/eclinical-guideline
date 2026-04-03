@@ -42,7 +42,7 @@ export interface AnimatedButtonProps
 
 const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : motion.button
+    const Comp = (asChild ? Slot : motion.button) as any
     return (
       <Comp
         className={cn(animatedButtonVariants({ variant, size, className }))}

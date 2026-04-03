@@ -4,16 +4,12 @@ import {
   ClipboardList, 
   Brain, 
   AlertCircle, 
-  TrendingUp, 
   Clock,
   CheckCircle2,
   Activity,
-  Heart,
   History,
-  PlayCircle,
   FileText,
-  Shield,
-  Award
+  Shield
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
@@ -279,9 +275,9 @@ export default function HomePage() {
                           </div>
                           <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
                             <span>{timeAgo}</span>
-                            {(session.patient_code || session.patientCode) && (
+                            {(session.patient_code || (session as any).patientCode) && (
                               <span className="text-teal-600 font-medium">
-                                | Patient: {session.patient_code || session.patientCode}
+                                | Patient: {session.patient_code || (session as any).patientCode}
                               </span>
                             )}
                           </div>

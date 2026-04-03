@@ -8,7 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -103,7 +103,7 @@ export function Header() {
                   </div>
                 </div>
                 <Button
-                  onClick={logout}
+                  onClick={signOut}
                   variant="outline"
                   size="sm"
                   className={`flex items-center gap-2 ${isScrolled ? "border-teal-600 text-teal-600 hover:bg-teal-50" : "border-white text-white hover:bg-white/20"}`}

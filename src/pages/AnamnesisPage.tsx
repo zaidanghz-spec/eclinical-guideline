@@ -6,40 +6,47 @@ import { diseases } from '../lib/diseases';
 
 export default function AnamnesisPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [step, setStep] = useState(1);
+  const [data, setData] = useState({
+    chiefComplaint: '',
+    symptoms: [] as string[],
+    duration: '',
+    severity: ''
+  });
+  const [suggestions, setSuggestions] = useState<typeof diseases>([]);
 
-  // Extract all unique keywords from diseases
-  const allSymptoms = Array.from(
-    new Set(diseases.flatMap(d => d.keywords))
-  ).sort();
+  // Basic symptom options derived from our most common disease keywords
+  const symptomOptions = [
+    { id: 'chest pain', label: 'Nyeri Dada (Chest Pain)' },
+    { id: 'headache', label: 'Sakit Kepala' },
+    { id: 'fever', label: 'Demam' },
+    { id: 'dizziness', label: 'Pusing (Dizziness/Vertigo)' },
+    { id: 'weakness', label: 'Kelemahan (Weakness)' },
+    { id: 'vomiting', label: 'Muntah' },
+    { id: 'cough', label: 'Batuk' },
+    { id: 'shortness of breath', label: 'Sesak Napas' }
+  ];
 
-  const toggleSymptom = (symptom: string) => {
-    setSelectedSymptoms(prev =>
-      prev.includes(symptom)
-        ? prev.filter(s => s !== symptom)
-        : [...prev, symptom]
-    );
+  const handleSymptomToggle = (symptomId: string) => {
+    setData(prev => ({
+      ...prev,
+      symptoms: prev.symptoms.includes(symptomId)
+        ? prev.symptoms.filter(id => id !== symptomId)
+        : [...prev.symptoms, symptomId]
+    }));
   };
 
-  // Filter diseases based on selected symptoms
-  const matchingDiseases = selectedSymptoms.length > 0
-    ? diseases.filter(disease =>
-        selectedSymptoms.some(symptom =>
-          disease.keywords.includes(symptom)
-        )
-      ).sort((a, b) => {
-        // Sort by number of matching symptoms
-        const aMatches = selectedSymptoms.filter(s => a.keywords.includes(s)).length;
-        const bMatches = selectedSymptoms.filter(s => b.keywords.includes(s)).length;
-        return bMatches - aMatches;
-      })
-    : [];
-
-  // Filter symptoms based on search
-  const filteredSymptoms = allSymptoms.filter(symptom =>
-    symptom.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const analyzeSuggestions = () => {
+    // Simple analysis based on symptom match
+    const matched = diseases.filter(d => 
+      data.symptoms.some(s => d.keywords.some(k => k.toLowerCase().includes(s.toLowerCase()))) ||
+      d.keywords.some(k => k.toLowerCase().includes(data.chiefComplaint.toLowerCase()))
+    );
+    // Sort by emergency first, then by match count
+    matched.sort((a, b) => (b.isEmergency ? 1 : 0) - (a.isEmergency ? 1 : 0));
+    setSuggestions(matched.slice(0, 5));
+    setStep(4);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">

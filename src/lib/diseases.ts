@@ -10,10 +10,10 @@ export interface Disease {
 }
 
 export const diseases: Disease[] = [
-  // KARDIOVASKULAR (6 penyakit)
+  // KARDIOVASKULAR (5 penyakit)
   {
-    id: 'acs',
-    name: 'Sindrom Koroner Akut (ACS)',
+    id: 'sindrom-koroner-akut',
+    name: 'Sindrom Koroner Akut (SKA / STEMI / NSTEMI / UAP)',
     nameEn: 'Acute Coronary Syndrome',
     organSystem: 'kardiovaskular',
     isEmergency: true,

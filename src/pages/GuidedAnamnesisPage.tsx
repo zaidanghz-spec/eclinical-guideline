@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowLeft, 
@@ -108,11 +108,9 @@ const sections = [
 ];
 
 export default function GuidedAnamnesisPage() {
-  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState(-1);
   const [data, setData] = useState<AnamnesisData>(initialData);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [completedSections, setCompletedSections] = useState<Record<string, boolean>>({});
 
   const completion = useMemo(() => calculateCompletion(data), [data]);
   const suggestions = useMemo(() => {
@@ -752,7 +750,7 @@ export default function GuidedAnamnesisPage() {
                     Current: {Math.round(completion)}% / Target: 70%
                   </div>
                 </div>
-              ) : suggestions.length === 0 ? (
+              ) : !showSuggestions ? (
                 <div className="text-center py-6">
                   <button
                     onClick={handleGenerateSuggestions}

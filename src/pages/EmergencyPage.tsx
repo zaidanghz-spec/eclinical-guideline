@@ -87,8 +87,8 @@ export default function EmergencyPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className={`text-xs font-bold px-3 py-1 rounded-full border ${urgencyColors[disease.urgency]}`}>
-                        {urgencyLabels[disease.urgency]}
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full border ${urgencyColors[(disease as any).urgency] || 'bg-red-600'}`}>
+                        {urgencyLabels[(disease as any).urgency] || 'EMERGENCY'}
                       </span>
                       {disease.timeToIntervention && (
                         <div className="flex items-center gap-2 text-sm text-slate-600">

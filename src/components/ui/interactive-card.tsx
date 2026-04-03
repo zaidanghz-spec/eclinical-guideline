@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { LucideIcon } from 'lucide-react';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 
 interface InteractiveCardProps {
   icon: LucideIcon;

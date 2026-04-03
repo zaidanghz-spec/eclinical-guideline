@@ -18,15 +18,10 @@ import {
   Target,
   TrendingUp,
   Pill,
-  Heart,
-  Activity,
-  Save,
-  User
+  Save
 } from 'lucide-react';
 import { diseases } from '../lib/diseases';
-import { dynamicPathways, PathwayNode, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
-import { EvidenceTag } from '../components/clinical/EvidenceTag';
-import { MedicationCard } from '../components/clinical/MedicationCard';
+import { dynamicPathways, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
 
@@ -34,13 +29,12 @@ export default function DynamicPathwayPage() {
   const { diseaseId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { currentSession, createSession, updateSession, saveDraft, completeSession } = usePathwaySessions();
+  const { currentSession, createSession, saveDraft, completeSession } = usePathwaySessions();
   
   const disease = diseases.find(d => d.id === diseaseId);
   const pathway = dynamicPathways[diseaseId || ''];
   
   const [currentNodeId, setCurrentNodeId] = useState<string>(pathway?.startNodeId || '');
-  const [completedNodes, setCompletedNodes] = useState<string[]>([]);
   const [checkedSteps, setCheckedSteps] = useState<Record<string, boolean>>({});
   const [stepNotes, setStepNotes] = useState<Record<string, string>>({});
   const [showNotesFor, setShowNotesFor] = useState<string | null>(null);
@@ -68,7 +62,7 @@ export default function DynamicPathwayPage() {
     if (state?.sessionId && state?.resume && currentSession) {
       setShowPatientCodeModal(false);
       setSessionId(state.sessionId);
-      setPatientCode(currentSession.patient_code || currentSession.patientCode || '');
+      setPatientCode(currentSession.patient_code || (currentSession as any).patientCode || '');
       if (currentSession.checklist) setCheckedSteps(currentSession.checklist);
       if (currentSession.notes) setStepNotes(currentSession.notes);
       if (currentSession.current_node_id || currentSession.currentNodeId) {
@@ -129,7 +123,7 @@ export default function DynamicPathwayPage() {
     }));
   };
 
-  const handleBranchSelect = (branchId: string, nextNodeId: string, branchTitle: string) => {
+  const handleBranchSelect = (_branchId: string, nextNodeId: string, branchTitle: string) => {
     // Check if previous node validation is needed
     const previousNode = pathwayHistory.length > 0 ? 
       pathway?.nodes[pathwayHistory[pathwayHistory.length - 1].nodeId] : null;
@@ -146,7 +140,6 @@ export default function DynamicPathwayPage() {
 
   const navigateToNode = (nextNodeId: string, branchTitle: string) => {
     if (currentNode) {
-      setCompletedNodes(prev => [...prev, currentNodeId]);
       setPathwayHistory(prev => [...prev, { nodeId: currentNodeId, nodeName: currentNode.type === 'checklist' ? currentNode.title : currentNode.title }]);
     }
     setCurrentNodeId(nextNodeId);
@@ -376,7 +369,6 @@ export default function DynamicPathwayPage() {
                 <DecisionNodeComponent
                   node={currentNode as DecisionNode}
                   onBranchSelect={handleBranchSelect}
-                  pathway={pathway}
                 />
               )}
             </motion.div>
@@ -681,9 +673,6 @@ function ChecklistNodeComponent({
   // Separate medication items from other items
   const medicationItems = node.items.filter(item => item.category === 'medication');
   const otherItems = node.items.filter(item => item.category !== 'medication');
-  const isEmergencyNode = node.title.toLowerCase().includes('stemi') || 
-                          node.title.toLowerCase().includes('emergency') ||
-                          node.title.toLowerCase().includes('immediate');
 
   // Group items by phases (smart auto-detection)
   const groupItemsByPhase = (items: typeof node.items) => {
@@ -969,12 +958,10 @@ function ChecklistNodeComponent({
 // Decision Node Component
 function DecisionNodeComponent({ 
   node, 
-  onBranchSelect,
-  pathway
+  onBranchSelect
 }: { 
   node: DecisionNode; 
   onBranchSelect: (branchId: string, nextNodeId: string, branchTitle: string) => void;
-  pathway: any;
 }) {
   const warningColors = {
     info: { bg: 'bg-blue-50', border: 'border-blue-200', icon: 'bg-blue-100', iconColor: 'text-blue-600' },

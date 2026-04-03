@@ -214,7 +214,7 @@ export const pathwayValidation = {
   validateChecklist: (checkedItems: Record<string, boolean>, checklist: PathwayChecklist) => {
     const allItems = checklist.sections.flatMap(s => s.items);
     const requiredItems = allItems.filter(i => i.required);
-    const requiredChecked = requiredItems.filter(item => checkedItems[item.id]);
+    
     
     return {
       isComplete: allItems.every(item => checkedItems[item.id]),
