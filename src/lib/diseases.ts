@@ -402,7 +402,7 @@ export const organSystems = [
     id: 'kardiovaskular',
     name: 'Kardiovaskular',
     nameEn: 'Cardiovascular',
-    icon: '❤️',
+    icon: '',
     color: 'red',
     count: diseases.filter(d => d.organSystem === 'kardiovaskular').length
   },
@@ -410,7 +410,7 @@ export const organSystems = [
     id: 'respirasi',
     name: 'Respirasi',
     nameEn: 'Respiratory',
-    icon: '🫁',
+    icon: '',
     color: 'blue',
     count: diseases.filter(d => d.organSystem === 'respirasi').length
   },
@@ -418,7 +418,7 @@ export const organSystems = [
     id: 'neurologi',
     name: 'Neurologi',
     nameEn: 'Neurology',
-    icon: '🧠',
+    icon: '',
     color: 'purple',
     count: diseases.filter(d => d.organSystem === 'neurologi').length
   },
@@ -426,7 +426,7 @@ export const organSystems = [
     id: 'gastrointestinal',
     name: 'Gastrointestinal',
     nameEn: 'Gastrointestinal',
-    icon: '🫀',
+    icon: '',
     color: 'orange',
     count: diseases.filter(d => d.organSystem === 'gastrointestinal').length
   },
@@ -434,7 +434,7 @@ export const organSystems = [
     id: 'infeksi-tropis',
     name: 'Penyakit Infeksi Tropis',
     nameEn: 'Tropical Infectious Diseases',
-    icon: '🦠',
+    icon: '',
     color: 'green',
     count: diseases.filter(d => d.organSystem === 'infeksi-tropis').length
   },
@@ -442,7 +442,7 @@ export const organSystems = [
     id: 'endokrin',
     name: 'Endokrin & Metabolik',
     nameEn: 'Endocrine & Metabolic',
-    icon: '⚡',
+    icon: '',
     color: 'yellow',
     count: diseases.filter(d => d.organSystem === 'endokrin').length
   },
@@ -450,7 +450,7 @@ export const organSystems = [
     id: 'kulit-alergi',
     name: 'Kulit & Alergi',
     nameEn: 'Dermatology & Allergy',
-    icon: '🧴',
+    icon: '',
     color: 'pink',
     count: diseases.filter(d => d.organSystem === 'kulit-alergi').length
   },
@@ -458,7 +458,7 @@ export const organSystems = [
     id: 'muskuloskeletal',
     name: 'Muskuloskeletal & Trauma',
     nameEn: 'Musculoskeletal & Trauma',
-    icon: '🦴',
+    icon: '',
     color: 'orange',
     count: diseases.filter(d => d.organSystem === 'muskuloskeletal').length
   },

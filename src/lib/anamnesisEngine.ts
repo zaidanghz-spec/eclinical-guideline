@@ -204,7 +204,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (searchText.includes('right lower') || searchText.includes('kanan bawah') || searchText.includes('mcburney')) {
       if (disease.id === 'acute-appendicitis') {
         score += 30;
-        matched.push('🚨 RLQ pain (McBurney) → HIGHLY SUSPECT APPENDICITIS!');
+        matched.push(' RLQ pain (McBurney) → HIGHLY SUSPECT APPENDICITIS!');
       }
     }
 
@@ -316,7 +316,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       // Pleuritic pain + chest → UNLIKELY ACS
       if (hasChestPain && disease.id === 'acs') {
         score -= 20;
-        matched.push('⚠️ Pleuritic chest pain → less likely ACS');
+        matched.push(' Pleuritic chest pain → less likely ACS');
       }
     }
 
@@ -408,7 +408,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       if (searchText.includes('stepladder') || searchText.includes('naik bertahap')) {
         if (disease.id === 'typhoid-fever') {
           score += 30;
-          matched.push('🚨 Stepladder fever → HIGHLY SPECIFIC FOR TYPHOID!');
+          matched.push(' Stepladder fever → HIGHLY SPECIFIC FOR TYPHOID!');
         }
       }
 
@@ -416,7 +416,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       if (searchText.includes('periodic') || searchText.includes('chills') || searchText.includes('menggigil') || searchText.includes('rigor')) {
         if (disease.id === 'malaria') {
           score += 30;
-          matched.push('🚨 Periodic fever + chills → HIGHLY SUSPECT MALARIA!');
+          matched.push(' Periodic fever + chills → HIGHLY SUSPECT MALARIA!');
         }
       }
 
@@ -436,7 +436,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         }
         if (['acs', 'heart-failure'].includes(disease.id)) {
           score -= 30;
-          matched.push('⚠️ Fever + chest pain → less likely pure cardiac');
+          matched.push(' Fever + chest pain → less likely pure cardiac');
         }
       }
     }
@@ -464,7 +464,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       if (searchText.includes('orthopnea') || searchText.includes('worse lying') || searchText.includes('sulit tidur')) {
         if (disease.id === 'heart-failure') {
           score += 30;
-          matched.push('🚨 Orthopnea → HIGHLY SPECIFIC FOR HEART FAILURE!');
+          matched.push(' Orthopnea → HIGHLY SPECIFIC FOR HEART FAILURE!');
         }
       }
 
@@ -559,21 +559,21 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (searchText.includes('hemiparesis') || searchText.includes('hemiplegia') || searchText.includes('kelemahan satu sisi')) {
       if (disease.id === 'stroke-iskemik') {
         score += 35;
-        matched.push('🚨 Hemiparesis → HIGHLY SUSPECT STROKE!');
+        matched.push(' Hemiparesis → HIGHLY SUSPECT STROKE!');
       }
     }
 
     if (searchText.includes('facial droop') || searchText.includes('wajah tidak simetris') || searchText.includes('senyum miring')) {
       if (disease.id === 'stroke-iskemik') {
         score += 35;
-        matched.push('🚨 Facial droop → HIGHLY SUSPECT STROKE!');
+        matched.push(' Facial droop → HIGHLY SUSPECT STROKE!');
       }
     }
 
     if (searchText.includes('aphasia') || searchText.includes('bicara pelo') || searchText.includes('slurred speech')) {
       if (disease.id === 'stroke-iskemik') {
         score += 35;
-        matched.push('🚨 Aphasia → HIGHLY SUSPECT STROKE!');
+        matched.push(' Aphasia → HIGHLY SUSPECT STROKE!');
       }
     }
 
@@ -587,13 +587,13 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
 
     if (fastCriteria >= 2 && disease.id === 'stroke-iskemik') {
       score += 50;
-      matched.push(`🚨🚨 FAST criteria (${fastCriteria}/4) → STROKE EMERGENCY!`);
+      matched.push(` FAST criteria (${fastCriteria}/4) → STROKE EMERGENCY!`);
     }
 
     // EXCLUDE stroke if fever
     if (hasFever && disease.id === 'stroke-iskemik') {
       score -= 35;
-      matched.push('⚠️ Fever present → less likely stroke');
+      matched.push(' Fever present → less likely stroke');
     }
 
     // General weakness
@@ -609,7 +609,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         (searchText.includes('stiff neck') || searchText.includes('kaku kuduk'))) {
       if (disease.id === 'meningitis') {
         score += 40;
-        matched.push('🚨 Severe headache + stiff neck → HIGHLY SUSPECT MENINGITIS!');
+        matched.push(' Severe headache + stiff neck → HIGHLY SUSPECT MENINGITIS!');
       }
     }
 
@@ -630,7 +630,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       
       if (disease.id === 'stroke-iskemik' && !searchText.includes('hemiparesis') && !searchText.includes('weakness')) {
         score -= 25;
-        matched.push('⚠️ Isolated dizziness without weakness → less likely stroke');
+        matched.push(' Isolated dizziness without weakness → less likely stroke');
       }
     }
 
@@ -718,7 +718,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       if (searchText.includes('>5') || searchText.includes('prolonged') || searchText.includes('status')) {
         if (disease.id === 'seizures') {
           score += 25;
-          matched.push('🚨 Prolonged seizure → STATUS EPILEPTICUS!');
+          matched.push(' Prolonged seizure → STATUS EPILEPTICUS!');
         }
       }
     }
@@ -771,7 +771,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (bleedingSites >= 2) {
       if (disease.id === 'dbd') {
         score += 40;
-        matched.push(`🚨 Multiple bleeding sites (${bleedingSites}) → HIGHLY SUSPICIOUS FOR DBD!`);
+        matched.push(` Multiple bleeding sites (${bleedingSites}) → HIGHLY SUSPICIOUS FOR DBD!`);
       } else if (disease.id === 'sepsis') {
         score += 20;
         matched.push('Multiple bleeding → possible DIC/sepsis');
@@ -782,12 +782,12 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (hasFever && bleedingSites >= 1) {
       if (['dbd', 'sepsis'].includes(disease.id)) {
         score += 35;
-        matched.push('🔥 Fever + Bleeding → STRONGLY SUSPECT DBD/SEPSIS!');
+        matched.push(' Fever + Bleeding → STRONGLY SUSPECT DBD/SEPSIS!');
       }
       
       if (['acs', 'heart-failure', 'arrhythmias'].includes(disease.id)) {
         score -= 50;
-        matched.push('⚠️ Fever + Bleeding → NOT cardiac!');
+        matched.push(' Fever + Bleeding → NOT cardiac!');
       }
     }
 
@@ -831,7 +831,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (searchText.includes('hematemesis') || searchText.includes('muntah darah') || searchText.includes('coffee ground')) {
       if (disease.id === 'upper-gi-bleeding') {
         score += 35;
-        matched.push('🚨 Hematemesis → UPPER GI BLEEDING!');
+        matched.push(' Hematemesis → UPPER GI BLEEDING!');
       }
     }
 
@@ -839,7 +839,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (searchText.includes('melena') || searchText.includes('black stool') || searchText.includes('tinja hitam')) {
       if (disease.id === 'upper-gi-bleeding') {
         score += 35;
-        matched.push('🚨 Melena → UPPER GI BLEEDING!');
+        matched.push(' Melena → UPPER GI BLEEDING!');
       }
     }
 
@@ -848,7 +848,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         (searchText.includes('melena') || searchText.includes('tinja hitam'))) {
       if (disease.id === 'upper-gi-bleeding') {
         score += 50;
-        matched.push('🚨🚨 Hematemesis + Melena → EMERGENCY GI BLEEDING!');
+        matched.push(' Hematemesis + Melena → EMERGENCY GI BLEEDING!');
       }
     }
 
@@ -889,7 +889,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
           (searchText.includes('rapid') || searchText.includes('cepat') || searchText.includes('racing'))) {
         if (disease.id === 'svt') {
           score += 30;
-          matched.push('🚨 Sudden onset rapid palpitations → SUSPECT SVT!');
+          matched.push(' Sudden onset rapid palpitations → SUSPECT SVT!');
         }
       }
       
@@ -907,7 +907,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         }
         if (disease.id === 'svt') {
           score -= 10;
-          matched.push('⚠️ Irregular rhythm → less likely SVT (SVT usually regular)');
+          matched.push(' Irregular rhythm → less likely SVT (SVT usually regular)');
         }
       }
     }
@@ -944,7 +944,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       if (searchText.includes('unilateral') || searchText.includes('satu kaki')) {
         if (disease.id === 'dvt') {
           score += 30;
-          matched.push('🚨 Unilateral leg swelling → HIGHLY SUSPECT DVT!');
+          matched.push(' Unilateral leg swelling → HIGHLY SUSPECT DVT!');
         }
       }
 
@@ -970,7 +970,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (diabetesPs >= 2) {
       if (['diabetes-melitus-tipe-2', 'dka'].includes(disease.id)) {
         score += 35;
-        matched.push(`🚨 Classic 3P symptoms (${diabetesPs}/3) → HIGHLY SUSPECT DIABETES!`);
+        matched.push(` Classic 3P symptoms (${diabetesPs}/3) → HIGHLY SUSPECT DIABETES!`);
       }
     } else if (diabetesPs === 1) {
       if (['diabetes-melitus-tipe-2', 'dka'].includes(disease.id)) {
@@ -991,7 +991,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (searchText.includes('kussmaul') || searchText.includes('fruity') || searchText.includes('acetone')) {
       if (disease.id === 'dka') {
         score += 35;
-        matched.push('🚨 Kussmaul/fruity breath → DKA!');
+        matched.push(' Kussmaul/fruity breath → DKA!');
       }
     }
 
@@ -1000,7 +1000,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         searchText.includes('tremor') || searchText.includes('cold sweat') || searchText.includes('keringat dingin')) {
       if (disease.id === 'hypoglycemia') {
         score += 28;
-        matched.push('🚨 Hypoglycemia symptoms!');
+        matched.push(' Hypoglycemia symptoms!');
       }
     }
 
@@ -1009,7 +1009,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         (searchText.includes('agitation') || searchText.includes('gelisah') || searchText.includes('tremor'))) {
       if (disease.id === 'thyroid-storm') {
         score += 40;
-        matched.push('🚨 Tachycardia + fever + agitation → THYROID STORM!');
+        matched.push(' Tachycardia + fever + agitation → THYROID STORM!');
       }
     }
 
@@ -1050,7 +1050,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
          (searchText.includes('hypotension') || searchText.includes('shock')))) {
       if (disease.id === 'alergi-dermatitis') {
         score += 50;
-        matched.push('🚨🚨 ANAPHYLAXIS → EMERGENCY!');
+        matched.push(' ANAPHYLAXIS → EMERGENCY!');
       }
     }
 
@@ -1069,7 +1069,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       // Exclude non-traumatic if clear trauma
       if (!['fraktur'].includes(disease.id) && (searchText.includes('accident') || searchText.includes('kecelakaan'))) {
         score -= 20;
-        matched.push('⚠️ Trauma history → less likely non-traumatic');
+        matched.push(' Trauma history → less likely non-traumatic');
       }
     }
 
@@ -1078,7 +1078,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         (searchText.includes('cannot move') || searchText.includes('tidak bisa gerak'))) {
       if (disease.id === 'fraktur') {
         score += 35;
-        matched.push('🚨 Deformity + immobility → FRACTURE!');
+        matched.push(' Deformity + immobility → FRACTURE!');
       }
     }
 
@@ -1098,7 +1098,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (searchText.includes('flood') || searchText.includes('banjir') || searchText.includes('water exposure')) {
       if (disease.id === 'leptospirosis') {
         score += 30;
-        matched.push('🚨 Flood exposure → SUSPECT LEPTOSPIROSIS!');
+        matched.push(' Flood exposure → SUSPECT LEPTOSPIROSIS!');
       }
     }
 
@@ -1122,7 +1122,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     if (searchText.includes('anosmia') || searchText.includes('loss of smell') || searchText.includes('hilang penciuman')) {
       if (disease.id === 'covid-19') {
         score += 35;
-        matched.push('🚨 Anosmia → HIGHLY SPECIFIC FOR COVID-19!');
+        matched.push(' Anosmia → HIGHLY SPECIFIC FOR COVID-19!');
       }
     }
 

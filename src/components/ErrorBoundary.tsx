@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    console.error('🚨 [ErrorBoundary] Error caught:', error);
+    console.error(' [ErrorBoundary] Error caught:', error);
     return {
       hasError: true,
       error,
@@ -31,8 +31,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('🚨 [ErrorBoundary] Component stack:', errorInfo.componentStack);
-    console.error('🚨 [ErrorBoundary] Error details:', error);
+    console.error(' [ErrorBoundary] Component stack:', errorInfo.componentStack);
+    console.error(' [ErrorBoundary] Error details:', error);
     this.setState({
       error,
       errorInfo

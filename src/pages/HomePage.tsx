@@ -25,23 +25,23 @@ export default function HomePage() {
   const { sessions, loading, authError } = usePathwaySessions();
   const [hasError, setHasError] = useState(false);
 
-  console.log('🏠 [HomePage] Rendering HomePage...');
-  console.log('🏠 [HomePage] User:', user ? { email: user.email, name: user.name } : null);
-  console.log('🏠 [HomePage] Sessions:', sessions ? sessions.length : 'null');
-  console.log('🏠 [HomePage] Loading:', loading);
-  console.log('🏠 [HomePage] Auth Error:', authError);
-  console.log('🏠 [HomePage] Has error:', hasError);
+  console.log(' [HomePage] Rendering HomePage...');
+  console.log(' [HomePage] User:', user ? { email: user.email, name: user.name } : null);
+  console.log(' [HomePage] Sessions:', sessions ? sessions.length : 'null');
+  console.log(' [HomePage] Loading:', loading);
+  console.log(' [HomePage] Auth Error:', authError);
+  console.log(' [HomePage] Has error:', hasError);
 
   // Catch any rendering errors
   useEffect(() => {
-    console.log('🏠 [HomePage] useEffect - Setting up error handler');
+    console.log(' [HomePage] useEffect - Setting up error handler');
     const errorHandler = (error: ErrorEvent) => {
-      console.error('🚨 [HomePage] Rendering error:', error);
+      console.error(' [HomePage] Rendering error:', error);
       setHasError(true);
     };
     window.addEventListener('error', errorHandler);
     return () => {
-      console.log('🏠 [HomePage] useEffect - Cleaning up error handler');
+      console.log(' [HomePage] useEffect - Cleaning up error handler');
       window.removeEventListener('error', errorHandler);
     };
   }, []);

@@ -163,7 +163,7 @@ export default function PathwayPage() {
         {/* Clinical Pathway Checklist */}
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl">
-            <h2 className="text-2xl font-bold mb-2">📋 Clinical Pathway Checklist</h2>
+            <h2 className="text-2xl font-bold mb-2"> Clinical Pathway Checklist</h2>
             <p className="text-blue-100">
               Centang setiap langkah saat sudah selesai dilakukan
             </p>
@@ -301,7 +301,7 @@ export default function PathwayPage() {
                         <ul className="space-y-2">
                           {step.redFlags.map((flag, idx) => (
                             <li key={idx} className="flex items-start gap-2">
-                              <span className="text-red-600">⚠️</span>
+                              <span className="text-red-600"></span>
                               <span className="text-sm text-red-800">{flag}</span>
                             </li>
                           ))}
@@ -343,7 +343,7 @@ export default function PathwayPage() {
             className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-8 rounded-2xl text-center mt-8 shadow-2xl"
           >
             <Award className="w-20 h-20 mx-auto mb-4 animate-bounce" />
-            <h3 className="text-3xl font-bold mb-2">🎉 Pathway Completed!</h3>
+            <h3 className="text-3xl font-bold mb-2"> Pathway Completed!</h3>
             <p className="text-green-100 mb-6 text-lg">
               Anda telah menyelesaikan semua langkah clinical pathway untuk {disease.name}
             </p>
@@ -371,7 +371,7 @@ export default function PathwayPage() {
         {/* Evidence Notice */}
         <div className="mt-8 p-6 bg-slate-100 rounded-xl">
           <p className="text-sm text-slate-600 text-center">
-            <strong>📚 Evidence-Based:</strong> Pathway ini disusun berdasarkan guideline WHO, 
+            <strong> Evidence-Based:</strong> Pathway ini disusun berdasarkan guideline WHO, 
             PPK Indonesia, dan pola resistensi antibiotik lokal. 
             Selalu sesuaikan dengan kondisi pasien individual dan konsultasi senior jika diperlukan.
           </p>

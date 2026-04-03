@@ -9,7 +9,7 @@ interface PublicRouteProps {
 export function PublicRoute({ children }: PublicRouteProps) {
   const { user, loading } = useAuth();
 
-  console.log('🌐 PublicRoute check:', { 
+  console.log(' PublicRoute check:', { 
     user: user ? { email: user.email, name: user.name } : null, 
     loading,
     userExists: !!user 
@@ -28,14 +28,14 @@ export function PublicRoute({ children }: PublicRouteProps) {
   }
 
   if (user) {
-    console.log('✅ [PublicRoute] User already logged in, redirecting to /home');
-    console.log('👤 [PublicRoute] User details:', { 
+    console.log(' [PublicRoute] User already logged in, redirecting to /home');
+    console.log(' [PublicRoute] User details:', { 
       email: user.email, 
       name: user.name
     });
     return <Navigate to="/home" replace />;
   }
 
-  console.log('ℹ️ [PublicRoute] No user, showing public page');
+  console.log('ℹ [PublicRoute] No user, showing public page');
   return <>{children}</>;
 }

@@ -12,21 +12,21 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   // Debug logging
-  console.log('🔵 LoginPage rendered');
+  console.log(' LoginPage rendered');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      console.log('🔐 Attempting sign in...', { email });
+      console.log(' Attempting sign in...', { email });
       const success = await signIn(email, password);
-      console.log('✅ Sign in result:', success);
+      console.log(' Sign in result:', success);
       if (success) {
         navigate('/home');
       }
     } catch (error: any) {
-      console.error('❌ Sign in error:', error);
+      console.error(' Sign in error:', error);
     } finally {
       setLoading(false);
     }
