@@ -1,4 +1,4 @@
-const { query, verifyToken } = require('./_lib/db');
+const { query, verifyToken } = require('./_lib/db.cjs');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
