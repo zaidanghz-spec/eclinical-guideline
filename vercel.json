@@ -2,11 +2,5 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ],
-  "functions": {
-    "api/auth.cjs": { "runtime": "nodejs20.x" },
-    "api/whitelist.cjs": { "runtime": "nodejs20.x" },
-    "api/admin.cjs": { "runtime": "nodejs20.x" },
-    "api/pathway.cjs": { "runtime": "nodejs20.x" }
-  }
+  ]
 }
