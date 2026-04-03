@@ -195,6 +195,15 @@ export const diseases: Disease[] = [
     prevalenceIndonesia: 'Penyebab vertigo perifer tersering (~80% kasus vertigo posisional). ICD-10: H81.1. PPK Neurologi PERDOSSI 2023',
     keywords: ['dizziness', 'pusing berputar', 'spinning', 'nausea', 'imbalance', 'vertigo', 'bppv', 'posisional', 'positional', 'dix hallpike', 'epley', 'nistagmus', 'nystagmus', 'miring', 'telentang', 'berputar', 'pusing', 'mual', 'kepala', 'posisi']
   },
+  {
+    id: 'tension-type-headache',
+    name: 'Nyeri Kepala Tipe Tegang (TTH)',
+    nameEn: 'Tension-Type Headache',
+    organSystem: 'neurologi',
+    isEmergency: false,
+    prevalenceIndonesia: 'Nyeri kepala tersering di Indonesia dan dunia. Prevalensi lifetime 80-90% populasi umum. ICD-10: G44.2. PPK Neurologi PERDOSSI 2023',
+    keywords: ['sakit kepala', 'headache', 'tension headache', 'nyeri kepala', 'tth', 'kepala tegang', 'kepala berat', 'stress headache', 'headache bilateral', 'nyeri kepala bilateral', 'menekan', 'mengikat', 'tension type', 'g44.2', 'amitriptyline', 'nyeri kepala tipe tegang']
+  },
 
   // GASTROINTESTINAL (5 penyakit)
   {
