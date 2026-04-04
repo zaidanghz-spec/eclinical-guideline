@@ -2,7 +2,7 @@ import { DynamicPathway } from '../dynamicPathways';
 
 export const acuteKidneyInjuryPathway: DynamicPathway = {
   diseaseId: 'acute-kidney-injury',
-  diseaseName: 'Gangguan Ginjal Akut (GGA)',
+  diseaseName: 'Gangguan Ginjal Akut (GGA) - PERNEFRI 2023',
   startNodeId: 'gga-initial-assessment',
   nodes: {
     'gga-initial-assessment': {
