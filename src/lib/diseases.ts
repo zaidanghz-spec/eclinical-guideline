@@ -385,6 +385,16 @@ export const diseases: Disease[] = [
     prevalenceIndonesia: 'Prevalensi 0.3-1% populasi global. F:M = 3:1. Peak onset 40-60 tahun. Early treatment (window of opportunity <3-6 bulan) prevents joint destruction',
     keywords: ['rheumatoid', 'RA', 'arthritis', 'joint pain', 'swelling', 'morning stiffness', 'synovitis', 'RF', 'anti-CCP', 'MTX', 'methotrexate', 'DMARD', 'biologics', 'autoimmune', 'rematik', 'sendi bengkak']
   },
+  {
+    id: 'acute-kidney-injury',
+    name: 'Gangguan Ginjal Akut (GGA)',
+    nameEn: 'Acute Kidney Injury (AKI)',
+    organSystem: 'endokrin',
+    isEmergency: true,
+    timeToIntervention: 'Segera',
+    prevalenceIndonesia: 'Insidensi meningkat pada pasien ICU dan pasca pembedahan',
+    keywords: ['aki', 'gga', 'gagal ginjal akut', 'kreatinin', 'oliguria', 'cuci darah', 'dialisis', 'kidney injury']
+  }
 ];
 
 export const organSystems = [
