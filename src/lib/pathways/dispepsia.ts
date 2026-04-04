@@ -9,15 +9,8 @@ export const dispepsiaPathway: DynamicPathway = {
       id: 'dispepsia-initial-assessment',
       type: 'checklist',
       title: 'Fase 1: Evaluasi Awal & Skrining Alarm Symptoms',
-      description: 'Pendekatan Uninvestigated Dyspepsia di Layanan Primer (Klinik Keterbatasan Alat).',
+      description: 'Pendekatan Uninvestigated Dyspepsia di Layanan Primer (Klinik Keterbatasan Alat).\n\n[REFERENSI: Konsensus Nasional Penatalaksanaan Dispepsia dan Infeksi Helicobacter pylori di Indonesia (Revisi 2021) oleh PGI. Algoritma telah DISESUAIKAN CUSTOME untuk klinik dengan limitasi: Hanya punya TTV, EKG, Suction, dan Termometer tanpa Endoskopi/UBT.]',
       items: [
-        {
-          id: 'ref-dispepsia-initial',
-          title: 'REFERENSI KREDIBILITAS CHECKLIST',
-          description: 'Sumber: Konsensus Nasional Penatalaksanaan Dispepsia dan Infeksi Helicobacter pylori di Indonesia (Revisi 2021) oleh PGI. Algoritma telah DISESUAIKAN CUSTOME untuk klinik dengan limitasi: Hanya punya TTV, EKG, Suction, dan Termometer tanpa Endoskopi/UBT.',
-          required: true,
-          category: 'documentation'
-        },
         {
           id: 'disp-ttv',
           title: 'Pemantauan Keadaan Umum (TTV & Oxymeter)',
@@ -84,15 +77,8 @@ export const dispepsiaPathway: DynamicPathway = {
       id: 'dispepsia-empiric-therapy',
       type: 'checklist',
       title: 'Terapi Empiris Dispepsia (Uninvestigated Dyspepsia)',
-      description: 'Langkah pengobatan standar sebelum dilakukan diagnostik invasif.',
+      description: 'Langkah pengobatan standar sebelum dilakukan diagnostik invasif.\n\n[REFERENSI: PGI 2021 merekomendasikan strategi "Test and Treat" untuk daerah endemik, NAMUN akibat KETIADAAN ALAT testing non-invasif H.Pylori di klinik ini, opsi EBM kedua ("Empiric Acid-Suppression Therapy") diterapkan secara absolut.]',
       items: [
-        {
-          id: 'ref-dispepsia-empiric',
-          title: 'REFERENSI KREDIBILITAS CHECKLIST',
-          description: 'PGI 2021 merekomendasikan strategi "Test and Treat" untuk daerah endemik, NAMUN akibat KETIADAAN ALAT testing non-invasif H.Pylori di klinik ini, opsi EBM kedua ("Empiric Acid-Suppression Therapy") diterapkan secara absolut.',
-          required: true,
-          category: 'documentation'
-        },
         {
           id: 'disp-ppi',
           title: 'Proton Pump Inhibitor (PPI) Empiris',
@@ -129,15 +115,8 @@ export const dispepsiaPathway: DynamicPathway = {
       id: 'dispepsia-rujuk-endoskopi',
       type: 'checklist',
       title: 'Tatalaksana Khusus Red Flag & Rujukan',
-      description: 'Prosedur pengamanan pasien dengan risiko malignansi atau komplikasi ulkus.',
+      description: 'Prosedur pengamanan pasien dengan risiko malignansi atau komplikasi ulkus.\n\n[REFERENSI: PGI Konsensus 2021 merekomendasikan: Setiap keluhan dispepsia onset usia >45 tahun, atau dibarengi perdarahan GI, anemia tak jelas sebab, dan red flags lainnya adalah indikasi MUTLAK Esofagogastroduodenoskopi (EGD).]',
       items: [
-        {
-          id: 'ref-dispepsia-rujuk',
-          title: 'REFERENSI KREDIBILITAS CHECKLIST',
-          description: 'PGI Konsensus 2021 merekomendasikan: Setiap keluhan dispepsia onset usia >45 tahun, atau dibarengi perdarahan GI, anemia tak jelas sebab, dan red flags lainnya adalah indikasi MUTLAK Esofagogastroduodenoskopi (EGD).',
-          required: true,
-          category: 'documentation'
-        },
         {
           id: 'disp-iv-line',
           title: 'Resusitasi Cairan Darurat (Bila Perdarahan)',
@@ -166,15 +145,8 @@ export const dispepsiaPathway: DynamicPathway = {
       id: 'dispepsia-eradication-hpylori',
       type: 'checklist',
       title: 'Regimen Eradikasi Helicobacter pylori (Confirmed)',
-      description: 'Jika pasien tegak terkonfirmasi menderita H. pylori dari fasilitas lanjutan.',
+      description: 'Jika pasien tegak terkonfirmasi menderita H. pylori dari fasilitas lanjutan.\n\n[REFERENSI: Konsensus Nasional PGI 2021 Tatalaksana H.Pylori. Diperbarui khusus melihat resistensi clarithromycin tinggi (>20%) di Indonesia dan kurang tersedianya obat regimen Bismuth.]',
       items: [
-        {
-          id: 'ref-dispepsia-hpylori',
-          title: 'REFERENSI KREDIBILITAS CHECKLIST',
-          description: 'Sumber: Konsensus Nasional PGI 2021 Tatalaksana H.Pylori. Diperbarui khusus melihat resistensi clarithromycin tinggi (>20%) di Indonesia dan kurang tersedianya obat regimen Bismuth.',
-          required: true,
-          category: 'documentation'
-        },
         {
           id: 'disp-erad-firstline',
           title: 'EBM PGI: Pilihan Regimen Lini Pertama Concomitant',
@@ -204,15 +176,8 @@ export const dispepsiaPathway: DynamicPathway = {
       id: 'dispepsia-evaluation',
       type: 'checklist',
       title: 'Evaluasi & Tindak Lanjut Panjang',
-      description: 'Folow-up pasien di kunjungan berikutnya',
+      description: 'Folow-up pasien di kunjungan berikutnya.\n\n[REFERENSI: Step-down therapy & re-evaluation policy mengikuti alur PGI 2021.]',
       items: [
-        {
-          id: 'ref-dispepsia-eval',
-          title: 'REFERENSI KREDIBILITAS CHECKLIST',
-          description: 'Step-down therapy & re-evaluation policy mengikuti alur PGI 2021.',
-          required: true,
-          category: 'documentation'
-        },
         {
           id: 'disp-eval-success',
           title: 'Respons Terapi Tuntas (Berhasil)',
