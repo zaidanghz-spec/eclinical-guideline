@@ -33,7 +33,68 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           category: 'action'
         }
       ],
-      nextNodeId: 'gga-special-cases-decision'
+      nextNodeId: 'gga-age-decision'
+    },
+
+    'gga-age-decision': {
+      id: 'gga-age-decision',
+      type: 'decision',
+      title: 'Kategori Usia (Anak vs Dewasa)',
+      description: 'Apakah pasien berusia anak-anak (< 18 tahun) atau dewasa?',
+      branches: [
+        {
+          id: 'age-pediatric',
+          title: 'Anak / Neonatus',
+          description: 'Gunakan kriteria pRIFLE / nRIFLE dan manajemen anak (Panduan 7).',
+          color: 'purple',
+          nextNodeId: 'gga-pediatric-management'
+        },
+        {
+          id: 'age-adult',
+          title: 'Dewasa',
+          description: 'Lanjutkan panduan PERNEFRI untuk dewasa / umum.',
+          color: 'blue',
+          nextNodeId: 'gga-special-cases-decision'
+        }
+      ]
+    },
+
+    'gga-pediatric-management': {
+      id: 'gga-pediatric-management',
+      type: 'checklist',
+      title: 'Tatalaksana GGA Pada Anak (Panduan 7)',
+      description: 'Manajemen khusus GGA pada neonatus dan anak-anak berdasarkan kriteria pRIFLE / nRIFLE dan terapi konservatif spesifik.',
+      items: [
+        {
+          id: 'ped-criterion',
+          title: 'Diagnosis & Kriteria (pRIFLE / nRIFLE)',
+          description: 'Evaluasi berdasarkan klirens kreatinin atau output urin spesifik pedriatik. Klasifikasi menjadi Risk, Injury, Failure, Loss, End-Stage.',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'ped-conservative',
+          title: 'Terapi Konservatif & Resusitasi',
+          description: 'Pada keadaan syok/dehidrasi, berikan cairan NaCl 0.9% / Ringer Laktat 10-20 mL/kgBB, awasi ketat jangan sampai asidosis hiperkloremia atau hipervolemia paru.',
+          required: true,
+          category: 'action'
+        },
+        {
+          id: 'ped-hyperkalemia',
+          title: 'Penanganan Medikamentosa Khusus Anak',
+          description: 'Apabila ada asidosis ringan tangani penyebabnya. Hiperkalemia refrakter beri asupan proteksi jantung Ca-Gluconate dan shift Kalium ke dalam sel (Insulin-Glukosa).',
+          required: true,
+          category: 'medication'
+        },
+        {
+          id: 'ped-tpga',
+          title: 'Terapi Pengganti Ginjal Akut (TPGA) Anak',
+          description: 'Indikasi: asidosis refrakter, fluid overload dengan gagalan organ, ensefalopati uremikum. Dapat dilakukan Dialisis Peritoneal Akut (DPA) karena akses lebih aman, PD, CRRT atau HD.',
+          required: true,
+          category: 'safety'
+        }
+      ],
+      nextNodeId: 'gga-nutrition-maintenance'
     },
 
     'gga-special-cases-decision': {
