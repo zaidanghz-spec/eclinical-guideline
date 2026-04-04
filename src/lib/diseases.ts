@@ -195,7 +195,16 @@ export const diseases: Disease[] = [
     keywords: ['sakit kepala', 'headache', 'tension headache', 'nyeri kepala', 'tth', 'kepala tegang', 'kepala berat', 'stress headache', 'headache bilateral', 'nyeri kepala bilateral', 'menekan', 'mengikat', 'tension type', 'g44.2', 'amitriptyline', 'nyeri kepala tipe tegang']
   },
 
-  // GASTROINTESTINAL (5 penyakit)
+  // GASTROINTESTINAL
+  {
+    id: 'dispepsia',
+    name: 'Dispepsia & H. Pylori (PGI 2021)',
+    nameEn: 'Dyspepsia & H. Pylori',
+    organSystem: 'gastrointestinal',
+    isEmergency: false,
+    prevalenceIndonesia: 'Sangat tinggi di rawat jalan (~30% keluhan perut)',
+    keywords: ['maag', 'nyeri ulu hati', 'dispepsia', 'dyspepsia', 'gerd', 'asam lambung', 'h. pylori', 'perut perih']
+  },
   {
     id: 'acute-gastroenteritis',
     name: 'Gastroenteritis Akut',

@@ -11,6 +11,7 @@ import { apsPathway } from './pathways/aps';
 import { skaPathway } from './pathways/ska';
 import { acuteKidneyInjuryPathway } from './pathways/acute-kidney-injury';
 import { diabetesMelitusPathway } from './pathways/diabetes-melitus';
+import { dispepsiaPathway } from './pathways/dispepsia';
 
 export interface PathwayChecklistItem {
  id: string;
@@ -72,6 +73,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 
  // DIABETES MELITUS TIPE 2 - PNPK 2020 & PERKENI 2021
  'diabetes-melitus-tipe-2': diabetesMelitusPathway,
+
+ // DISPEPSIA & H. PYLORI - PGI 2021
+ 'dispepsia': dispepsiaPathway,
 
  // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
  // Imported from separate file for better organization (14 nodes, 92 items)
