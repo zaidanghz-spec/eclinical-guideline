@@ -12,51 +12,51 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
       description: 'Lakukan evaluasi awal berdasarkan kriteria definisi dan identifikasi etiologi GGA sesegera mungkin dalam 48 jam.',
       items: [
         {
+          id: 'gga-anamnesis-urine',
+          title: 'Anamnesis & Penilaian Produksi Urin (Kriteria Utama Tanpa Alat)',
+          description: 'Langkah pertama memastikan kecurigaan GGA. Kriteria klinis GGA dapat ditegakkan HANYA dengan melihat produksi urin bila Urine Output <0,5 ml/kgBB/jam selama >6 jam. Pasang kateter urin bila perlu untuk pengukuran akurat.',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'gga-diag-lab',
+          title: 'Pemeriksaan Laboratorium (Serum Kreatinin)',
+          description: 'Diagnosis pasti membutuhkan cek Peningkatan Cr Serum >0,3 mg/dL. Mengingat alat lab serum kreatinin tidak tersedia, patokan utama adalah produksi urin. Bila klinis memburuk tanpa alat lab, SEGERA RUJUK ke fasilitas sekunder.',
+          required: true,
+          category: 'assessment'
+        },
+        {
           id: 'gga-ttv',
           title: 'Pemantauan Tanda-Tanda Vital (Tensi, Termometer, Oxymeter)',
-          description: 'Wajib dipantau untuk menilai stabilisasi hemodinamik dan risiko syok pre-renal (hipovolemia) atau infeksi sistemik. Jika alat dasar penunjang pemantauan tidak memadai, SEGERA RUJUK ke ICU / Rumah Sakit sekunder.',
+          description: 'Lakukan pemantauan untuk menilai tanda syok pre-renal (hipovolemia) atau infeksi sistemik (sepsis). Jika TD sangat rendah / oksigenasi buruk dan tidak sanggup diatasi, SEGERA RUJUK.',
           required: true,
           category: 'assessment'
         },
         {
           id: 'gga-ekg',
           title: 'Pemeriksaan EKG (Elektrokardiograf)',
-          description: 'Wajib dilakukan segera untuk deteksi aritmia letal yang disebabkan oleh komplikasi hiperkalemia (Tall T-Wave / QRS melebar). Jika mesin EKG tidak tersedia, berikan penanganan empiris cairan lalu SEGERA RUJUK.',
+          description: 'Langkah krusial berikutnya! Wajib dilakukan segera untuk skrining komplikasi mematikan hiperkalemia (Hadirnya Tall T-Wave / QRS melebar). Jika gambaran EKG mengkhawatirkan atau mesin EKG/listrik mati, SEGERA RUJUK.',
           required: true,
           category: 'assessment'
         },
         {
           id: 'gga-suction',
-          title: 'Persiapan Akses Jalan Napas (Suction)',
-          description: 'Standby mesin suction. Sangat penting jika pasien mengalami penurunan kesadaran mendadak akibat ensefalopati uremikum untuk antisipasi aspirasi muntah. Jika mesin suction listrik tidak ada, siapkan suction manual statis sebagai antisipasi sementara.',
+          title: 'Evaluasi Kesadaran & Persiapan Suction',
+          description: 'Cek kesadaran pasien. Jika GGA memicu ensefalopati uremikum (kejang/koma), standby mesin suction untuk antisipasi aspirasi muntah. Jika mesin suction listrik tidak ada, wajib siapkan suction manual / bulb darurat.',
           required: false,
           category: 'safety'
         },
         {
-          id: 'gga-diag-criteria',
-          title: 'Konfirmasi Kriteria Diagnosis GGA',
-          description: 'Cek Peningkatan Cr Serum >0,3 mg/dL dalam 48 jam, ATAU peningkatan >1,5x basal dalam 7 hari, ATAU Urine Output <0,5 ml/kgBB/jam selama >6 jam.',
-          required: true,
-          category: 'assessment'
-        },
-        {
-          id: 'gga-etiology',
-          title: 'Identifikasi Klasifikasi Kausa (Pre/Intra/Post)',
-          description: 'Lakukan evaluasi menyeluruh untuk menentukan penyebab (Pre-renal: hipovolemik/syok, Intrinsik: nefritis/obat/nefrotoksin, Post-renal: obstruksi).',
-          required: true,
-          category: 'assessment'
-        },
-        {
           id: 'gga-nebulizer',
-          title: 'Tersedianya Mesin Nebulizer',
-          description: 'Sebagai opsi medikasi cepat lini kedua (pemberian inhalasi Beta-2 Agonis / Albuterol / Salbutamol) penggeser Kalium akut masuk ke intraselular. Jika nebulizer tidak ada, tangani ganti memakai Calcium Gluconate dan Insulin Dextrose IV.',
+          title: 'Tersedianya Mesin Nebulizer (Jika EKG Curiga Hiperkalemia)',
+          description: 'Bila EKG merujuk ke hiperkalemia, siapkan nebulizer sebagai opsi lini kedua pendamping (inhalasi Salbutamol) penggeser Kalium. Jika nebulizer rusak/tak ada, gunakan alternatif lini pertama (Calcium Gluconate & Insulin IV) lantas RUJUK.',
           required: false,
           category: 'medication'
         },
         {
-          id: 'gga-risk-exposure',
-          title: 'Singkirkan Faktor Paparan Nefrotoksik (Exposure)',
-          description: 'Hentikan/evaluasi penggunaan NSAID, Aminoglikosida, media kontras iodium, dan ACEI/ARB (jika hemodinamik tak stabil).',
+          id: 'gga-etiology-exposure',
+          title: 'Identifikasi Etiologi & Stop Paparan Nefrotoksik',
+          description: 'Tentukan apakah penyebabnya pre-renal atau post-renal (seperti batu/obstruksi). Singkirkan paparan racun ginjal: hentikan segera penggunaan obat NSAID, ACEI/ARB (saat syok), dan pastikan bebas dari jamu-jamuan toksik.',
           required: true,
           category: 'action'
         }
