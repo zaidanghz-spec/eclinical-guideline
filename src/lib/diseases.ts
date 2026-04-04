@@ -354,7 +354,7 @@ export const diseases: Disease[] = [
     keywords: ['hypotension', 'shock', 'hyponatremia', 'hyperkalemia', 'abdominal pain']
   },
 
-  // ALERGI & DERMATOLOGI (1 penyakit)
+  // ALERGI & DERMATOLOGI
   {
     id: 'alergi-dermatitis',
     name: 'Alergi & Dermatitis',
@@ -364,8 +364,18 @@ export const diseases: Disease[] = [
     prevalenceIndonesia: 'Dermatitis atopik prevalensi 10-20% anak Indonesia. Anaphylaxis 1-3% populasi lifetime risk',
     keywords: ['alergi', 'gatal', 'ruam', 'urtikaria', 'eksim', 'dermatitis', 'atopic', 'eczema', 'contact dermatitis', 'seborrheic', 'anaphylaxis', 'allergy']
   },
+  {
+    id: 'reaksi-gigitan-serangga',
+    name: 'Reaksi Gigitan Serangga / Arthropoda',
+    nameEn: 'Insect Bite / Sting Reaction',
+    organSystem: 'kulit-alergi',
+    isEmergency: true,
+    timeToIntervention: 'Segera (<20 menit) pantau syok anafilaktif',
+    prevalenceIndonesia: 'Tinggi insidensinya untuk gigitan tawon (Vespa affinis), ubur-ubur, dan serangga lain',
+    keywords: ['gigitan serangga', 'insect bite', 'sengatan lebah', 'bengkak', 'anafilaksis', 'tawon', 'ubur-ubur', 'kelabang', 'T63.4']
+  },
 
-  // MUSKULOSKELETAL & TRAUMA (3 penyakit)
+  // MUSKULOSKELETAL & TRAUMA
   {
     id: 'fraktur',
     name: 'Fraktur (Terbuka & Tertutup)',

@@ -12,6 +12,7 @@ import { skaPathway } from './pathways/ska';
 import { acuteKidneyInjuryPathway } from './pathways/acute-kidney-injury';
 import { diabetesMelitusPathway } from './pathways/diabetes-melitus';
 import { dispepsiaPathway } from './pathways/dispepsia';
+import { insectBitePathway } from './pathways/reaksi-gigitan-serangga';
 
 export interface PathwayChecklistItem {
  id: string;
@@ -76,6 +77,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 
  // DISPEPSIA & H. PYLORI - PGI 2021
  'dispepsia': dispepsiaPathway,
+
+ // REAKSI GIGITAN SERANGGA - Kemenkes RI 2022/2023
+ 'reaksi-gigitan-serangga': insectBitePathway,
 
  // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
  // Imported from separate file for better organization (14 nodes, 92 items)
