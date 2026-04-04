@@ -9,6 +9,7 @@ import { frakturPathway } from'./pathways/fraktur';
 import { tthPathway } from './pathways/tth';
 import { apsPathway } from './pathways/aps';
 import { skaPathway } from './pathways/ska';
+import { acuteKidneyInjuryPathway } from './pathways/acute-kidney-injury';
 
 export interface PathwayChecklistItem {
  id: string;
@@ -64,6 +65,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 
  // HIPERTENSI DEWASA - PNPK Kemenkes 2021
  'hipertensi': hipertensiPathway,
+
+ // ACUTE KIDNEY INJURY (AKI) - KDIGO Guidelines
+ 'acute-kidney-injury': acuteKidneyInjuryPathway,
 
  // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
  // Imported from separate file for better organization (14 nodes, 92 items)
