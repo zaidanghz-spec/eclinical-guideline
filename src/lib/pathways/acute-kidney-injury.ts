@@ -8,167 +8,281 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
     'gga-initial-assessment': {
       id: 'gga-initial-assessment',
       type: 'checklist',
-      title: 'Penilaian Awal & Diagnosis GGA',
-      description: 'Lakukan evaluasi awal untuk menegakkan diagnosis dan mengidentifikasi penyebab GGA.',
+      title: 'Fase 1: Evaluasi Awal & Penegakan Diagnosis (KDIGO)',
+      description: 'Lakukan evaluasi awal berdasarkan kriteria definisi dan identifikasi etiologi GGA sesegera mungkin dalam 48 jam.',
       items: [
         {
-          id: 'gga-diag-scr',
-          title: 'Evaluasi Serum Kreatinin',
-          description: 'Peningkatan kreatinin serum >0,3 mg/dL dalam 48 jam ATAU >1,5 kali dari nilai basal dalam 7 hari.',
+          id: 'gga-diag-criteria',
+          title: 'Konfirmasi Kriteria Diagnosis GGA',
+          description: 'Cek Peningkatan Cr Serum >0,3 mg/dL dalam 48 jam, ATAU peningkatan >1,5x basal dalam 7 hari, ATAU Urine Output <0,5 ml/kgBB/jam selama >6 jam.',
           required: true,
           category: 'assessment'
         },
         {
-          id: 'gga-diag-uo',
-          title: 'Evaluasi Laju Urin (Urine Output)',
-          description: 'Laju urin <0,5 ml/kgBB/jam selama lebih dari 6 jam.',
+          id: 'gga-etiology',
+          title: 'Identifikasi Klasifikasi Kausa (Pre/Intra/Post)',
+          description: 'Lakukan evaluasi menyeluruh untuk menentukan penyebab (Pre-renal: hipovolemik/syok, Intrinsik: nefritis/obat/nefrotoksin, Post-renal: obstruksi).',
           required: true,
           category: 'assessment'
         },
         {
-          id: 'gga-risk-factors',
-          title: 'Identifikasi Faktor Risiko',
-          description: 'Lakukan evaluasi etiologi (Pre-renal, Intrinsik, Post-renal) dan singkirkan agen nefrotoksik.',
+          id: 'gga-risk-exposure',
+          title: 'Singkirkan Faktor Paparan Nefrotoksik (Exposure)',
+          description: 'Hentikan/evaluasi penggunaan NSAID, Aminoglikosida, media kontras iodium, dan ACEI/ARB (jika hemodinamik tak stabil).',
           required: true,
-          category: 'assessment'
+          category: 'action'
         }
       ],
-      nextNodeId: 'gga-severity-decision'
+      nextNodeId: 'gga-special-cases-decision'
     },
 
-    'gga-severity-decision': {
-      id: 'gga-severity-decision',
+    'gga-special-cases-decision': {
+      id: 'gga-special-cases-decision',
       type: 'decision',
-      title: 'Stratifikasi Keparahan & Indikasi Darurat',
-      description: 'Apakah terdapat indikasi darurat yang mengancam nyawa untuk terapi pendukung ginjal (TPdG)?',
+      title: 'Identifikasi Populasi / Keadaan Khusus',
+      description: 'Apakah pasien masuk dalam kategori keadaan klinis khusus yang membutuhkan protokol spesifik tambahan?',
       branches: [
         {
-          id: 'gga-emergency',
-          title: 'Indikasi Darurat TPdG',
-          description: 'Hadirnya komplikasi mengancam nyawa (Oliguria/anuria, asidosis berat pH<7.1, Hiperkalemia refrakter >6.5, Edema paru)',
-          color: 'red',
-          nextNodeId: 'gga-emergency-management'
+          id: 'gga-special-yes',
+          title: 'Ya, Keadaan Khusus',
+          description: 'Pasien hamil, pasca/pre-operatif, GGA-kontras, atau pemicu kemoterapi',
+          color: 'teal',
+          nextNodeId: 'gga-special-management'
         },
         {
-          id: 'gga-conservative',
-          title: 'Kondisi Stabil / Tanpa Darurat',
-          description: 'Hemodinamik stabil atau dapat dikoreksi, belum membutuhkan TPdG darurat.',
-          color: 'emerald',
-          nextNodeId: 'gga-conservative-management'
+          id: 'gga-special-no',
+          title: 'Tidak, Kasus Umum',
+          description: 'Lanjutkan ke klasifikasi stadium untuk populasi umum',
+          color: 'slate',
+          nextNodeId: 'gga-staging-decision'
         }
       ]
     },
 
-    'gga-conservative-management': {
-      id: 'gga-conservative-management',
+    'gga-special-management': {
+      id: 'gga-special-management',
       type: 'checklist',
-      title: 'Tatalaksana Suportif & Konservatif',
-      description: 'Pertahankan fungsi fisiologis dan cegah progresivitas GGA.',
+      title: 'Tatalaksana Kondisi Khusus (Kontras, Perioperatif, Kehamilan, Kemoterapi)',
+      description: 'Protokol spesifik untuk menangani dan mencegah GGA pada keadaan tertentu berdasarkan panduan (Bab 4).',
       items: [
         {
-          id: 'gga-hemodynamic',
-          title: 'Resusitasi Cairan & Optimalisasi Hemodinamik',
-          description: 'Gunakan isotonis kristaloid (NaCl 0.9%). Jaga MAP > 65-70 mmHg. Hindari penggunaan koloid (Starch).',
-          required: true,
-          category: 'action'
-        },
-        {
-          id: 'gga-vasopressor',
-          title: 'Pemberian Vasopresor',
-          description: 'Gunakan Noradrenalin sebagai pilihan utama jika MAP < 65 mmHg setelah resusitasi cairan adekuat.',
+          id: 'spec-contrast',
+          title: 'Pencegahan GGA akibat Kontras',
+          description: 'Gunakan profilaksis Saline 0.9% hidrasi intravena (1-3 ml/kg/jam). Hindari profilaksis IHD/Hemofiltrasi. Gunakan kontras low-osmolar/iso-osmolar dosis terendah.',
           required: false,
           category: 'action'
         },
         {
-          id: 'gga-nephrotoxic',
-          title: 'Hentikan Obat Nefrotoksik',
-          description: 'Evaluasi regimen obat dan hentikan seluruh obat nefrotoksik non-esensial. Sesuaikan dosis antibiotik.',
+          id: 'spec-surgery',
+          title: 'Manajemen Perioperatif',
+          description: 'Pertahankan normovolemia. Target MAP 100-110% dari baseline. Diuretik tidak direkomendasikan untuk GGA perioperatif kecuali fluid overload.',
+          required: false,
+          category: 'action'
+        },
+        {
+          id: 'spec-pregnancy',
+          title: 'GGA pada Kehamilan',
+          description: 'Pendekatan multidisipliner Obgyn. Terminasi kehamilan jika indikasi PE Berat/Eklampsi dengan komplikasi organ gagal respon terhadap terapi medis pada janin <34 minggu terindikasi.',
+          required: false,
+          category: 'safety'
+        },
+        {
+          id: 'spec-chemo',
+          title: 'Pencegahan GGA Kemoterapi',
+          description: 'Berikan volume hidrasi (NaCl 0.9% 2-4L) sebelum dan sesudah obat. Suplementasi Mg dan pertimbangkan Mannitol (Forced Diuresis) untuk obat high-risk spt cisplatin.',
+          required: false,
+          category: 'medication'
+        }
+      ],
+      nextNodeId: 'gga-staging-decision'
+    },
+
+    'gga-staging-decision': {
+      id: 'gga-staging-decision',
+      type: 'decision',
+      title: 'Klasifikasi Stadium (KDIGO)',
+      description: 'Klasifikasikan keparahan GGA pasien untuk menentukan agresivitas monitoring dan indikasi dialisis.',
+      branches: [
+        {
+          id: 'stage-1',
+          title: 'Stadium 1',
+          description: 'Cr naik 1.5-1.9x nilai dasar ATAU Urine <0.5 mL/kg/jam selama 6-12 jam.',
+          color: 'green',
+          nextNodeId: 'gga-supportive-care'
+        },
+        {
+          id: 'stage-2',
+          title: 'Stadium 2',
+          description: 'Cr naik 2.0-2.9x nilai dasar ATAU Urine <0.5 mL/kg/jam selama >12 jam.',
+          color: 'orange',
+          nextNodeId: 'gga-supportive-care'
+        },
+        {
+          id: 'stage-3',
+          title: 'Stadium 3',
+          description: 'Cr naik >3.0x ATAU Cr >4.0 mg/dL ATAU Anuria >12 jam / Oliguria >24 jam.',
+          color: 'red',
+          nextNodeId: 'gga-complication-decision'
+        }
+      ]
+    },
+
+    'gga-supportive-care': {
+      id: 'gga-supportive-care',
+      type: 'checklist',
+      title: 'Perawatan Suportif & Optimalisasi Hemodinamik (Umum)',
+      description: 'Pertahankan fungsi ginjal dan cegah progresivitas GGA sesuai Bundle Perawatan GGA.',
+      items: [
+        {
+          id: 'sup-fluid',
+          title: 'Resusitasi Cairan Sensitif',
+          description: 'Gunakan cairan kristaloid isotonik (Normal Saline 0.9%). JANGAN gunakan Starch (Koloid) karena terbukti meningkatan GGA! Pantau risiko hiperkloremia jika butuh NS volume besar.',
+          required: true,
+          category: 'medication'
+        },
+        {
+          id: 'sup-map',
+          title: 'Target Perfusi (MAP & Vasopresor)',
+          description: 'Pastikan MAP >65-70 mmHg (atau 80-85 mmHg jika ada HT Kronik). Syok? Gunakan Noradrenalin sebagai vasopresor lini pertama. (Dopamin DILARANG u/ proteksi ginjal).',
           required: true,
           category: 'action'
         },
         {
-          id: 'gga-glucose',
-          title: 'Kontrol Glukosa Ketat',
-          description: 'Pertahankan profil glukosa darah pada rentang 110-149 mg/dl pada pasien kritis.',
+          id: 'sup-sugar',
+          title: 'Kontrol Glikemik Ketat',
+          description: 'Pada keadaan pasien kritis dengan GGA, pertahankan Gula Darah pada batas target 110-149 mg/dL menggunakan insulin reguler intravena.',
+          required: true,
+          category: 'medication'
+        },
+        {
+          id: 'sup-diuretics',
+          title: 'Stop Diuretik Rutin (Kecuali Overload)',
+          description: 'Diuretik (e.g. Furosemide) TIDAK BOLEH digunakan untuk terapi atau prevensi GGA. Hanya berikan dalam kasus overhidrasi / edema paru refrakter (Furosemide Stress Test boleh untuk prediksi).',
+          required: true,
+          category: 'safety'
+        }
+      ],
+      nextNodeId: 'gga-complication-decision'
+    },
+
+    'gga-complication-decision': {
+      id: 'gga-complication-decision',
+      type: 'decision',
+      title: 'Tanda Bahaya dan Indikasi TPdG / Cuci Darah',
+      description: 'Apakah didapatkan komplikasi metabolik berat atau tanda-tanda ancaman nyawa akibat kegagalan fungsi renal?',
+      branches: [
+        {
+          id: 'comp-emergency',
+          title: 'Hadir Komplikasi Mengancam Nyawa',
+          description: 'Asidosis Refrakter, Hiperkalemia >6.5, Edema Paru Absolut, atau Anuria (Stadium 3).',
+          color: 'red',
+          nextNodeId: 'gga-complication-management'
+        },
+        {
+          id: 'comp-stable',
+          title: 'Tanpa Indikasi CITO (Stabil)',
+          description: 'Status asam-basa, kalium, dan cairan pasien terkendali minimal.',
+          color: 'emerald',
+          nextNodeId: 'gga-nutrition-maintenance'
+        }
+      ]
+    },
+
+    'gga-complication-management': {
+      id: 'gga-complication-management',
+      type: 'checklist',
+      title: 'Tatalaksana Komplikasi Bedah Medis Akut (Jembatan Menuju Ekstrakorporeal)',
+      description: 'Protokol temporer stabilisasi kondisi vital sebelum dimulainya Terapi Pendukung Ginjal (TPdG/Dialisis).',
+      items: [
+        {
+          id: 'comp-kali',
+          title: 'Stabilisasi Hiperkalemia Berat (K > 6.5)',
+          description: 'Eksitasi jantung dihalangi dengan Calcium Gluconas IV. Masukkan K ke sel dengan Insulin (10 unit) + Glukosa D40%. Pasang bed-monitor EKG.',
+          required: true,
+          category: 'action'
+        },
+        {
+          id: 'comp-acid',
+          title: 'Koreksi Asidosis Bikarbonat',
+          description: 'Bila pH < 7.1-7.2 dan HCO3 < 15 mEq/L, berikan terapi Sodium Bikarbonat secara titrasi. Pantau status Na (waspada hipernatremia) dan ventilator (pCO2).',
+          required: true,
+          category: 'medication'
+        },
+        {
+          id: 'comp-overload',
+          title: 'Penanganan Overload Cairan Refrakter',
+          description: 'Berikan terapi intermiten / IV pump Diuretik Loop (Furosemide dosis tinggi). Jika O2 saturasi terus memburuk dan output urin nihil, persiapkan CVC Dialisis segera.',
           required: true,
           category: 'action'
         }
       ],
-      nextNodeId: 'gga-reassessment-decision'
+      nextNodeId: 'gga-tpdg-management'
     },
 
-    'gga-reassessment-decision': {
-      id: 'gga-reassessment-decision',
-      type: 'decision',
-      title: 'Evaluasi Respon Terapi Konservatif',
-      description: 'Bagaimana respon fungsi ginjal pasien terhadap terapi konservatif paska 48 jam?',
-      branches: [
-        {
-          id: 'gga-improving',
-          title: 'Klinis Membaik',
-          description: 'Pemulihan output urin dan penurunan atau stabilisasi serum kreatinin.',
-          color: 'emerald',
-          nextNodeId: 'gga-recovery-maintenance'
-        },
-        {
-          id: 'gga-worsening',
-          title: 'Progresif Memburuk',
-          description: 'Perkembangan ke arah stadium 3 KDIGO, refractory anuria, atau asidosis berat.',
-          color: 'red',
-          nextNodeId: 'gga-emergency-management'
-        }
-      ]
-    },
-
-    'gga-recovery-maintenance': {
-      id: 'gga-recovery-maintenance',
+    'gga-tpdg-management': {
+      id: 'gga-tpdg-management',
       type: 'checklist',
-      title: 'Pemeliharaan dan Nutrisi',
-      description: 'Lanjutkan pengelolaan konservatif paska pemulihan akut.',
+      title: 'Pelaksanaan Terapi Pendukung Ginjal (TPdG/CRRT/IHD/DP)',
+      description: 'Inisiasi intervensi organ artifisial (Dialisis/TPG) sesuai pedoman PERNEFRI Bab 3.',
       items: [
         {
-          id: 'gga-nutrition',
-          title: 'Optimalisasi Terapi Nutrisi',
-          description: 'Lakukan skrining risiko malnutrisi. Berikan kalori sesuai kebutuhan dengan evaluasi berkala.',
+          id: 'tpdg-modality',
+          title: 'Pemilihan Modalitas Sesuai Syok',
+          description: 'Hemodinamik tak stabil / edema otak / syok = Wajib CKD-CRRT, PIRRT atau DP Akut. Jika hemodinamik stabil & kalium sangat tinggi = IHD (Intermittent Hemodialisis) pilihan utama.',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'tpdg-access',
+          title: 'Pemasangan Akses Vaskuler dengan USG',
+          description: 'Kateter Non-Tunnel. Urutan insersi: 1) Vena Jugularis Kanan, 2) Vena Femoral, 3) Vena Jugularis Kiri. (Hindari subclavia). CVC hanya digunakan untuk prosedur ekstra korporeal.',
+          required: true,
+          category: 'safety'
+        },
+        {
+          id: 'tpdg-dose',
+          title: 'Target Peresepan Dosis & Dialisat',
+          description: 'Target Kt/V = 3.9/minggu untuk IHD. Efluen = 20-25 ml/kg/jam untuk CRRT. Gunakan membran filter biokompatibel dengan Buffer ekstrakorporeal Bikarbonat (jangan laktat bila liver dysfunction).',
           required: true,
           category: 'action'
         },
         {
-          id: 'gga-monitor-kidney',
-          title: 'Pemantauan Fungsi Ginjal Transisi',
-          description: 'Lanjutkan monitoring fungsi ginjal secara periodik hingga 3 bulan (pengawasan AKD ke CKD).',
+          id: 'tpdg-anticoag',
+          title: 'Pemberian Antikoagulan Sirkuit',
+          description: 'TANPA perdarahan: CRRT gunakan Sitrat Regional (utama) atau LMWH. IHD gunakan UFH/LMWH. DENGAN perdarahan/HIT: Gunakan Sitrat Regional, hidari heparin murni. (Bisa gunakan Argatroban jika HIT).',
           required: true,
-          category: 'action'
+          category: 'medication'
         }
-      ]
+      ],
+      nextNodeId: 'gga-nutrition-maintenance'
     },
 
-    'gga-emergency-management': {
-      id: 'gga-emergency-management',
+    'gga-nutrition-maintenance': {
+      id: 'gga-nutrition-maintenance',
       type: 'checklist',
-      title: 'Persiapan Terapi Pendukung Ginjal (TPdG)',
-      description: 'Kolaorasi dan persiapkan TPdG ekstracorporeal / dialisis peritoneal segera.',
+      title: 'Dosis Obat, Nutrisi & Pemeliharaan Fase Pemulihan',
+      description: 'Tatalaksana suportif pasca stabilisasi akut dan pemeliharaan transisi ke Poli Rawat Jalan (Bab 5 & 6).',
       items: [
         {
-          id: 'gga-tpdg-modality',
-          title: 'Pemilihan Modalitas TPdG',
-          description: 'Pertimbangkan IHD (untuk hiperkalemia/komplikasi mengancam) atau CRRT (untuk syok kardiovaskular / hemodinamik tidak stabil).',
+          id: 'maint-dose',
+          title: 'Rekalibrasi Dosis Farmakokinetik',
+          description: 'Sesuaikan dosis antibiotik hidrofilik (Beta laktam, Aminoglikosida) sesuai klirens/eGFR/durasi CRRT. Peningkatan kompartemen cairan/sepsis= dosis loading wajib agresif.',
           required: true,
-          category: 'safety'
+          category: 'medication'
         },
         {
-          id: 'gga-vascular-access',
-          title: 'Insersi Akses Vaskular',
-          description: 'Gunakan Vena Jugularis Kanan sebagai prioritas utama untuk akses pemasangan CVC HD.',
+          id: 'maint-nutri',
+          title: 'Manutrisi & Skrining Nutrisi (Renal iNUT)',
+          description: 'Lakukan skoring dengan ESPEN GLIM atau Renal iNUT. Prioritaskan jalur Enteral. Pertimbangkan pengembalian Kalori yang memadai pada hiperkatabolisme akibat CRRT.',
           required: true,
-          category: 'safety'
+          category: 'assessment'
         },
         {
-          id: 'gga-tpdg-dose',
-          title: 'Preskripsi Dosis dan Antikoagulan',
-          description: 'Target Kt/V mingguan 3.9 atau volume effluent 20-25 ml/kg/jam. Pilih antikoagulan (Sitrat atau Heparin) sesuai kondisi dan risiko perdarahan pasien.',
+          id: 'maint-monitoring',
+          title: 'Evaluasi Fase AKD (Acute Kidney Disease) ke CKD',
+          description: 'Pemantauan secara berkala setelah discharge dalam waktu <3 bulan (Periode Penyakit Ginjal Akut) utk mencegah progresi ke End-Stage CKD.',
           required: true,
-          category: 'safety'
+          category: 'documentation'
         }
       ]
     }
