@@ -11,6 +11,7 @@ import { apsPathway } from './pathways/aps';
 import { skaPathway } from './pathways/ska';
 import { acuteKidneyInjuryPathway } from './pathways/acute-kidney-injury';
 import { diabetesMelitusPathway } from './pathways/diabetes-melitus';
+import { diareDewasaPathway } from './pathways/diare-dewasa';
 import { dispepsiaPathway } from './pathways/dispepsia';
 import { insectBitePathway } from './pathways/reaksi-gigitan-serangga';
 
@@ -80,6 +81,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 
  // REAKSI GIGITAN SERANGGA - Kemenkes RI 2022/2023
  'reaksi-gigitan-serangga': insectBitePathway,
+
+ // DIARE AKUT & KRONIK - PGI 2024
+ 'acute-gastroenteritis': diareDewasaPathway,
 
  // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
  // Imported from separate file for better organization (14 nodes, 92 items)

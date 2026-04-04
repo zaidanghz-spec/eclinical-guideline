@@ -207,12 +207,13 @@ export const diseases: Disease[] = [
   },
   {
     id: 'acute-gastroenteritis',
-    name: 'Gastroenteritis Akut',
-    nameEn: 'Acute Gastroenteritis',
+    name: 'Diare Akut dan Kronik (PGI 2024)',
+    nameEn: 'Acute and Chronic Diarrhea',
     organSystem: 'gastrointestinal',
-    isEmergency: false,
-    prevalenceIndonesia: 'Penyebab diare akut tersering',
-    keywords: ['diarrhea', 'diare', 'vomiting', 'muntah', 'nausea', 'dehydration']
+    isEmergency: true,
+    timeToIntervention: 'Segera bila curiga syok dehidrasi (<2 jam)',
+    prevalenceIndonesia: 'Prevalensi 4.3% populasi',
+    keywords: ['diarrhea', 'diare', 'mencret', 'muntah', 'disentri', 'dehydration', 'bab cair']
   },
   {
     id: 'typhoid-fever',
