@@ -2,7 +2,7 @@
 // Based on Indonesian PPK (Panduan Praktik Klinis) + WHO Guidelines
 
 import { dbdPathway } from'./pathways/dbd';
-import { hypertensionPathway } from'./pathways/hypertension';
+import { hipertensiPathway } from './pathways/hipertensi';
 import { svtPathway } from'./pathways/svt';
 import { bppvPathway } from'./pathways/bppv';
 import { frakturPathway } from'./pathways/fraktur';
@@ -62,9 +62,8 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
  // Imported from separate file for better organization (11 nodes, 83 items)
 'dbd': dbdPathway,
 
- // HIPERTENSI - ACC/AHA 2017 + ESC/ESH 2018 + JNC 8 + WHO Guidelines
- // Imported from separate file for better organization (13 nodes, 95 items)
-'hypertension': hypertensionPathway,
+ // HIPERTENSI DEWASA - PNPK Kemenkes 2021
+ 'hipertensi': hipertensiPathway,
 
  // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
  // Imported from separate file for better organization (14 nodes, 92 items)

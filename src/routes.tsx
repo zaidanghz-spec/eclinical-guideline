@@ -18,6 +18,7 @@ import PathwayListPage from "./pages/PathwayListPage";
 import DynamicPathwayPage from "./pages/DynamicPathwayPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import PathwayHistoryPage from "./pages/PathwayHistoryPage";
+import PathwayReportPage from "./pages/PathwayReportPage";
 import { WhitelistPage } from "./pages/WhitelistPage";
 import NotFound from "./pages/NotFound";
 
@@ -184,6 +185,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <PathwayHistoryPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "pathway-report/:sessionId",
+        element: (
+          <ProtectedRoute>
+            <PathwayReportPage />
           </ProtectedRoute>
         ),
       },

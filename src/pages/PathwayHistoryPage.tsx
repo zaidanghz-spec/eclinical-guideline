@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   PlayCircle,
   FileText,
-  AlertCircle,
   Activity,
   TrendingUp,
   History,
@@ -314,6 +313,7 @@ export default function PathwayHistoryPage() {
                   session={session}
                   index={index}
                   onResume={handleResumeSession}
+                  onViewReport={(id) => navigate(`/pathway-report/${id}`)}
                   formatDate={formatDate}
                   calculateDuration={calculateDuration}
                   getCompletionPercentage={getCompletionPercentage}
@@ -332,6 +332,7 @@ function SessionCard({
   session,
   index,
   onResume,
+  onViewReport,
   formatDate,
   calculateDuration,
   getCompletionPercentage
@@ -339,11 +340,11 @@ function SessionCard({
   session: PathwaySession;
   index: number;
   onResume: (session: PathwaySession) => void;
+  onViewReport: (id: string) => void;
   formatDate: (date: string) => string;
   calculateDuration: (start: string, end: string | null) => string;
   getCompletionPercentage: (session: PathwaySession) => number;
 }) {
-  const [showDetails, setShowDetails] = useState(false);
   const percentage = getCompletionPercentage(session);
   const isCompleted = session.status === 'completed';
 
@@ -445,11 +446,11 @@ function SessionCard({
           )}
           
           <button
-            onClick={() => setShowDetails(!showDetails)}
+            onClick={() => onViewReport(session.id)}
             className={`${isCompleted ? 'flex-1' : ''} px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-semibold hover:bg-slate-200 transition-all flex items-center justify-center gap-2`}
           >
             <FileText className="w-5 h-5" />
-            <span>{showDetails ? 'Hide' : 'View'} Details</span>
+            <span>View Full Report</span>
           </button>
 
           {/* TODO: Export PDF button
@@ -461,131 +462,6 @@ function SessionCard({
           */}
         </div>
       </div>
-
-      {/* Expandable Details */}
-      <AnimatePresence>
-        {showDetails && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="border-t border-slate-200 bg-slate-50"
-          >
-            <div className="p-6 space-y-4">
-              {/* Session Info */}
-              <div>
-                <h4 className="font-semibold text-slate-900 mb-2">Session Information</h4>
-                <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Session ID:</span>
-                    <span className="text-slate-900 font-mono">{session.id.slice(0, 8)}...</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Started:</span>
-                    <span className="text-slate-900">{formatDate(session.startedAt)}</span>
-                  </div>
-                  {session.completedAt && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-600">Completed:</span>
-                      <span className="text-slate-900">{formatDate(session.completedAt)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Current Node:</span>
-                    <span className="text-slate-900">{session.currentNodeId || 'Not started'}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Checklist Progress */}
-              {Object.keys(session.checklist).length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-slate-900 mb-2">
-                    Checklist Progress ({Object.values(session.checklist).filter(Boolean).length}/{Object.keys(session.checklist).length})
-                  </h4>
-                  <div className="bg-white rounded-xl border border-slate-200 p-4 max-h-48 overflow-y-auto">
-                    <div className="space-y-2">
-                      {Object.entries(session.checklist).map(([key, checked]) => (
-                        <div key={key} className="flex items-center gap-2 text-sm border-b border-slate-100 pb-2 last:border-0 last:pb-0">
-                          {checked ? (
-                            <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                          ) : (
-                            <div className="w-4 h-4 border-2 border-slate-300 rounded-full flex-shrink-0" />
-                          )}
-                          <span className={checked ? 'text-slate-900 font-medium' : 'text-slate-500'}>
-                            {key.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Clinical Notes */}
-              {Object.keys(session.notes).length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-slate-900 mb-2">
-                    Clinical Notes ({Object.keys(session.notes).length})
-                  </h4>
-                  <div className="bg-white rounded-xl border border-slate-200 p-4 max-h-48 overflow-y-auto">
-                    <div className="space-y-3">
-                      {Object.entries(session.notes).map(([key, note]) => (
-                        <div key={key} className="text-sm">
-                          <div className="font-semibold text-slate-700 mb-1">{key}:</div>
-                          <div className="text-slate-600 bg-slate-50 rounded-lg p-2">{note}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Decisions Made */}
-              {session.decisions && session.decisions.length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-slate-900 mb-2">
-                    Clinical Decisions ({session.decisions.length})
-                  </h4>
-                  <div className="bg-white rounded-xl border border-slate-200 p-4">
-                    <div className="space-y-2">
-                      {session.decisions.map((decision, idx) => (
-                        <div key={idx} className="text-sm flex items-start gap-2">
-                          <span className="text-slate-400">{idx + 1}.</span>
-                          <span className="text-slate-900">{decision.branchTitle}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Variations */}
-              {session.variations && session.variations.length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-orange-600" />
-                    Clinical Variations ({session.variations.length})
-                  </h4>
-                  <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-                    <div className="space-y-3">
-                      {session.variations.map((variation, idx) => (
-                        <div key={idx} className="text-sm">
-                          <div className="font-semibold text-orange-900 mb-1">
-                            Variation {idx + 1}:
-                          </div>
-                          <div className="text-orange-800">{variation.variationReason}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

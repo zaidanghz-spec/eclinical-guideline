@@ -31,23 +31,13 @@ export const diseases: Disease[] = [
     keywords: ['sesak napas', 'edema', 'orthopnea', 'dyspnea', 'fatigue']
   },
   {
-    id: 'hypertension',
-    name: 'Hipertensi',
+    id: 'hipertensi',
+    name: 'Hipertensi Dewasa (PNPK 2021)',
     nameEn: 'Hypertension',
     organSystem: 'kardiovaskular',
     isEmergency: false,
     prevalenceIndonesia: '34% orang dewasa Indonesia (Riskesdas 2018)',
-    keywords: ['blood pressure', 'tekanan darah tinggi', 'headache', 'sakit kepala', 'dizziness', 'pusing', 'high blood pressure', 'darah tinggi']
-  },
-  {
-    id: 'hypertensive-crisis',
-    name: 'Krisis Hipertensi',
-    nameEn: 'Hypertensive Crisis',
-    organSystem: 'kardiovaskular',
-    isEmergency: true,
-    timeToIntervention: '1 jam',
-    prevalenceIndonesia: 'Hipertensi mengenai 34% orang dewasa Indonesia',
-    keywords: ['blood pressure', 'tekanan darah tinggi', 'headache', 'sakit kepala', 'epistaxis', 'mimisan', 'pusing', 'dizziness', 'hypertension', 'emergency']
+    keywords: ['blood pressure', 'tekanan darah tinggi', 'headache', 'sakit kepala', 'dizziness', 'pusing', 'high blood pressure', 'darah tinggi', 'krisis hipertensi', 'emergency']
   },
   {
     id: 'svt',
