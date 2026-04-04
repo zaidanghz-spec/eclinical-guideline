@@ -71,7 +71,7 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
  'acute-kidney-injury': acuteKidneyInjuryPathway,
 
  // DIABETES MELITUS TIPE 2 - PNPK 2020 & PERKENI 2021
- 'diabetes-melitus-type-2': diabetesMelitusPathway,
+ 'diabetes-melitus-tipe-2': diabetesMelitusPathway,
 
  // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
  // Imported from separate file for better organization (14 nodes, 92 items)
