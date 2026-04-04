@@ -12,6 +12,27 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
       description: 'Lakukan evaluasi awal berdasarkan kriteria definisi dan identifikasi etiologi GGA sesegera mungkin dalam 48 jam.',
       items: [
         {
+          id: 'gga-ttv',
+          title: 'Pemantauan Tanda-Tanda Vital (Tensi, Termometer, Oxymeter)',
+          description: 'Wajib dipantau untuk menilai stabilisasi hemodinamik dan risiko syok pre-renal (hipovolemia) atau infeksi sistemik. Jika alat dasar penunjang pemantauan tidak memadai, SEGERA RUJUK ke ICU / Rumah Sakit sekunder.',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'gga-ekg',
+          title: 'Pemeriksaan EKG (Elektrokardiograf)',
+          description: 'Wajib dilakukan segera untuk deteksi aritmia letal yang disebabkan oleh komplikasi hiperkalemia (Tall T-Wave / QRS melebar). Jika mesin EKG tidak tersedia, berikan penanganan empiris cairan lalu SEGERA RUJUK.',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'gga-suction',
+          title: 'Persiapan Akses Jalan Napas (Suction)',
+          description: 'Standby mesin suction. Sangat penting jika pasien mengalami penurunan kesadaran mendadak akibat ensefalopati uremikum untuk antisipasi aspirasi muntah. Jika mesin suction listrik tidak ada, siapkan suction manual statis sebagai antisipasi sementara.',
+          required: false,
+          category: 'safety'
+        },
+        {
           id: 'gga-diag-criteria',
           title: 'Konfirmasi Kriteria Diagnosis GGA',
           description: 'Cek Peningkatan Cr Serum >0,3 mg/dL dalam 48 jam, ATAU peningkatan >1,5x basal dalam 7 hari, ATAU Urine Output <0,5 ml/kgBB/jam selama >6 jam.',
@@ -24,6 +45,13 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Lakukan evaluasi menyeluruh untuk menentukan penyebab (Pre-renal: hipovolemik/syok, Intrinsik: nefritis/obat/nefrotoksin, Post-renal: obstruksi).',
           required: true,
           category: 'assessment'
+        },
+        {
+          id: 'gga-nebulizer',
+          title: 'Tersedianya Mesin Nebulizer',
+          description: 'Sebagai opsi medikasi cepat lini kedua (pemberian inhalasi Beta-2 Agonis / Albuterol / Salbutamol) penggeser Kalium akut masuk ke intraselular. Jika nebulizer tidak ada, tangani ganti memakai Calcium Gluconate dan Insulin Dextrose IV.',
+          required: false,
+          category: 'medication'
         },
         {
           id: 'gga-risk-exposure',
