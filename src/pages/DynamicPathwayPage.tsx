@@ -51,6 +51,7 @@ export default function DynamicPathwayPage() {
   const [patientCode, setPatientCode] = useState('');
   const [patientCodeError, setPatientCodeError] = useState('');
   const [decisions, setDecisions] = useState<any[]>([]);
+  const [variations, setVariations] = useState<any[]>([]);
   
   const nodeRef = useRef<HTMLDivElement>(null);
 
@@ -70,6 +71,7 @@ export default function DynamicPathwayPage() {
       }
       if (currentSession.pathway_history) setPathwayHistory(currentSession.pathway_history);
       if (currentSession.decisions) setDecisions(currentSession.decisions);
+      if (currentSession.variations) setVariations(currentSession.variations);
     }
   }, [currentSession]);
 
@@ -159,6 +161,18 @@ export default function DynamicPathwayPage() {
       return;
     }
     
+    const newVariation = {
+      nodeId: currentNodeId,
+      variationReason: variationReason,
+      incompleteSteps: incompleteSteps.map(s => s.id),
+      documentedAt: new Date().toISOString()
+    };
+    
+    // Auto-save happens on state update due to how we manage saveDraft, 
+    // but since saveDraft reads states directly, we need to pass variations directly.
+    const newVariationsList = [...variations, newVariation];
+    setVariations(newVariationsList);
+    
     if (pendingBranchId) {
       const nextNode = pathway?.nodes[pendingBranchId];
       navigateToNode(pendingBranchId, nextNode?.type === 'checklist' ? nextNode.title : (nextNode as DecisionNode).title);
@@ -168,8 +182,9 @@ export default function DynamicPathwayPage() {
     }
   };
 
-  const handleSubmitPathway = () => {
+  const handleSubmitPathway = async () => {
     if (sessionId) {
+      await handleSaveDraft();
       completeSession(sessionId);
     }
     toast.success(`Clinical pathway for ${disease?.name} completed!`);
@@ -182,7 +197,7 @@ export default function DynamicPathwayPage() {
       return;
     }
     setSavingDraft(true);
-    await saveDraft(sessionId, checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions);
+    await saveDraft(sessionId, checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations);
     setSavingDraft(false);
   };
 

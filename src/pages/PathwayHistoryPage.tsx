@@ -506,23 +506,18 @@ function SessionCard({
                   </h4>
                   <div className="bg-white rounded-xl border border-slate-200 p-4 max-h-48 overflow-y-auto">
                     <div className="space-y-2">
-                      {Object.entries(session.checklist).slice(0, 10).map(([key, checked]) => (
-                        <div key={key} className="flex items-center gap-2 text-sm">
+                      {Object.entries(session.checklist).map(([key, checked]) => (
+                        <div key={key} className="flex items-center gap-2 text-sm border-b border-slate-100 pb-2 last:border-0 last:pb-0">
                           {checked ? (
                             <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
                           ) : (
                             <div className="w-4 h-4 border-2 border-slate-300 rounded-full flex-shrink-0" />
                           )}
-                          <span className={checked ? 'text-slate-900' : 'text-slate-500'}>
-                            {key}
+                          <span className={checked ? 'text-slate-900 font-medium' : 'text-slate-500'}>
+                            {key.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                           </span>
                         </div>
                       ))}
-                      {Object.keys(session.checklist).length > 10 && (
-                        <p className="text-xs text-slate-500 italic">
-                          +{Object.keys(session.checklist).length - 10} more items...
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>

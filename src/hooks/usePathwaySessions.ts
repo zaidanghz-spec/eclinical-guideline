@@ -137,13 +137,13 @@ export function usePathwaySessions() {
 
   const saveDraft = async (
     sessionId: string, checklist: Record<string, boolean>, notes: Record<string, string>,
-    currentNodeId: string, pathwayHistory: Array<{ nodeId: string; nodeName: string }>, decisions: any[]
+    currentNodeId: string, pathwayHistory: Array<{ nodeId: string; nodeName: string }>, decisions: any[], variations: any[] = []
   ): Promise<boolean> => {
     if (!user || !accessToken) return false;
     try {
       const res = await fetch(`${API_BASE}/pathway?action=update`, {
         method: 'PUT', headers: getHeaders(),
-        body: JSON.stringify({ sessionId, checklist, notes, currentNodeId, pathwayHistory, decisions, status: 'in_progress' }),
+        body: JSON.stringify({ sessionId, checklist, notes, currentNodeId, pathwayHistory, decisions, variations, status: 'in_progress' }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save draft');
