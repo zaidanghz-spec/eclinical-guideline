@@ -8,29 +8,43 @@ export const diabetesMelitusPathway: DynamicPathway = {
     'dm-initial-assessment': {
       id: 'dm-initial-assessment',
       type: 'checklist',
-      title: 'Fase 1: Evaluasi Awal & Penegakan Diagnosis (Berdasarkan PERKENI 2021)',
-      description: 'Diagnosis awal DM Tipe 2 mengutamakan gejala klasik (Polidipsi, Poliuri, Polifagi, Penurunan Berat Badan) dan pemeriksaan kadar glukosa plasma.',
+      title: 'Fase 1: Evaluasi Awal & Penegakan Diagnosis (Keterbatasan Alat)',
+      description: 'Mengingat ketiadaan alat periksa HbA1c dan lab canggih, diagnosis DM Tipe 2 mengutamakan gejala klasik 4P dan glukometer kapiler (Point-of-Care).',
       items: [
         {
           id: 'dm-anamnesis-gejala',
           title: 'Anamnesis Gejala Klasik & Faktor Risiko',
-          description: 'Cari 4P (Poliuria, Polidipsia, Polifagia, Penurunan berat badan tak bersebab). Evaluasi faktor risiko (Obese, Hipertensi, Riwayat Keluarga, Dislipidemia).',
+          description: 'Cari gejala klasik 4P (Poliuria, Polidipsia, Polifagia, Penurunan berat badan tak bersebab). Evaluasi faktor risiko kardiovaskular (Hipertensi, Obesitas).',
+          required: true,
+          category: 'assessment'
+        },
+        {
+          id: 'dm-ttv',
+          title: 'Pemantauan Tanda Vital (Tensi, Termometer, Oxymeter)',
+          description: 'Wajib periksa tekanan darah (HT komorbid sering terjadi pada DM) dan suhu. Takikardi, nafas cepat (Kussmaul), dan saturasi turun menandakan kegawatan komplikasi (KAD / Asidosis metabolik).',
           required: true,
           category: 'assessment'
         },
         {
           id: 'dm-kriteria-diagnosis',
-          title: 'Konfirmasi Kriteria Diagnosis Laboratorium',
-          description: 'Diagnosis tegak apabila memenuhi salah satu: (1) Glukosa Darah Puasa (GDP) >= 126 mg/dL; (2) Glukosa Darah 2 Jam Post Prondial (GD2PP) >= 200 mg/dL; (3) HbA1c >= 6.5%; (4) Gejala Klasik + GDS >= 200 mg/dL.',
+          title: 'Pemeriksaan Glukosa Darah Kapiler (Glucometer)',
+          description: 'Cek Glukosa Darah Sewaktu (GDS) atau Puasa (GDP) via ujung jari. Diagnosis tegak bila Gejala Klasik (+) DAN GDS >= 200 mg/dL. Jika tidak punya glucometer SAMA SEKALI, RUJUK SEGERA untuk penegakan diagnosis.',
           required: true,
           category: 'assessment'
         },
         {
-          id: 'dm-komplikasi-awal',
-          title: 'Skrining Komplikasi Emergensi Awal',
-          description: 'Singkirkan kegawatan metabolik: Ketoasidosis Diabetik (KAD) atau Status Hiperosmolar Hiperglikemik (SHH). Jika dicurigai ada KAD/SHH dengan tanda asidosis/dehidrasi berat, SEGERA RUJUK.',
-          required: true,
+          id: 'dm-ekg-suction',
+          title: 'Persiapan Kegawatan (EKG & Suction)',
+          description: 'Lakukan EKG jika pasien mengeluh nyeri dada atau curiga gangguan jantung penyerta. Standby Suction jika terjadi penurunan kesadaran tiba-tiba (Koma Diabetikum/KAD/SHH).',
+          required: false,
           category: 'safety'
+        },
+        {
+          id: 'dm-rujuk-hba1c',
+          title: 'Rujuk Pemeriksaan Laboratorium Konfirmasi (HbA1c & Fungsi Ginjal)',
+          description: 'Disarankan untuk merujuk pasien ke Lab / RS Terdekat minimal untuk pemeriksaan baseline: HbA1c, Ureum/Kreatinin, dan Profil Lipid (karena fasilitas tidak sedia).',
+          required: true,
+          category: 'action'
         }
       ],
       nextNodeId: 'dm-treatment-decision'
@@ -39,34 +53,27 @@ export const diabetesMelitusPathway: DynamicPathway = {
     'dm-treatment-decision': {
       id: 'dm-treatment-decision',
       type: 'decision',
-      title: 'Pemilihan Terapi Awal (HbA1c & Komorbiditas)',
-      description: 'Langkah awal terapi medikamentosa. PNPK 2020 & PERKENI 2021 memiliki beberapa pendekatan. Mari pilih algoritma sesuai kadar HbA1c dan kondisi metabolik.',
+      title: 'Pemilihan Terapi Awal (Tanpa Target HbA1c)',
+      description: 'Karena HbA1c tidak bisa diperiksa langsung, pendekatan terapi menggunakan estimasi Glukosa Darah Puasa (GDP) atau Sewaktu (GDS) dari glukometer sesuai panduan substitusi.',
       branches: [
         {
-          id: 'dm-branch-hba1c-low',
-          title: 'HbA1c < 7.5%',
-          description: 'Modifikasi Gaya Hidup + Monoterapi OHO',
+          id: 'dm-branch-gds-low',
+          title: 'GDP < 130 mg/dL / GDS < 200 mg/dL',
+          description: 'Kondisi stabil, gejala ringan. Modifikasi Gaya Hidup + Monoterapi Metformin.',
           color: 'teal',
           nextNodeId: 'dm-monotherapy'
         },
         {
-          id: 'dm-branch-hba1c-mid',
-          title: 'HbA1c 7.5% - < 9.0%',
-          description: 'Modifikasi Gaya Hidup + Terapi Kombinasi 2 Obat',
+          id: 'dm-branch-gds-mid',
+          title: 'GDP 130-250 mg/dL / GDS 200-300 mg/dL',
+          description: 'Modifikasi Gaya Hidup + Langsung Terapi Kombinasi 2 Obat OHO.',
           color: 'blue',
           nextNodeId: 'dm-dual-therapy'
         },
         {
-          id: 'dm-branch-hba1c-high-asymptomatic',
-          title: 'HbA1c >= 9.0% (Tanpa Gejala Metabolik)',
-          description: 'Kombinasi 2 atau 3 OHO Obat',
-          color: 'orange',
-          nextNodeId: 'dm-dual-triple-therapy'
-        },
-        {
-          id: 'dm-branch-hba1c-high-symptomatic',
-          title: 'HbA1c >= 9.0% (Dengan Gejala B/KAD/SHH/BB Turun Cepat)',
-          description: 'Indikasi Terapi Insulin (+/- OHO)',
+          id: 'dm-branch-gds-high-symptomatic',
+          title: 'GDP > 250 mg/dL / GDS > 300 mg/dL / Bergejala Berat (KAD/SHH)',
+          description: 'Gejala ketonuria, krisis hiperglikemia, Koma. OHO tidak memadai!',
           color: 'red',
           nextNodeId: 'dm-insulin-therapy'
         }
@@ -76,27 +83,27 @@ export const diabetesMelitusPathway: DynamicPathway = {
     'dm-monotherapy': {
       id: 'dm-monotherapy',
       type: 'checklist',
-      title: 'Monoterapi Lini Pertama & Modifikasi Gaya Hidup',
-      description: 'Edukasi diet, aktivitas fisik, dan pemilihan obat pertama pada pasien DM baru yang stabi.',
+      title: 'Monoterapi Lini Pertama & Edukasi Non-Farmakologis',
+      description: 'Tata laksana awal DM ringan-sedang dan stabil.',
       items: [
         {
           id: 'dm-lifestyle',
-          title: 'Modifikasi Gaya Hidup (Terapis Nutrisi Medis)',
-          description: 'Edukasi diet seimbang (kurangi karbo simpleks, tinggi serat). Olahraga 150 menit/minggu (intensitas sedang). Usahakan penurunan berat badan pada pasien obesitas.',
+          title: 'Edukasi Terapi Nutrisi Medis & Fisik',
+          description: 'Edukasi porsi makan, hindari gula sederhana. Olahraga jalan sehat 30 mnt/hari (150 mnt/minggu). Turunkan berat badan jika obesitas.',
           required: true,
           category: 'action'
         },
         {
           id: 'dm-metformin-ebm',
-          title: 'Penentuan OHO Lini Pertama (EBM PERKENI vs PNPK)',
-          description: 'EBM - PNPK 2020: Pilihan mutlak adalah Metformin sebagai lini pertama tanpa melihat faktor komorbid.\nEBM - PERKENI 2021: Mempertimbangkan komorbiditas (ASCVD, CKD, Heart Failure).\n\nREKOMENDASI EBM BERSAMA (Terbaru): Bila tidak ada risiko klinis tinggi, berikan Metformin (titrasi dari 500mg/hari untuk cegah GI upset). NAMUN JIKA ada komorbid kardiovaskular tinggi / jantung / ginjal kronik, sangat disarankan segera pakai SGLT-2 inhibitor / GLP-1 RA karena efek proteksi organ terlepas dari HbA1c.',
+          title: 'Pemberian OHO Lini Pertama (Metformin)',
+          description: 'PNPK 2020: Pilihan mutlaknya Metformin. Mulai dosis kecil 500mg/hari saat/sesudah makan (cegah mual). PERKENI 2021 merekomendasikan: Bila pasien diketahui (dari faskes/rujukan sebelumnya) punya penyulit jantung/ginjal kronik, rekomendasikan agar obat diganti menjadi SGLT-2 inhibitor di faskes tingkat lanjut.',
           required: true,
           category: 'medication'
         },
         {
-          id: 'dm-followup-3mon',
-          title: 'Jadwal Pemantauan (Follow Up)',
-          description: 'Cek ulang HbA1c dalam 3 bulan. Jika target (individual mis. <7%) belum tercapai, segera tingkatkan ke dual-therapy.',
+          id: 'dm-followup-gds',
+          title: 'Jadwal Pemantauan GDS Harian/Mingguan',
+          description: 'Pantau GDS / GDP secara berkala 1-2 minggu ke depan. Karena tanpa HbA1c, cek efektivitas dari keluhan poliuria/polidipsia dan tren penurunan GDS.',
           required: true,
           category: 'documentation'
         }
@@ -107,46 +114,22 @@ export const diabetesMelitusPathway: DynamicPathway = {
     'dm-dual-therapy': {
       id: 'dm-dual-therapy',
       type: 'checklist',
-      title: 'Terapi Kombinasi Ganda (Dual Therapy)',
-      description: 'Pasien datang dengan HbA1c 7.5% - 8.9% atau gagal monoterapi dalam 3 bulan.',
+      title: 'Terapi Kombinasi Ganda (Dual Therapy OHO)',
+      description: 'Pasien glukosa tinggi sejak awal atau tidak membaik dengan monoterapi.',
       items: [
         {
           id: 'dm-combo-base',
-          title: 'Teruskan Modifikasi Gaya Hidup & Obat Dasar',
-          description: 'Pastikan ketaatan pada diet, olahraga, dan teruskan Metformin (bila tidak ada intoleransi).',
+          title: 'Teruskan Modifikasi Gaya Hidup & Lanjutkan Metformin',
+          description: 'Bila fungsi ginjal normal (dilihat dari hasil rujukan jika ada), Metformin dinaikkan dosis hingga batas maksimal toleransi (mis. 2000mg/hari) dan tambahkan obat kedua.',
           required: true,
           category: 'action'
         },
         {
           id: 'dm-choice-2nd',
-          title: 'Pemilihan Obat Kedua (Patient-Centered Approach)',
-          description: 'Pilih obat lini kedua berdasarkan profil pasien.\n- Risiko kardio/ginjal: SGLT2-i (Dapagliflozin/Empagliflozin) / GLP1-RA.\n- Risiko hipoglikemia yang dihindari: DPP-4i (Sitagliptin/Vildagliptin), SGLT2-i.\n- Pertimbangan biaya/BPJS: Sulfonilurea (Glimepiride/Gliclazide). Waspadai Hipoglikemia.',
+          title: 'Tambahkan Obat Kedua: Sulfonilurea (Terjangkau)',
+          description: 'Kombinasi paling terjangkau & sering tersedia di faskes terbatas adalah Metformin + Sulfonilurea (Glimepiride / Gliquidone). Edukasikan pasien risiko HIPOGLIKEMIA berat (siapkan manisan bila lemas akut).',
           required: true,
           category: 'medication'
-        }
-      ],
-      nextNodeId: 'dm-complication-screening'
-    },
-
-    'dm-dual-triple-therapy': {
-      id: 'dm-dual-triple-therapy',
-      type: 'checklist',
-      title: 'Terapi Kombinasi Ganda atau Tripel (HbA1c >9% Tanpa Gejala Klinis)',
-      description: 'Pasien asimptomatik namun memiliki HbA1c tinggi membutuhkan intensifikasi obat oral lebih agresif sebelum diputuskan insulin.',
-      items: [
-        {
-          id: 'dm-triple-med',
-          title: 'Gunakan 2 atau 3 Obat Hipoglikemik Oral Sekaligus',
-          description: 'Mulai dengan kombinasi yang kuat (Misal: Metformin + Sulfonilurea + DPP4-i atau SGLT2-i). \nPerbedaan EBM PNPK & PERKENI:\nPNPK 2020: Merujuk minimal 2 obat, sangat cost-based.\nPERKENI 2021: Menekankan efikasi. Disarankan menggunakan kombinasi dengan patofisiologi berbeda (Tingkatkan sensitivitas + Pengeluaran glukosa).\nRekomendasi EBM Terbaru: Maksimalkan obat bersinergi kardioprotektif (Metformin + SGLT2i + DPP4i) bila mampu.',
-          required: true,
-          category: 'medication'
-        },
-        {
-          id: 'dm-prep-insulin',
-          title: 'Edukasi Persiapan Insulin',
-          description: 'Apabila target gagal dicapai dengan 3 obat OHO dalam 3 bulan, wajib edukasi kemungkinan insulin.',
-          required: false,
-          category: 'documentation'
         }
       ],
       nextNodeId: 'dm-complication-screening'
@@ -155,29 +138,22 @@ export const diabetesMelitusPathway: DynamicPathway = {
     'dm-insulin-therapy': {
       id: 'dm-insulin-therapy',
       type: 'checklist',
-      title: 'Terapi Inisiasi Insulin (HbA1c > 9% / Bergejala Berat)',
-      description: 'Inisiasi terapi injeksi terutama pada pasien dekompensasi metabolik, gejala ketosis, atau HbA1c > 9% dengan gejala klinis.',
+      title: 'Tatalaksana Hiperglikemia Ekstrem / Rujuk Insulin',
+      description: 'Pasien dengan krisis glukosa tinggi sangat berisiko kematian bila dicoba distabilkan dengan OHO saja.',
       items: [
         {
-          id: 'dm-insulin-basal',
-          title: 'Inisiasi Insulin Basal',
-          description: 'Mulai dengan insulin basal (Glargine / Detemir) 10 Unit/hari atau 0.1-0.2 U/kgBB. Titrasi dosis setiap 3 hari dengan patokan GDP sampai mencapai target (100-130 mg/dL).',
+          id: 'dm-fluid-resus',
+          title: 'Manajemen Cairan (Resusitasi Cepat)',
+          description: 'Krisis hiperglikemia (GDS > 300) sering disertai dehidrasi ekstrim (poliuri massif). Segera pasang IV line dan drip Normal Saline (NaCl 0.9%) 1000cc dalam 1-2 jam pertama.',
           required: true,
           category: 'action'
         },
         {
-          id: 'dm-combo-insulin-oho',
-          title: 'Lanjutkan / Sesuaikan OHO',
-          description: 'Metformin biasanya tetap dilanjutkan jika tidak dikontraindikasikan. Sulfonilurea (SU) dihentikan atau dikurangi untuk menghindari hipoglikemia berat jika dimulai injeksi bolus.',
+          id: 'dm-rujuk-cito',
+          title: 'RUJUK CITO untuk Terapi Insulin IV',
+          description: 'Karena obat insulin titrasi intravena, analisis gas darah, dan monitoring keton membutuhkan IGD rumah sakit paripurna, pasien WAJIB DIRUJUK setelah stabilisasi cairan awal. OHO tablet tidak akan bekerja cepat untuk life-saving di sini.',
           required: true,
-          category: 'medication'
-        },
-        {
-          id: 'dm-insulin-intensification',
-          title: 'Indikasi Intensifikasi (Insulin Prandial)',
-          description: 'Jika GDP terkontrol namun HbA1c belum tercapai, periksa GD2PP dan tambahkan 1 injeksi insulin kerja cepat (Prandial) sebelum makan utama (basal-plus algorithm).',
-          required: false,
-          category: 'action'
+          category: 'safety'
         }
       ],
       nextNodeId: 'dm-complication-screening'
@@ -186,34 +162,34 @@ export const diabetesMelitusPathway: DynamicPathway = {
     'dm-complication-screening': {
       id: 'dm-complication-screening',
       type: 'checklist',
-      title: 'Skrining Komplikasi Mikrovaskular & Makrovaskular Tipe 2',
-      description: 'Skrining holistik sesuai PERKENI 2021 dan ADA, wajib diperiksa minimal 1 tahun sekali.',
+      title: 'Skrining Komplikasi Jangka Panjang (Adaptasi Faskes)',
+      description: 'Skrining komplikasi mikro/makrovaskular berpedoman pada keterbatasan alat.',
       items: [
         {
           id: 'comp-retinopathy',
-          title: 'Skrining Retinopati Diabetik',
-          description: 'RUJUK pasien ke dokter mata untuk pemeriksaan funduskopi komprehensif saat baru didiagnosis, kemudian rujuk ulangan berkala tahunan.',
+          title: 'RUJUK Skrining Retinopati Diabetik',
+          description: 'Alat funduskopi mungkin tidak tersedia. Rujuk pasien rutin setiap tahun ke Poli Mata (Opthalmologis).',
           required: true,
-          category: 'assessment'
+          category: 'action'
         },
         {
           id: 'comp-nephropathy',
-          title: 'Skrining Nefropati Diabetik / CKD',
-          description: 'Periksa UACR (Urine Albumin-to-Creatinine Ratio) urin sewaktu dan eGFR tahunan. Jika ada mikroalbuminuria ringan, wajib beri ACEI/ARB terlepas dari penderita hipertensi / normotensi.',
+          title: 'RUJUK Skrining Nefropati (UACR & Ginjal)',
+          description: 'Tanpa tes darah/urin fungsi ginjal di tempat pengobatan primer, pasien perlu dirujuk tes lab mikroalbuminuria & eGFR eksternal per tahun.',
           required: true,
-          category: 'assessment'
+          category: 'action'
         },
         {
           id: 'comp-neuropathy',
-          title: 'Skrining Neuropati Perifer (Diabetic Foot)',
-          description: 'Periksa sensibilitas telapak kaki dengan Monofilamen 10g minimal 1 tahun sekali. Lakukan inspeksi tungkai deteksi luka/ulkus pada setiap kunjungan dokter.',
+          title: 'Pemeriksaan Klinis Neuropati (Diabetic Foot)',
+          description: 'Inspeksi & palpasi telapak kaki tanpa alat canggih wajib dilakukan tiap kunjungan! Cek hilangnya refleks dan sensibilitas sentuhan sederhana. Cek adanya ulkus tersembunyi.',
           required: true,
           category: 'assessment'
         },
         {
           id: 'comp-macrovascular',
-          title: 'Skrining Makrovaskular & Target Berbasis EBM',
-          description: 'Target Tekanan Darah <130/80 (EBM PERKENI terbaru, PNPK 140/90). Berikan Terapi Statin Intensitas Sedang/Tinggi pada semua pasien DM > 40 tahun (Atorvastatin / Rosuvastatin) untuk profilaksis penyakit jantung koroner.',
+          title: 'Terapi Profilaksis Tekanan Darah (Pake Tensi)',
+          description: 'EBM PERKENI 2021 merekomendasikan Tensimeter harus digunakan tiap visit. Target tensi <130/80 (Jika PNPK 140/90). Bila hipertensi, berikan obat (ACEI/ARB) sekaligus perlindungan ginjal.',
           required: true,
           category: 'medication'
         }
