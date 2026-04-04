@@ -133,18 +133,24 @@ export default function PathwayReportPage() {
                               const isChecked = session.checklist[item.id];
                               const note = session.notes && session.notes[item.id];
                               
+                              const nodeVariation = session.variations?.find(v => v.nodeId === node.id);
+                              const isSkippedWithVariation = nodeVariation?.incompleteSteps?.includes(item.id);
+                              const variationReason = isSkippedWithVariation ? nodeVariation?.variationReason : null;
+                              
                               return (
-                                <div key={item.id} className={`flex items-start gap-4 p-4 rounded-xl border bg-white ${isChecked ? 'border-teal-100' : 'border-slate-200'} shadow-sm`}>
+                                <div key={item.id} className={`flex items-start gap-4 p-4 rounded-xl border bg-white ${isChecked ? 'border-teal-100' : isSkippedWithVariation ? 'border-orange-200 bg-orange-50/50' : 'border-slate-200'} shadow-sm`}>
                                   <div className="mt-0.5">
                                     {isChecked ? (
                                       <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                                    ) : isSkippedWithVariation ? (
+                                      <AlertCircle className="w-5 h-5 text-orange-500 flex-shrink-0" />
                                     ) : (
                                       <div className="w-5 h-5 border-2 border-slate-300 rounded-full flex-shrink-0" />
                                     )}
                                   </div>
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                      <span className={`font-semibold ${isChecked ? 'text-slate-900' : 'text-slate-600'}`}>
+                                      <span className={`font-semibold ${isChecked ? 'text-slate-900' : isSkippedWithVariation ? 'text-orange-900' : 'text-slate-600'}`}>
                                         {item.title}
                                       </span>
                                       <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider 
@@ -155,6 +161,14 @@ export default function PathwayReportPage() {
                                     <p className="text-sm text-slate-600 leading-relaxed mb-2">
                                       {item.description}
                                     </p>
+                                    
+                                    {/* Variation Display */}
+                                    {isSkippedWithVariation && (
+                                      <div className="mt-2 text-sm font-semibold text-orange-800 bg-orange-100/50 p-2.5 rounded-lg border border-orange-200">
+                                        <AlertCircle className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+                                        Dilakukan dengan variasi: {variationReason}
+                                      </div>
+                                    )}
                                     
                                     {/* Clinical Notes Display */}
                                     {note && (
@@ -224,43 +238,31 @@ export default function PathwayReportPage() {
             
             {/* Conclusion Area */}
             <div className="mt-16 pt-8 border-t border-slate-200">
-              <h2 className="text-xl font-bold text-slate-900 mb-6">Conclusion & Audit Summary</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Conclusion & Statement of Compliance</h2>
               
               {session.variations && session.variations.length > 0 ? (
                 <div className="bg-orange-50 border-2 border-orange-200 p-6 rounded-2xl shadow-sm">
-                  <div className="flex items-center gap-3 mb-4">
-                    <AlertCircle className="w-8 h-8 text-orange-600" />
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
+                      <AlertCircle className="w-8 h-8 text-orange-600" />
+                    </div>
                     <div>
-                      <h3 className="text-lg font-bold text-orange-900">Clinical Variances Recorded</h3>
-                      <p className="text-orange-800">
-                        Tenaga medis telah menyelesaikan penanganan pasien dengan variasi klinis / penyimpangan dari pedoman karena alasan berikut:
+                      <h3 className="text-lg font-bold text-orange-900 mb-1">Penyimpangan / Variasi Klinis Ditemukan</h3>
+                      <p className="text-orange-800 leading-relaxed">
+                        Tenaga medis telah menyelesaikan penanganan pasien, namun ditemukan adanya pedoman checklist yang <strong>tidak dilaksanakan secara penuh</strong> atau dilakukan dengan variasi terhadap pedoman klinis standar <strong>{session.diseaseName}</strong> karena alasan klinis.
                       </p>
                     </div>
                   </div>
-                  
-                  <ul className="space-y-4">
-                    {session.variations.map((v, i) => (
-                      <li key={i} className="bg-white p-4 rounded-xl border border-orange-100 text-slate-700">
-                        <div className="font-bold text-orange-900 mb-1">Variasi / Bypass pada tahap: {v.nodeId}</div>
-                        <div>"{v.variationReason}"</div>
-                        {v.incompleteSteps && v.incompleteSteps.length > 0 && (
-                          <div className="mt-2 text-sm bg-slate-50 p-2 rounded text-slate-600 border border-slate-100">
-                            <strong>Checklist yang dilewati:</strong> {v.incompleteSteps.join(', ')}
-                          </div>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               ) : (
                 <div className="bg-teal-50 border-2 border-teal-200 p-6 rounded-2xl shadow-sm flex items-start gap-4">
-                  <div className="bg-teal-100 rounded-full p-2">
+                  <div className="bg-teal-100 rounded-full p-2 flex-shrink-0">
                     <CheckCircle2 className="w-8 h-8 text-teal-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-teal-900 mb-1">Standard Guideline Adherence</h3>
-                    <p className="text-teal-800">
-                      Tenaga medis telah menyelesaikan penanganan pasien sesuai dengan pedoman klinis yang berlaku. Tidak ditemukan penyimpangan (variasi) dari langkah-langkah pedoman <strong>{session.diseaseName}</strong>. Pathway dipatuhi dan dijalankan sebagaimana mestinya.
+                    <h3 className="text-lg font-bold text-teal-900 mb-1">Kepatuhan Penuh Pedoman Klinis (Fully Compliant)</h3>
+                    <p className="text-teal-800 leading-relaxed">
+                      Tenaga medis telah menyelesaikan penanganan pasien <strong>telah sesuai</strong> dengan pedoman klinis yang berlaku. Seluruh langkah checklist pedoman <strong>{session.diseaseName}</strong> dipatuhi dan dilaksanakan tanpa adanya variasi atau ada langkah yang dilewati.
                     </p>
                   </div>
                 </div>
