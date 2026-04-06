@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { ArrowLeft, CheckCircle2, AlertCircle, FileText, Printer, Stethoscope } from 'lucide-react';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
@@ -8,27 +8,123 @@ import Navbar from '../components/Navbar';
 export default function PathwayReportPage() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
-  const { sessions, loading } = usePathwaySessions();
+  const { sessions, loading, refreshSessions } = usePathwaySessions();
+  const [attemptedRefresh, setAttemptedRefresh] = useState(false);
+  
+  const targetId = sessionId?.trim();
+  const session = sessions.find(s => String(s.id) === String(targetId));
+  const pathwayKey = session?.diseaseId || '';
+  const pathway = pathwayKey ? dynamicPathways[pathwayKey] : null;
 
-  const session = sessions.find(s => s.id === sessionId);
-  const pathway = session ? dynamicPathways[session.diseaseId] : null;
-
+  // Manual Trigger to refresh if not loading but not found
   useEffect(() => {
-    if (!loading && !session) {
-      // If session is not found and we are done loading
-      navigate('/history');
+    if (!loading && !session && sessions.length === 0 && !attemptedRefresh) {
+      setAttemptedRefresh(true);
+      refreshSessions();
     }
-  }, [session, loading, navigate]);
+  }, [loading, session, sessions.length, refreshSessions, attemptedRefresh]);
 
-  if (loading || !session || !pathway) {
+  const displayDate = (s: any) => {
+    try {
+      const d = new Date(s.updated_at || s.startedAt || Date.now());
+      return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch (e) {
+      return 'N/A';
+    }
+  };
+
+  // 1. LOADING STAGE
+  if (loading && !session) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-8">
+        <div className="animate-spin w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full mb-6" />
+        <h2 className="text-xl font-bold text-slate-800">Menarik Data dari Server...</h2>
+        <p className="text-slate-400 mt-2 font-mono text-sm">Mencari Sesi: {targetId}</p>
       </div>
     );
   }
 
-  // Get chronological sequence of nodes visited
+  // 2. MISSING SESSION STAGE
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-4 py-12">
+          <div className="bg-white rounded-3xl shadow-2xl border-2 border-red-100 overflow-hidden">
+            <div className="bg-red-50 p-8 border-b border-red-100 flex items-center gap-6">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                <AlertCircle className="w-10 h-10" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-red-900">Sesi Tidak Ditemukan</h1>
+                <p className="text-red-700">Gagal memuat detail pemeriksaan klinis ini.</p>
+              </div>
+            </div>
+            
+            <div className="p-8 space-y-8">
+               <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Sesi yang Dicari</h3>
+                  <div className="font-mono text-lg text-slate-900 break-all">{targetId || 'UNKNOWN'}</div>
+                </div>
+                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Status Sinkronisasi</h3>
+                  <div className="font-bold text-slate-900">
+                    {loading ? 'Sedang Memuat...' : `Ditemukan ${sessions.length} sesi di sistem.`}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Informasi untuk Pengembang:</h3>
+                <div className="p-4 bg-slate-900 rounded-xl font-mono text-xs text-teal-400 whitespace-pre-wrap overflow-x-auto">
+                  {JSON.stringify({ 
+                    urlParamId: targetId,
+                    totalSystemRecords: sessions.length,
+                    availableIds: sessions.slice(0, 5).map(s => s.id),
+                    isLoading: loading,
+                    hasAttemptedRefresh: attemptedRefresh
+                  }, null, 2)}
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <button onClick={() => refreshSessions()} className="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-black transition-all">
+                  Coba Muat Ulang (Force Sync)
+                </button>
+                <button onClick={() => navigate('/history')} className="flex-1 py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-all">
+                  Kembali ke Riwayat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. MISSING PATHWAY DEFINITION
+  if (!pathway) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+            <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mx-auto mb-6">
+                <AlertCircle className="w-12 h-12" />
+            </div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">Pedoman Tidak Terdaftar</h1>
+            <p className="text-slate-600 mb-8 max-w-md mx-auto">
+                Sesi ditemukan ({session.diseaseName}), namun rincian pedoman klinis untuk penyakit ini ({session.diseaseId}) belum terdaftar di registry sistem.
+            </p>
+            <button onClick={() => navigate('/history')} className="px-8 py-4 bg-teal-600 text-white rounded-2xl font-bold">
+                Kembali ke Riwayat
+            </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 4. MAIN REPORT CONTENT
   const visitedNodes = session.pathway_history || [];
 
   return (
@@ -36,254 +132,173 @@ export default function PathwayReportPage() {
       <Navbar />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Actions Header */}
         <div className="flex items-center justify-between mb-6 print:hidden">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
-          >
+          <button onClick={() => navigate('/history')} className="flex items-center gap-2 text-slate-600 hover:text-slate-900 font-medium">
             <ArrowLeft className="w-5 h-5" />
-            <span>Back to History</span>
+            <span>Kembali</span>
           </button>
-
-          <button
-            onClick={() => window.print()}
-            className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-xl text-slate-700 font-semibold shadow-sm hover:bg-slate-50 transition-all"
-          >
+          <button onClick={() => window.print()} className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-xl text-slate-700 font-bold shadow-sm hover:bg-slate-50">
             <Printer className="w-5 h-5" />
-            <span>Print Report</span>
+            <span>Cetak PDF</span>
           </button>
         </div>
 
-        {/* Report Paper */}
         <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden print:shadow-none print:border-none">
-          {/* Document Header */}
+          {/* Header Paper */}
           <div className="bg-slate-900 px-8 py-10 text-white">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-teal-400" />
+            <div className="flex justify-between items-start mb-10">
+              <div className="flex gap-4">
+                <div className="w-14 h-14 bg-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-500/20">
+                  <FileText className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold">Clinical Pathway Report</h1>
-                  <p className="text-slate-400">Eclinical Guideline System</p>
+                  <h1 className="text-2xl font-bold">Laporan Alur Klinis</h1>
+                  <p className="text-slate-400 text-sm">Dokumentasi Digital E-Clinical</p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 font-semibold text-sm rounded-lg border border-teal-500/30 uppercase">
-                  {session.status.replace('_', ' ')}
-                </div>
+              <div className="px-4 py-2 bg-teal-500/20 border border-teal-500/30 rounded-xl text-teal-400 text-sm font-bold uppercase tracking-wider">
+                {session.status}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6 border-t border-slate-700/50">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/10 pt-8">
               <div>
-                <div className="text-slate-400 text-sm mb-1">Diagnosis</div>
-                <div className="font-semibold">{session.diseaseName}</div>
+                <span className="text-slate-500 text-xs uppercase font-bold tracking-widest block mb-1">Diagnosis</span>
+                <span className="font-semibold text-slate-100">{session.diseaseName}</span>
               </div>
               <div>
-                <div className="text-slate-400 text-sm mb-1">Patient Code</div>
-                <div className="font-semibold text-teal-400">{session.patient_code || 'Unspecified'}</div>
+                <span className="text-slate-500 text-xs uppercase font-bold tracking-widest block mb-1">Kode Pasien</span>
+                <span className="font-semibold text-teal-400">{session.patient_code || '---'}</span>
               </div>
               <div>
-                <div className="text-slate-400 text-sm mb-1">Session ID</div>
-                <div className="font-mono text-sm leading-relaxed truncate">{session.id}</div>
+                <span className="text-slate-500 text-xs uppercase font-bold tracking-widest block mb-1">Waktu</span>
+                <span className="font-semibold text-slate-100">{displayDate(session)}</span>
               </div>
-              <div>
-                <div className="text-slate-400 text-sm mb-1">Date</div>
-                <div className="font-semibold">
-                  {new Date(session.updated_at || session.startedAt).toLocaleDateString()}
-                </div>
+              <div className="overflow-hidden">
+                <span className="text-slate-500 text-xs uppercase font-bold tracking-widest block mb-1">ID Sesi</span>
+                <span className="text-xs font-mono text-slate-400 truncate block">{session.id}</span>
               </div>
             </div>
           </div>
 
           <div className="p-8">
             <div className="space-y-12">
-              {visitedNodes.map((historyItem, stepIndex) => {
-                const node = pathway.nodes[historyItem.nodeId];
-                if (!node) return null;
-
-                const isChecklist = node.type === 'checklist';
-                const isDecision = node.type === 'decision';
-
-                return (
-                  <section key={`${historyItem.nodeId}-${stepIndex}`} className="relative">
-                    {/* Step Timeline Line */}
-                    {stepIndex !== visitedNodes.length - 1 && (
-                      <div className="absolute left-[19px] top-10 bottom-[-40px] w-0.5 bg-slate-100 print:hidden" />
-                    )}
-
-                    <div className="flex gap-6">
-                      {/* Step Number */}
-                      <div className="relative z-10 flex-shrink-0 w-10 h-10 rounded-full bg-slate-100 border-4 border-white flex items-center justify-center font-bold text-slate-500">
-                        {stepIndex + 1}
+              {visitedNodes.length === 0 ? (
+                <div className="p-16 border-2 border-dashed border-slate-100 rounded-3xl text-center text-slate-400 italic">
+                  Tidak ada riwayat langkah yang tercatat dalam sesi ini.
+                </div>
+              ) : (
+                visitedNodes.map((historyItem, idx) => {
+                  const node = pathway.nodes[historyItem.nodeId];
+                  if (!node) return null;
+                  
+                  return (
+                    <div key={`${historyItem.nodeId}-${idx}`} className="relative pl-14">
+                      {idx !== visitedNodes.length - 1 && <div className="absolute left-6 top-10 bottom-[-48px] w-0.5 bg-slate-100" />}
+                      <div className="absolute left-0 top-0.5 w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-500 shadow-sm">
+                        {idx + 1}
+                      </div>
+                      
+                      <div className="mb-4">
+                        <h3 className="text-xl font-bold text-slate-900">{node.title}</h3>
+                        {node.description && <p className="text-slate-500 leading-relaxed mt-1">{node.description}</p>}
                       </div>
 
-                      {/* Content */}
-                      <div className="flex-1 pt-1.5">
-                        <h2 className="text-xl font-bold text-slate-900 mb-1">{node.title}</h2>
-                        {node.description && (
-                          <p className="text-slate-600 mb-6">{node.description}</p>
-                        )}
-
-                        {isChecklist && (
-                          <div className="space-y-3 bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                            {node.items.map((item) => {
-                              const isChecked = session.checklist[item.id];
-                              const note = session.notes && session.notes[item.id];
-                              
-                              const nodeVariation = session.variations?.find(v => v.nodeId === node.id);
-                              const isSkippedWithVariation = nodeVariation?.incompleteSteps?.includes(item.id);
-                              const variationReason = isSkippedWithVariation ? nodeVariation?.variationReason : null;
-                              
-                              return (
-                                <div key={item.id} className={`flex items-start gap-4 p-4 rounded-xl border bg-white ${isChecked ? 'border-teal-100' : isSkippedWithVariation ? 'border-orange-200 bg-orange-50/50' : 'border-slate-200'} shadow-sm`}>
-                                  <div className="mt-0.5">
-                                    {isChecked ? (
-                                      <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0" />
-                                    ) : isSkippedWithVariation ? (
-                                      <AlertCircle className="w-5 h-5 text-orange-500 flex-shrink-0" />
-                                    ) : (
-                                      <div className="w-5 h-5 border-2 border-slate-300 rounded-full flex-shrink-0" />
-                                    )}
-                                  </div>
+                      {node.type === 'checklist' && (
+                        <div className="mt-4 grid gap-3">
+                          {node.items.map(item => {
+                            const isChecked = session.checklist[item.id];
+                            const note = session.notes && session.notes[item.id];
+                             return (
+                              <div key={item.id} className={`p-5 rounded-2xl border ${isChecked ? 'bg-teal-50/30 border-teal-100 ring-1 ring-teal-100' : 'bg-slate-50/50 border-slate-100'}`}>
+                                <div className="flex gap-4">
+                                  {isChecked ? (
+                                    <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>
+                                  ) : (
+                                    <div className="w-6 h-6 border-2 border-slate-300 rounded-full" />
+                                  )}
                                   <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className={`font-semibold ${isChecked ? 'text-slate-900' : isSkippedWithVariation ? 'text-orange-900' : 'text-slate-600'}`}>
-                                        {item.title}
-                                      </span>
-                                      <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider 
-                                        ${item.required ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-500'}`}>
-                                        {item.required ? 'Required' : 'Optional'}
-                                      </span>
-                                    </div>
-                                    <p className="text-sm text-slate-600 leading-relaxed mb-2">
-                                      {item.description}
-                                    </p>
-                                    
-                                    {/* Variation Display */}
-                                    {isSkippedWithVariation && (
-                                      <div className="mt-2 text-sm font-semibold text-orange-800 bg-orange-100/50 p-2.5 rounded-lg border border-orange-200">
-                                        <AlertCircle className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
-                                        Dilakukan dengan variasi: {variationReason}
-                                      </div>
-                                    )}
-                                    
-                                    {/* Clinical Notes Display */}
+                                    <div className="font-bold text-slate-800">{item.title}</div>
+                                    <p className="text-slate-500 text-sm mt-1">{item.description}</p>
                                     {note && (
-                                      <div className="mt-3 bg-yellow-50/50 border border-yellow-100 rounded-lg p-3 text-sm">
-                                        <div className="font-semibold text-yellow-800 mb-1 flex items-center gap-1.5">
-                                          <FileText className="w-4 h-4" />
-                                          Clinical Notes:
-                                        </div>
-                                        <p className="text-yellow-900">{note}</p>
+                                      <div className="mt-4 p-4 bg-white border border-yellow-200 rounded-xl text-sm text-yellow-800 shadow-sm italic">
+                                        <div className="flex items-center gap-2 mb-1 not-italic font-bold text-yellow-900 uppercase text-[10px]">Catatan Klinis:</div>
+                                        {note}
                                       </div>
                                     )}
                                   </div>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
 
-                        {isDecision && (
-                          <div className="mt-4">
-                            {(() => {
-                              const decisionRecord = session.decisions?.find(d => d.nodeId === node.id);
-                              if (!decisionRecord) {
-                                return (
-                                  <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-slate-500 text-center">
-                                    No branch selection recorded.
-                                  </div>
-                                );
-                              }
-
-                              const branch = node.branches.find(b => b.id === decisionRecord.branchId);
-                              
-                              // Fallback in case the pathway structure changed
-                              if (!branch) {
-                                return (
-                                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl font-medium">
-                                    Decision made: {decisionRecord.branchTitle}
-                                  </div>
-                                );
-                              }
-
-                               return (
-                                <div className="bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm">
-                                  <div className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-3">
-                                    Selected Branch
-                                  </div>
-                                  <div className="flex items-start gap-4">
-                                    <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center bg-${branch.color}-100 text-${branch.color}-600`}>
-                                      <Stethoscope className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                      <h3 className="text-lg font-bold text-slate-900">{branch.title}</h3>
-                                      <p className="text-slate-600 mt-1">{branch.description}</p>
-                                    </div>
-                                  </div>
+                      {node.type === 'decision' && (
+                        <div className="mt-4">
+                          {(() => {
+                            const dec = session.decisions?.find(d => d.nodeId === node.id);
+                            const branch = dec ? node.branches.find(b => b.id === dec.branchId) : null;
+                            return (
+                              <div className="p-6 bg-slate-900 rounded-2xl flex gap-6 items-center shadow-lg">
+                                <div className="w-14 h-14 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
+                                  <Stethoscope className="w-8 h-8 text-white" />
                                 </div>
-                              );
-                            })()}
-                          </div>
-                        )}
-                      </div>
+                                <div className="flex-1">
+                                  <div className="text-[10px] text-teal-400 font-black uppercase tracking-widest mb-1">Keputusan Klinis Diambil</div>
+                                  <div className="font-bold text-white text-lg">{branch?.title || dec?.branchTitle || 'N/A'}</div>
+                                  {branch?.description && <div className="text-slate-400 text-xs mt-1">{branch.description}</div>}
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
-                  </section>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
-            
-            {/* Conclusion Area */}
-            <div className="mt-16 pt-8 border-t border-slate-200">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Conclusion & Statement of Compliance</h2>
-              
-              {session.variations && session.variations.length > 0 ? (
-                <div className="bg-orange-50 border-2 border-orange-200 p-6 rounded-2xl shadow-sm">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
-                      <AlertCircle className="w-8 h-8 text-orange-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-orange-900 mb-1">Penyimpangan / Variasi Klinis Ditemukan</h3>
-                      <p className="text-orange-800 leading-relaxed">
-                        Tenaga medis telah menyelesaikan penanganan pasien, namun ditemukan adanya pedoman checklist yang <strong>tidak dilaksanakan secara penuh</strong> atau dilakukan dengan variasi terhadap pedoman klinis standar <strong>{session.diseaseName}</strong> karena alasan klinis.
-                      </p>
-                    </div>
+
+            <div className="mt-20 pt-10 border-t border-slate-200">
+               {session.variations && session.variations.length > 0 ? (
+                <div className="p-8 bg-orange-50 rounded-3xl border-2 border-orange-100 flex gap-6">
+                  <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 shrink-0">
+                    <AlertCircle className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-orange-900 text-xl">Penyelesaian dengan Variasi</h4>
+                    <p className="text-orange-800 mt-2 leading-relaxed">
+                      Penanganan telah diselesaikan namun terdapat langkah pedoman klinis standar <strong>{session.diseaseName}</strong> yang disesuaikan atau dilewati sesuai dengan pertimbangan kondisi klinis pasien di lapangan.
+                    </p>
                   </div>
                 </div>
               ) : (
-                <div className="bg-teal-50 border-2 border-teal-200 p-6 rounded-2xl shadow-sm flex items-start gap-4">
-                  <div className="bg-teal-100 rounded-full p-2 flex-shrink-0">
-                    <CheckCircle2 className="w-8 h-8 text-teal-600" />
+                <div className="p-8 bg-teal-50 rounded-3xl border-2 border-teal-100 flex gap-6">
+                  <div className="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center text-teal-600 shrink-0">
+                    <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-teal-900 mb-1">Kepatuhan Penuh Pedoman Klinis (Fully Compliant)</h3>
-                    <p className="text-teal-800 leading-relaxed">
-                      Tenaga medis telah menyelesaikan penanganan pasien <strong>telah sesuai</strong> dengan pedoman klinis yang berlaku. Seluruh langkah checklist pedoman <strong>{session.diseaseName}</strong> dipatuhi dan dilaksanakan tanpa adanya variasi atau ada langkah yang dilewati.
+                    <h4 className="font-bold text-teal-900 text-xl">Kepatuhan Penuh (Fully Compliant)</h4>
+                    <p className="text-teal-800 mt-2 leading-relaxed">
+                      Seluruh langkah penanganan dalam pedoman klinis <strong>{session.diseaseName}</strong> telah dilaksanakan sesuai standar tanpa variasi. Dokumentasi menunjukkan kepatuhan 100% terhadap protokol yang berlaku.
                     </p>
                   </div>
                 </div>
               )}
               
-              {/* Authenticity Signature Block (Print purposes) */}
-              <div className="mt-12 pt-8 border-t border-slate-200 hidden print:block">
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-xs text-slate-500 mb-1">Report Generated Automatically</p>
-                    <p className="font-mono text-xs text-slate-400">ID: {session.id}</p>
-                    <p className="font-mono text-xs text-slate-400">{new Date().toString()}</p>
-                  </div>
-                  <div className="text-center w-48">
-                    <div className="border-b border-slate-400 h-16 mb-2"></div>
-                    <p className="text-sm font-semibold text-slate-800">Assessing Clinician</p>
-                  </div>
+              <div className="mt-20 pt-12 border-t border-slate-100 hidden print:flex justify-between items-end">
+                <div className="text-[10px] text-slate-400 font-mono space-y-1">
+                    <div>Dokumen hasil sistem E-Clinical DSS</div>
+                    <div>Digital Signature: {session.id?.slice(0, 8)}-{Date.now()}</div>
+                    <div>Dicetak pada: {new Date().toLocaleString()}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-56 h-px bg-slate-300 mb-3" />
+                  <div className="font-black text-slate-900 text-xs uppercase tracking-widest">Dokter Pemeriksa</div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </main>

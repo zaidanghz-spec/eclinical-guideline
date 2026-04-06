@@ -55,10 +55,10 @@ function RootErrorBoundary() {
 
 function RootLayout() {
   return (
-    <AuthProvider>
+    <>
       <Outlet />
       <Toaster position="top-right" richColors />
-    </AuthProvider>
+    </>
   );
 }
 
