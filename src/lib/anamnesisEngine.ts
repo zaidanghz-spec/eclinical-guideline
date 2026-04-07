@@ -98,16 +98,16 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // ONSET ANALYSIS
     // ========================================
     if (data.onset.suddenGradual === 'sudden') {
-      if (['acs', 'stroke-iskemik', 'pulmonary-embolism', 'seizures', 'acute-appendicitis', 'dka', 'hypoglycemia', 'thyroid-storm', 'adrenal-crisis', 'asthma-exacerbation'].includes(disease.id)) {
+      if (['acs', 'stroke-iskemik', 'pulmonary-embolism', 'seizures', 'acute-appendicitis', 'dka', 'hypoglycemia', 'thyroid-storm', 'adrenal-crisis', 'asthma-exacerbation', 'insect-bite-reaction', 'acute-kidney-injury', 'intoksikasi-kimia'].includes(disease.id)) {
         score += 15;
-        matched.push('Onset mendadak (sesuai dengan ' + disease.name + ')');
+        matched.push('Onset mendadak (mendukung diagnosis gawat darurat)');
       }
     }
 
     if (data.onset.suddenGradual === 'gradual') {
-      if (['heart-failure', 'pneumonia-komunitas', 'tuberkulosis-paru', 'copd-exacerbation', 'diabetes-melitus-tipe-2', 'rheumatoid-arthritis'].includes(disease.id)) {
+      if (['heart-failure', 'pneumonia-komunitas', 'tuberkulosis-paru', 'copd-exacerbation', 'diabetes-melitus', 'rheumatoid-arthritis', 'dispepsia', 'hipertensi-dewasa'].includes(disease.id)) {
         score += 10;
-        matched.push('Onset bertahap/gradual');
+        matched.push('Onset bertahap/gradual (mendukung diagnosis kronis/subakut)');
       }
     }
 
@@ -151,15 +151,15 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
 
     // Burning pain → GI issues
     if (data.quality.type.includes('burning') || searchText.includes('terbakar') || searchText.includes('panas')) {
-      if (['upper-gi-bleeding', 'acute-pancreatitis'].includes(disease.id)) {
+      if (['upper-gi-bleeding', 'acute-pancreatitis', 'dispepsia'].includes(disease.id)) {
         score += 15;
-        matched.push('Nyeri terbakar → suspect GI');
+        matched.push('Nyeri terbakar → suspect GI origin');
       }
     }
 
-    // Throbbing/Pulsating → Headache, Migraine, Meningitis
+    // Throbbing/Pulsating → Headache, Migraine, Meningitis, Hypertension
     if (searchText.includes('berdenyut') || searchText.includes('throbbing') || searchText.includes('pulsating')) {
-      if (['meningitis', 'hypertensive-crisis'].includes(disease.id)) {
+      if (['meningitis', 'hipertensi-dewasa', 'hypertensive-crisis', 'tension-type-headache'].includes(disease.id)) {
         score += 12;
         matched.push('Nyeri berdenyut');
       }
@@ -194,7 +194,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
 
     // Abdominal pain
     if (searchText.includes('abdomen') || searchText.includes('perut') || searchText.includes('abdominal')) {
-      if (['acute-gastroenteritis', 'acute-appendicitis', 'upper-gi-bleeding', 'acute-pancreatitis', 'typhoid-fever'].includes(disease.id)) {
+      if (['acute-gastroenteritis', 'acute-appendicitis', 'upper-gi-bleeding', 'acute-pancreatitis', 'typhoid-fever', 'dispepsia'].includes(disease.id)) {
         score += 15;
         matched.push('Nyeri abdomen/perut');
       }
@@ -208,9 +208,9 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       }
     }
 
-    // Epigastric pain → Pancreatitis, GI bleeding
+    // Epigastric pain → Pancreatitis, GI bleeding, Dyspepsia
     if (searchText.includes('epigastric') || searchText.includes('ulu hati') || searchText.includes('upper abdomen')) {
-      if (['acute-pancreatitis', 'upper-gi-bleeding'].includes(disease.id)) {
+      if (['acute-pancreatitis', 'upper-gi-bleeding', 'dispepsia'].includes(disease.id)) {
         score += 20;
         matched.push('Epigastric pain');
       }
@@ -226,9 +226,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
 
     // Headache
     if (searchText.includes('head') || searchText.includes('kepala') || searchText.includes('sakit kepala')) {
-      if (['meningitis', 'hypertensive-crisis', 'stroke-iskemik'].includes(disease.id)) {
+      if (['meningitis', 'hipertensi-dewasa', 'hypertensive-crisis', 'stroke-iskemik', 'tension-type-headache'].includes(disease.id)) {
         score += 12;
-        matched.push('Sakit kepala');
+        matched.push('Gejala sakit kepala');
+      }
+      
+      // Tengkuk kaku → Hypertension / Meningitis
+      if (searchText.includes('tengkuk kaku') || searchText.includes('leher kaku') || searchText.includes('stiff neck')) {
+        if (['hipertensi-dewasa', 'meningitis'].includes(disease.id)) {
+          score += 25;
+          matched.push('Tengkuk kaku (Nuchal rigidity / Tension)');
+        }
       }
     }
 
@@ -242,9 +250,9 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
 
     // Joint pain → Arthritis
     if (searchText.includes('joint') || searchText.includes('sendi') || searchText.includes('arthritis')) {
-      if (['rheumatoid-arthritis', 'polymyalgia-rheumatica'].includes(disease.id)) {
+      if (['rheumatoid-arthritis', 'polymyalgia-rheumatica', 'fraktur'].includes(disease.id)) {
         score += 18;
-        matched.push('Nyeri sendi');
+        matched.push('Nyeri sendi/tulang');
       }
 
       // Morning stiffness → RA, PMR
@@ -252,23 +260,6 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (['rheumatoid-arthritis', 'polymyalgia-rheumatica'].includes(disease.id)) {
           score += 22;
           matched.push('Morning stiffness → suspect RA/PMR');
-        }
-      }
-
-      // Symmetric joints → RA
-      if (searchText.includes('symmetric') || searchText.includes('simetris')) {
-        if (disease.id === 'rheumatoid-arthritis') {
-          score += 20;
-          matched.push('Symmetric arthritis → suspect RA');
-        }
-      }
-
-      // Shoulder/hip in elderly → PMR
-      if ((searchText.includes('shoulder') || searchText.includes('hip') || searchText.includes('bahu')) &&
-          (searchText.includes('elderly') || searchText.includes('lansia') || searchText.includes('>60'))) {
-        if (disease.id === 'polymyalgia-rheumatica') {
-          score += 25;
-          matched.push('Shoulder/hip pain in elderly → suspect PMR');
         }
       }
     }
@@ -288,35 +279,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       }
     }
 
-    // Worsened by eating → GI
+    // Worsened by eating → GI / Dyspepsia
     if (searchText.includes('eating') || searchText.includes('makan') || searchText.includes('food')) {
-      if (['upper-gi-bleeding', 'acute-pancreatitis', 'acute-gastroenteritis'].includes(disease.id)) {
+      if (['upper-gi-bleeding', 'acute-pancreatitis', 'acute-gastroenteritis', 'dispepsia'].includes(disease.id)) {
         score += 12;
-        matched.push('Diperberat makan → GI issue');
-      }
-    }
-
-    // Relieved by rest → Cardiac angina
-    if (data.provocation.relievedBy.some(p => 
-        p.toLowerCase().includes('rest') || 
-        p.toLowerCase().includes('istirahat'))) {
-      if (['acs', 'heart-failure'].includes(disease.id)) {
-        score += 10;
-        matched.push('Membaik dengan istirahat');
-      }
-    }
-
-    // Worsened by breathing → Pleuritic
-    if (searchText.includes('breathing') || searchText.includes('napas') || searchText.includes('inspirasi')) {
-      if (['pneumonia-komunitas', 'pulmonary-embolism', 'asthma-exacerbation'].includes(disease.id)) {
-        score += 15;
-        matched.push('Diperberat napas → pleuritic pain');
-      }
-
-      // Pleuritic pain + chest → UNLIKELY ACS
-      if (hasChestPain && disease.id === 'acs') {
-        score -= 20;
-        matched.push(' Pleuritic chest pain → less likely ACS');
+        matched.push('Diperberat makan → GI origin');
       }
     }
 
@@ -325,26 +292,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         p.toLowerCase().includes('posisi') || 
         p.toLowerCase().includes('position') ||
         p.toLowerCase().includes('miring') ||
-        p.toLowerCase().includes('menoleh') ||
-        p.toLowerCase().includes('menengadah') ||
-        p.toLowerCase().includes('berbaring') ||
         p.toLowerCase().includes('bangun') ||
-        p.toLowerCase().includes('lying') ||
-        p.toLowerCase().includes('turning'))) {
+        p.toLowerCase().includes('lying'))) {
       if (disease.id === 'vertigo') {
         score += 30;
         matched.push('[HIGH] Diperberat perubahan posisi -- khas BPPV (PPK Neurologi 2023)');
-      }
-    }
-
-    // Relieved by staying still → BPPV
-    if (data.provocation.relievedBy.some(p => 
-        p.toLowerCase().includes('diam') || 
-        p.toLowerCase().includes('still') ||
-        p.toLowerCase().includes('tidak bergerak'))) {
-      if (disease.id === 'vertigo') {
-        score += 15;
-        matched.push('Membaik dengan tidak bergerak -- mendukung BPPV');
       }
     }
 
@@ -352,27 +304,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // TIME PATTERN ANALYSIS
     // ========================================
     
-    // Acute onset (<1 hour)
-    if (data.time.duration === '<1 hour' && data.onset.suddenGradual === 'sudden') {
-      if (['acs', 'stroke-iskemik', 'pulmonary-embolism', 'seizures', 'hypoglycemia'].includes(disease.id)) {
-        score += 10;
-        matched.push('Onset akut <1 jam');
-      }
-    }
-
     // Chronic (>weeks) → Chronic diseases
     if (searchText.includes('weeks') || searchText.includes('months') || searchText.includes('kronik') || searchText.includes('chronic')) {
-      if (['tuberkulosis-paru', 'copd-exacerbation', 'diabetes-melitus-tipe-2', 'heart-failure', 'rheumatoid-arthritis'].includes(disease.id)) {
+      if (['tuberkulosis-paru', 'copd-exacerbation', 'diabetes-melitus', 'heart-failure', 'rheumatoid-arthritis', 'hipertensi-dewasa'].includes(disease.id)) {
         score += 12;
         matched.push('Gejala kronik');
-      }
-    }
-
-    // Progressive pattern → TB, Heart Failure
-    if (searchText.includes('progressive') || searchText.includes('progresif') || searchText.includes('semakin memburuk')) {
-      if (['tuberkulosis-paru', 'heart-failure', 'copd-exacerbation'].includes(disease.id)) {
-        score += 10;
-        matched.push('Pola progresif');
       }
     }
 
@@ -383,7 +319,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     const hasFever = searchText.includes('fever') || searchText.includes('demam');
     
     if (hasFever) {
-      if (['pneumonia-komunitas', 'tuberkulosis-paru', 'meningitis', 'sepsis', 'dbd', 'malaria', 'typhoid-fever', 'covid-19', 'ispa', 'leptospirosis', 'acute-gastroenteritis'].includes(disease.id)) {
+      if (['pneumonia-komunitas', 'tuberkulosis-paru', 'meningitis', 'sepsis', 'dbd', 'malaria', 'typhoid-fever', 'ispa', 'acute-gastroenteritis'].includes(disease.id)) {
         score += 15;
         matched.push('Demam');
       }
@@ -398,45 +334,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
 
       // Prolonged fever → TB, Typhoid
       if (searchText.includes('prolonged') || searchText.includes('berkepanjangan') || searchText.includes('>1 week') || searchText.includes('minggu')) {
-        if (['tuberkulosis-paru', 'typhoid-fever', 'hiv-opportunistic', 'malaria'].includes(disease.id)) {
+        if (['tuberkulosis-paru', 'typhoid-fever'].includes(disease.id)) {
           score += 20;
           matched.push('Demam berkepanjangan → suspect TB/Typhoid');
         }
       }
 
-      // Stepladder fever → Typhoid
-      if (searchText.includes('stepladder') || searchText.includes('naik bertahap')) {
-        if (disease.id === 'typhoid-fever') {
-          score += 30;
-          matched.push(' Stepladder fever → HIGHLY SPECIFIC FOR TYPHOID!');
-        }
-      }
-
       // Periodic fever + chills → Malaria
-      if (searchText.includes('periodic') || searchText.includes('chills') || searchText.includes('menggigil') || searchText.includes('rigor')) {
+      if (searchText.includes('periodic') || searchText.includes('chills') || searchText.includes('menggigil')) {
         if (disease.id === 'malaria') {
           score += 30;
           matched.push(' Periodic fever + chills → HIGHLY SUSPECT MALARIA!');
-        }
-      }
-
-      // Fever + night sweats → TB
-      if (searchText.includes('night sweat') || searchText.includes('keringat malam')) {
-        if (['tuberkulosis-paru', 'hiv-opportunistic'].includes(disease.id)) {
-          score += 22;
-          matched.push('Fever + night sweats → suspect TB/HIV');
-        }
-      }
-
-      // Fever + chest pain → Pneumonia, NOT cardiac
-      if (hasChestPain) {
-        if (['pneumonia-komunitas'].includes(disease.id)) {
-          score += 20;
-          matched.push('Fever + chest pain → suspect pneumonia');
-        }
-        if (['acs', 'heart-failure'].includes(disease.id)) {
-          score -= 30;
-          matched.push(' Fever + chest pain → less likely pure cardiac');
         }
       }
     }
@@ -446,33 +354,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // ========================================
 
     // Dyspnea/Sesak napas
-    if (searchText.includes('dyspnea') || searchText.includes('sesak') || searchText.includes('breathless') || searchText.includes('napas') || searchText.includes('shortness')) {
-      if (['asthma-exacerbation', 'copd-exacerbation', 'heart-failure', 'pneumonia-komunitas', 'pulmonary-embolism', 'covid-19'].includes(disease.id)) {
+    if (searchText.includes('dyspnea') || searchText.includes('sesak') || searchText.includes('napas')) {
+      if (['asthma-exacerbation', 'copd-exacerbation', 'heart-failure', 'pneumonia-komunitas', 'pulmonary-embolism'].includes(disease.id)) {
         score += 15;
         matched.push('Sesak napas/dyspnea');
       }
 
-      // Sudden dyspnea → PE, Asthma
-      if (searchText.includes('sudden') || searchText.includes('mendadak') || searchText.includes('tiba-tiba')) {
-        if (['pulmonary-embolism', 'asthma-exacerbation'].includes(disease.id)) {
-          score += 22;
-          matched.push('Sesak mendadak → suspect PE/Acute asthma');
-        }
-      }
-
       // Orthopnea → Heart Failure
-      if (searchText.includes('orthopnea') || searchText.includes('worse lying') || searchText.includes('sulit tidur')) {
+      if (searchText.includes('orthopnea') || searchText.includes('worse lying') || searchText.includes('sulit tidur telentang')) {
         if (disease.id === 'heart-failure') {
           score += 30;
           matched.push(' Orthopnea → HIGHLY SPECIFIC FOR HEART FAILURE!');
-        }
-      }
-
-      // PND → Heart Failure
-      if (searchText.includes('pnd') || searchText.includes('terbangun malam')) {
-        if (disease.id === 'heart-failure') {
-          score += 25;
-          matched.push('PND → suspect Heart Failure');
         }
       }
     }
@@ -483,71 +375,13 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         score += 22;
         matched.push('Wheezing');
       }
-
-      // Wheezing + allergen → Asthma
-      if (searchText.includes('allergen') || searchText.includes('alergen') || searchText.includes('asap') || searchText.includes('debu')) {
-        if (disease.id === 'asthma-exacerbation') {
-          score += 18;
-          matched.push('Wheezing + allergen → suspect Asthma');
-        }
-      }
-
-      // Wheezing + smoking → COPD
-      if (searchText.includes('smok') || searchText.includes('rokok') || searchText.includes('tobacco')) {
-        if (disease.id === 'copd-exacerbation') {
-          score += 18;
-          matched.push('Wheezing + smoking → suspect COPD');
-        }
-      }
     }
 
-    // Cough patterns
-    const hasCough = searchText.includes('cough') || searchText.includes('batuk');
-    
-    if (hasCough) {
-      if (['pneumonia-komunitas', 'tuberkulosis-paru', 'asthma-exacerbation', 'copd-exacerbation', 'covid-19', 'ispa'].includes(disease.id)) {
-        score += 12;
-        matched.push('Batuk');
-      }
-
-      // Chronic cough → TB, COPD
-      if (searchText.includes('chronic') || searchText.includes('kronik') || searchText.includes('>2 week') || searchText.includes('>3 week')) {
-        if (['tuberkulosis-paru', 'copd-exacerbation'].includes(disease.id)) {
-          score += 20;
-          matched.push('Batuk kronik (>2-3 weeks) → suspect TB/COPD');
-        }
-      }
-
-      // Productive cough → Pneumonia, COPD, TB
-      if (searchText.includes('productive') || searchText.includes('sputum') || searchText.includes('dahak') || searchText.includes('berdahak')) {
-        if (['pneumonia-komunitas', 'copd-exacerbation', 'tuberkulosis-paru'].includes(disease.id)) {
-          score += 15;
-          matched.push('Batuk produktif/berdahak');
-        }
-
-        // Yellow/green sputum → Bacterial pneumonia
-        if (searchText.includes('yellow') || searchText.includes('green') || searchText.includes('kuning') || searchText.includes('hijau')) {
-          if (disease.id === 'pneumonia-komunitas') {
-            score += 20;
-            matched.push('Sputum kuning/hijau → suspect bacterial pneumonia');
-          }
-        }
-      }
-
-      // Hemoptysis → TB, PE
-      if (searchText.includes('hemoptysis') || searchText.includes('batuk darah') || searchText.includes('darah')) {
-        if (['tuberkulosis-paru', 'pulmonary-embolism'].includes(disease.id)) {
-          score += 25;
-          matched.push('Hemoptysis → suspect TB/PE');
-        }
-      }
-
-      // Dry cough → Viral, COVID, Asthma
-      if (searchText.includes('dry') || searchText.includes('kering')) {
-        if (['covid-19', 'ispa', 'asthma-exacerbation'].includes(disease.id)) {
-          score += 12;
-          matched.push('Batuk kering');
-        }
+    // Batuk Kronik → TB
+    if ((searchText.includes('batuk') || searchText.includes('cough')) && (searchText.includes('kronik') || searchText.includes('>2 minggu') || searchText.includes('lama'))) {
+      if (disease.id === 'tuberkulosis-paru') {
+        score += 25;
+        matched.push('Batuk kronik (>2 minggu) → suspect TB Paru');
       }
     }
 
@@ -555,645 +389,149 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // NEUROLOGICAL SYMPTOMS
     // ========================================
 
-    // STROKE-SPECIFIC (very specific!)
-    if (searchText.includes('hemiparesis') || searchText.includes('hemiplegia') || searchText.includes('kelemahan satu sisi')) {
+    // Stroke FAST
+    if (searchText.includes('hemiparesis') || searchText.includes('kelemahan satu sisi') || searchText.includes('bicara pelo') || searchText.includes('wajah miring')) {
       if (disease.id === 'stroke-iskemik') {
-        score += 35;
-        matched.push(' Hemiparesis → HIGHLY SUSPECT STROKE!');
-      }
-    }
-
-    if (searchText.includes('facial droop') || searchText.includes('wajah tidak simetris') || searchText.includes('senyum miring')) {
-      if (disease.id === 'stroke-iskemik') {
-        score += 35;
-        matched.push(' Facial droop → HIGHLY SUSPECT STROKE!');
-      }
-    }
-
-    if (searchText.includes('aphasia') || searchText.includes('bicara pelo') || searchText.includes('slurred speech')) {
-      if (disease.id === 'stroke-iskemik') {
-        score += 35;
-        matched.push(' Aphasia → HIGHLY SUSPECT STROKE!');
-      }
-    }
-
-    // FAST criteria
-    const fastCriteria = [
-      searchText.includes('facial droop') || searchText.includes('wajah tidak simetris'),
-      searchText.includes('arm weakness') || searchText.includes('kelemahan lengan') || searchText.includes('hemiparesis'),
-      searchText.includes('speech') || searchText.includes('bicara pelo'),
-      searchText.includes('sudden') || searchText.includes('mendadak')
-    ].filter(Boolean).length;
-
-    if (fastCriteria >= 2 && disease.id === 'stroke-iskemik') {
-      score += 50;
-      matched.push(` FAST criteria (${fastCriteria}/4) → STROKE EMERGENCY!`);
-    }
-
-    // EXCLUDE stroke if fever
-    if (hasFever && disease.id === 'stroke-iskemik') {
-      score -= 35;
-      matched.push(' Fever present → less likely stroke');
-    }
-
-    // General weakness
-    if (searchText.includes('weakness') || searchText.includes('lemah')) {
-      if (['stroke-iskemik', 'meningitis', 'sepsis', 'hypoglycemia'].includes(disease.id)) {
-        score += 12;
-        matched.push('Kelemahan');
-      }
-    }
-
-    // Headache + stiff neck → Meningitis
-    if ((searchText.includes('headache') || searchText.includes('sakit kepala')) &&
-        (searchText.includes('stiff neck') || searchText.includes('kaku kuduk'))) {
-      if (disease.id === 'meningitis') {
         score += 40;
-        matched.push(' Severe headache + stiff neck → HIGHLY SUSPECT MENINGITIS!');
+        matched.push(' FAST symptoms present → STROKE EMERGENCY!');
       }
     }
 
-    // Photophobia → Meningitis
-    if (searchText.includes('photophobia') || searchText.includes('silau') || searchText.includes('takut cahaya')) {
-      if (disease.id === 'meningitis') {
-        score += 20;
-        matched.push('Photophobia → suspect Meningitis');
-      }
-    }
-
-    // Dizziness - ONLY Vertigo/Hypertensive, NOT stroke
-    if (searchText.includes('dizzy') || searchText.includes('pusing') || searchText.includes('dizziness')) {
-      if (['vertigo', 'hypertensive-crisis'].includes(disease.id)) {
-        score += 15;
-        matched.push('Pusing/dizziness');
-      }
-      
-      if (disease.id === 'stroke-iskemik' && !searchText.includes('hemiparesis') && !searchText.includes('weakness')) {
-        score -= 25;
-        matched.push(' Isolated dizziness without weakness → less likely stroke');
-      }
-    }
-
-    // Vertigo (spinning) - BPPV specific analysis
-    if (searchText.includes('spinning') || searchText.includes('berputar') || searchText.includes('vertigo')) {
+    // Vertigo / Pusing Berputar
+    if (searchText.includes('berputar') || searchText.includes('spinning') || searchText.includes('vertigo')) {
       if (disease.id === 'vertigo') {
         score += 30;
-        matched.push('[HIGH] Vertigo/sensasi berputar -- suspect BPPV');
+        matched.push('[HIGH] Sensasi vertigo/berputar -- khas BPPV');
       }
     }
 
-    // BPPV-specific: Positional triggers
-    if (searchText.includes('posisi') || searchText.includes('position') || searchText.includes('miring') || 
-        searchText.includes('telentang') || searchText.includes('menoleh') || searchText.includes('menengadah') ||
-        searchText.includes('berbaring') || searchText.includes('lying') || searchText.includes('rolling')) {
-      if (disease.id === 'vertigo') {
+    // ========================================
+    // GASTROINTESTINAL & RENAL
+    // ========================================
+
+    // Diare / BAB Cair
+    if (searchText.includes('diarrhea') || searchText.includes('diare') || searchText.includes('mencret') || searchText.includes('bab cair')) {
+      if (['acute-gastroenteritis', 'typhoid-fever', 'sepsis'].includes(disease.id)) {
         score += 25;
-        matched.push('[HIGH] Vertigo posisional (dicetuskan perubahan posisi) -- khas BPPV');
+        matched.push('Diare / BAB cair');
       }
     }
 
-    // BPPV: Short duration episodes
-    if ((searchText.includes('singkat') || searchText.includes('brief') || searchText.includes('sebentar') || 
-         searchText.includes('detik') || searchText.includes('seconds') || searchText.includes('<1 min')) &&
-        (searchText.includes('pusing') || searchText.includes('vertigo') || searchText.includes('berputar'))) {
-      if (disease.id === 'vertigo') {
-        score += 20;
-        matched.push('[HIGH] Episode vertigo singkat (<1 menit) -- khas BPPV (PPK Neurologi 2023)');
-      }
-    }
-
-    // BPPV: Recurrent episodes
-    if ((searchText.includes('berulang') || searchText.includes('recurrent') || searchText.includes('kambuh') || searchText.includes('episodik')) &&
-        (searchText.includes('pusing') || searchText.includes('vertigo') || searchText.includes('berputar'))) {
-      if (disease.id === 'vertigo') {
+    // Mual/muntah
+    if (searchText.includes('nausea') || searchText.includes('mual') || searchText.includes('muntah')) {
+      if (['acute-gastroenteritis', 'upper-gi-bleeding', 'acute-pancreatitis', 'dka', 'dispepsia', 'dbd', 'intoksikasi-kimia'].includes(disease.id)) {
         score += 15;
-        matched.push('Episode vertigo berulang -- suspect BPPV');
+        matched.push('Gejala Mual / Muntah');
       }
     }
 
-    // BPPV vs Meniere differentiation: NO hearing loss/tinnitus
-    if ((searchText.includes('pusing') || searchText.includes('vertigo')) && 
-        !searchText.includes('tinnitus') && !searchText.includes('hearing') && !searchText.includes('pendengaran') && !searchText.includes('telinga berdenging')) {
-      if (disease.id === 'vertigo') {
-        score += 10;
-        matched.push('Vertigo tanpa gangguan pendengaran/tinnitus -- mendukung BPPV (bukan Meniere)');
-      }
-    }
-
-    // BPPV: Nausea with positional vertigo
-    if ((searchText.includes('mual') || searchText.includes('nausea') || searchText.includes('muntah')) &&
-        (searchText.includes('pusing') || searchText.includes('vertigo') || searchText.includes('berputar'))) {
-      if (disease.id === 'vertigo') {
-        score += 12;
-        matched.push('Mual/muntah menyertai vertigo -- umum pada BPPV');
-      }
-    }
-
-    // BPPV exclusion: Continuous vertigo suggests vestibular neuritis, not BPPV
-    if ((searchText.includes('terus menerus') || searchText.includes('continuous') || searchText.includes('konstan') || searchText.includes('constant')) &&
-        (searchText.includes('pusing') || searchText.includes('vertigo'))) {
-      if (disease.id === 'vertigo') {
-        score -= 20;
-        matched.push('[NOTE] Vertigo kontinu/terus-menerus -- kurang khas BPPV, pertimbangkan vestibular neuritis');
-      }
-    }
-
-    // BPPV exclusion: Vertigo with hearing loss suggests Meniere
-    if ((searchText.includes('pendengaran') || searchText.includes('hearing') || searchText.includes('tuli') || searchText.includes('deaf')) &&
-        (searchText.includes('pusing') || searchText.includes('vertigo'))) {
-      if (disease.id === 'vertigo') {
-        score -= 15;
-        matched.push('[NOTE] Vertigo + gangguan pendengaran -- pertimbangkan Penyakit Meniere');
-      }
-    }
-
-    // Seizure
-    if (searchText.includes('seizure') || searchText.includes('kejang') || searchText.includes('convulsion')) {
-      if (['seizures', 'meningitis', 'hypoglycemia', 'stroke-iskemik'].includes(disease.id)) {
-        score += 25;
-        matched.push('Kejang/seizure');
-      }
-
-      // Prolonged seizure → Status Epilepticus
-      if (searchText.includes('>5') || searchText.includes('prolonged') || searchText.includes('status')) {
-        if (disease.id === 'seizures') {
-          score += 25;
-          matched.push(' Prolonged seizure → STATUS EPILEPTICUS!');
-        }
-      }
-    }
-
-    // Altered mental status
-    if (searchText.includes('confusion') || searchText.includes('bingung') || searchText.includes('altered mental') || searchText.includes('kesadaran menurun')) {
-      if (['sepsis', 'meningitis', 'hypoglycemia', 'dka', 'stroke-iskemik'].includes(disease.id)) {
-        score += 18;
-        matched.push('Penurunan kesadaran');
-      }
-    }
-
-    // ========================================
-    // BLEEDING MANIFESTATIONS
-    // ========================================
-
-    // Epistaxis
-    if (searchText.includes('epistaxis') || searchText.includes('mimisan') || searchText.includes('nosebleed') || searchText.includes('hidung berdarah')) {
-      if (['dbd', 'hypertensive-crisis', 'upper-gi-bleeding', 'sepsis'].includes(disease.id)) {
-        score += 22;
-        matched.push('Epistaxis/mimisan');
-      }
-    }
-
-    // Gum bleeding
-    if (searchText.includes('gum bleeding') || searchText.includes('gusi berdarah') || searchText.includes('bleeding gums')) {
-      if (['dbd', 'sepsis', 'upper-gi-bleeding'].includes(disease.id)) {
-        score += 22;
-        matched.push('Gum bleeding');
-      }
-    }
-
-    // Petechiae
-    if (searchText.includes('petechiae') || searchText.includes('bintik merah') || searchText.includes('purpura')) {
-      if (['dbd', 'sepsis'].includes(disease.id)) {
-        score += 25;
-        matched.push('Petechiae → suspect DBD/Sepsis');
-      }
-    }
-
-    // MULTIPLE BLEEDING SITES → DBD
-    const bleedingSites = [
-      searchText.includes('mimisan') || searchText.includes('epistaxis'),
-      searchText.includes('gusi berdarah') || searchText.includes('gum bleeding'),
-      searchText.includes('petechiae') || searchText.includes('bintik merah'),
-      searchText.includes('hematemesis') || searchText.includes('muntah darah'),
-      searchText.includes('melena') || searchText.includes('tinja hitam')
-    ].filter(Boolean).length;
-
-    if (bleedingSites >= 2) {
-      if (disease.id === 'dbd') {
+    // AKI: Urine output reduction
+    if (searchText.includes('urine') || searchText.includes('bak sedikit') || searchText.includes('kencing sedikit') || searchText.includes('oliguria')) {
+      if (disease.id === 'acute-kidney-injury') {
         score += 40;
-        matched.push(` Multiple bleeding sites (${bleedingSites}) → HIGHLY SUSPICIOUS FOR DBD!`);
-      } else if (disease.id === 'sepsis') {
+        matched.push('[HIGH] Penurunan output urine (Oliguria) -- khas AKI (PERNEFRI 2023)');
+      }
+    }
+
+    // ========================================
+    // METABOLIC / DM
+    // ========================================
+    if (searchText.includes('haus terus') || searchText.includes('sering kencing') || searchText.includes('polyuria') || searchText.includes('polydipsia')) {
+      if (disease.id === 'diabetes-melitus' || disease.id === 'dka') {
+        score += 25;
+        matched.push('Symptom polidipsia/poliuria (Dicurigai Diabetes)');
+      }
+    }
+
+    if (searchText.includes('berat badan turun') || searchText.includes('weight loss')) {
+      if (['diabetes-melitus', 'tuberkulosis-paru'].includes(disease.id)) {
         score += 20;
-        matched.push('Multiple bleeding → possible DIC/sepsis');
-      }
-    }
-
-    // FEVER + BLEEDING → DBD/Sepsis, NOT cardiac
-    if (hasFever && bleedingSites >= 1) {
-      if (['dbd', 'sepsis'].includes(disease.id)) {
-        score += 35;
-        matched.push(' Fever + Bleeding → STRONGLY SUSPECT DBD/SEPSIS!');
-      }
-      
-      if (['acs', 'heart-failure', 'arrhythmias'].includes(disease.id)) {
-        score -= 50;
-        matched.push(' Fever + Bleeding → NOT cardiac!');
+        matched.push('Penurunan berat badan signifikan');
       }
     }
 
     // ========================================
-    // GI SYMPTOMS
+    // ALERGI / INSECT BITE
     // ========================================
-
-    // Diarrhea
-    if (searchText.includes('diarrhea') || searchText.includes('diare') || searchText.includes('mencret')) {
-      if (['acute-gastroenteritis', 'typhoid-fever', 'hiv-opportunistic', 'sepsis'].includes(disease.id)) {
-        score += 18;
-        matched.push('Diare');
-      }
-
-      // Bloody diarrhea
-      if (searchText.includes('bloody') || searchText.includes('berdarah')) {
-        if (['acute-gastroenteritis', 'typhoid-fever'].includes(disease.id)) {
-          score += 20;
-          matched.push('Diare berdarah');
-        }
-      }
-
-      // Chronic diarrhea → HIV
-      if (searchText.includes('chronic') || searchText.includes('kronik') || searchText.includes('>2 week')) {
-        if (disease.id === 'hiv-opportunistic') {
-          score += 25;
-          matched.push('Chronic diarrhea → suspect HIV');
-        }
-      }
-    }
-
-    // Vomiting
-    if (searchText.includes('vomiting') || searchText.includes('muntah') || searchText.includes('nausea') || searchText.includes('mual')) {
-      if (['acute-gastroenteritis', 'acute-appendicitis', 'acute-pancreatitis', 'meningitis', 'dka', 'upper-gi-bleeding'].includes(disease.id)) {
-        score += 12;
-        matched.push('Muntah/mual');
-      }
-    }
-
-    // Hematemesis
-    if (searchText.includes('hematemesis') || searchText.includes('muntah darah') || searchText.includes('coffee ground')) {
-      if (disease.id === 'upper-gi-bleeding') {
-        score += 35;
-        matched.push(' Hematemesis → UPPER GI BLEEDING!');
-      }
-    }
-
-    // Melena
-    if (searchText.includes('melena') || searchText.includes('black stool') || searchText.includes('tinja hitam')) {
-      if (disease.id === 'upper-gi-bleeding') {
-        score += 35;
-        matched.push(' Melena → UPPER GI BLEEDING!');
-      }
-    }
-
-    // Hematemesis + Melena
-    if ((searchText.includes('hematemesis') || searchText.includes('muntah darah')) &&
-        (searchText.includes('melena') || searchText.includes('tinja hitam'))) {
-      if (disease.id === 'upper-gi-bleeding') {
-        score += 50;
-        matched.push(' Hematemesis + Melena → EMERGENCY GI BLEEDING!');
-      }
-    }
-
-    // ========================================
-    // CARDIOVASCULAR SPECIFIC
-    // ========================================
-
-    // High Blood Pressure / Hypertension symptoms
-    if (searchText.includes('blood pressure') || searchText.includes('tekanan darah') || searchText.includes('darah tinggi') || searchText.includes('hipertensi')) {
-      if (['hypertension', 'hypertensive-crisis'].includes(disease.id)) {
-        score += 25;
-        matched.push('Riwayat hipertensi/darah tinggi');
-      }
-    }
-
-    // Headache (occipital) - characteristic of HTN
-    if ((searchText.includes('headache') || searchText.includes('sakit kepala')) && 
-        (searchText.includes('occipital') || searchText.includes('belakang kepala') || searchText.includes('tengkuk'))) {
-      if (['hypertension', 'hypertensive-crisis'].includes(disease.id)) {
-        score += 18;
-        matched.push('Headache occipital (khas HTN)');
-      }
-    }
-
-    // Morning headache - HTN characteristic
-    if ((searchText.includes('headache') || searchText.includes('sakit kepala')) && 
-        (searchText.includes('morning') || searchText.includes('pagi'))) {
-      if (disease.id === 'hypertension') {
-        score += 15;
-        matched.push('Morning headache (khas HTN)');
-      }
-    }
-
-    // Palpitations - differentiate SVT vs AFib vs other
-    if (searchText.includes('palpitation') || searchText.includes('berdebar') || searchText.includes('irregular')) {
-      // SVT: sudden onset, regular, rapid
-      if ((searchText.includes('sudden') || searchText.includes('mendadak')) && 
-          (searchText.includes('rapid') || searchText.includes('cepat') || searchText.includes('racing'))) {
-        if (disease.id === 'svt') {
-          score += 30;
-          matched.push(' Sudden onset rapid palpitations → SUSPECT SVT!');
-        }
-      }
-      
-      // Generic palpitations
-      if (['svt', 'arrhythmias', 'thyroid-storm', 'hypoglycemia'].includes(disease.id)) {
-        score += 18;
-        matched.push('Palpitasi');
-      }
-
-      // Irregular palpitations → AFib more likely than SVT
-      if (searchText.includes('irregular')) {
-        if (disease.id === 'arrhythmias') {
-          score += 15;
-          matched.push('Irregular palpitations → suspect AFib');
-        }
-        if (disease.id === 'svt') {
-          score -= 10;
-          matched.push(' Irregular rhythm → less likely SVT (SVT usually regular)');
-        }
-      }
-    }
-
-    // Syncope/presyncope with palpitations → SVT
-    if ((searchText.includes('syncope') || searchText.includes('pingsan') || searchText.includes('presyncope')) &&
-        (searchText.includes('palpitation') || searchText.includes('berdebar'))) {
-      if (disease.id === 'svt') {
-        score += 25;
-        matched.push('Syncope + palpitations → SVT with hemodynamic compromise');
-      }
-    }
-
-    // Chest discomfort with palpitations
-    if ((searchText.includes('chest') || searchText.includes('dada')) &&
-        (searchText.includes('palpitation') || searchText.includes('berdebar'))) {
-      if (['svt', 'acs'].includes(disease.id)) {
-        score += 15;
-        matched.push('Chest discomfort + palpitations');
-      }
-    }
-
-    // Edema/swelling
-    if (searchText.includes('edema') || searchText.includes('bengkak') || searchText.includes('swelling')) {
-      // Bilateral → HF
-      if (searchText.includes('bilateral') || searchText.includes('kedua kaki')) {
-        if (disease.id === 'heart-failure') {
-          score += 25;
-          matched.push('Bilateral leg edema → suspect Heart Failure');
-        }
-      }
-      
-      // Unilateral → DVT
-      if (searchText.includes('unilateral') || searchText.includes('satu kaki')) {
-        if (disease.id === 'dvt') {
-          score += 30;
-          matched.push(' Unilateral leg swelling → HIGHLY SUSPECT DVT!');
-        }
-      }
-
-      if (!searchText.includes('bilateral') && !searchText.includes('unilateral')) {
-        if (['heart-failure', 'dvt'].includes(disease.id)) {
-          score += 12;
-          matched.push('Edema');
-        }
-      }
-    }
-
-    // ========================================
-    // ENDOCRINE & METABOLIC
-    // ========================================
-
-    // Diabetes 3Ps
-    const diabetesPs = [
-      searchText.includes('polyuria') || searchText.includes('banyak kencing'),
-      searchText.includes('polydipsia') || searchText.includes('banyak minum') || searchText.includes('haus'),
-      searchText.includes('polyphagia') || searchText.includes('banyak makan')
-    ].filter(Boolean).length;
-
-    if (diabetesPs >= 2) {
-      if (['diabetes-melitus-tipe-2', 'dka'].includes(disease.id)) {
-        score += 35;
-        matched.push(` Classic 3P symptoms (${diabetesPs}/3) → HIGHLY SUSPECT DIABETES!`);
-      }
-    } else if (diabetesPs === 1) {
-      if (['diabetes-melitus-tipe-2', 'dka'].includes(disease.id)) {
-        score += 18;
-        matched.push('Diabetes symptom (polyuria/polydipsia/polyphagia)');
-      }
-    }
-
-    // Hyperglycemia
-    if (searchText.includes('hyperglycemia') || searchText.includes('gula darah tinggi') || searchText.includes('>200')) {
-      if (['diabetes-melitus-tipe-2', 'dka'].includes(disease.id)) {
-        score += 25;
-        matched.push('Hiperglikemia');
-      }
-    }
-
-    // DKA-specific
-    if (searchText.includes('kussmaul') || searchText.includes('fruity') || searchText.includes('acetone')) {
-      if (disease.id === 'dka') {
-        score += 35;
-        matched.push(' Kussmaul/fruity breath → DKA!');
-      }
-    }
-
-    // Hypoglycemia
-    if (searchText.includes('hypoglycemia') || searchText.includes('gula darah rendah') || searchText.includes('<70') ||
-        searchText.includes('tremor') || searchText.includes('cold sweat') || searchText.includes('keringat dingin')) {
-      if (disease.id === 'hypoglycemia') {
-        score += 28;
-        matched.push(' Hypoglycemia symptoms!');
-      }
-    }
-
-    // Thyroid storm
-    if ((searchText.includes('tachycardia') || searchText.includes('jantung cepat')) && hasFever &&
-        (searchText.includes('agitation') || searchText.includes('gelisah') || searchText.includes('tremor'))) {
-      if (disease.id === 'thyroid-storm') {
+    if (searchText.includes('gigitan') || searchText.includes('bite') || searchText.includes('sengatan') || searchText.includes('serangga')) {
+      if (disease.id === 'insect-bite-reaction') {
         score += 40;
-        matched.push(' Tachycardia + fever + agitation → THYROID STORM!');
+        matched.push('[HIGH] Riwayat gigitan atau sengatan serangga');
       }
     }
 
     // ========================================
-    // SHOCK & HYPOTENSION
+    // SCORE NORMALIZATION & FINAL QUESTIONS
     // ========================================
-
-    if (searchText.includes('hypotension') || searchText.includes('shock') || searchText.includes('tekanan darah rendah')) {
-      if (['sepsis', 'adrenal-crisis', 'upper-gi-bleeding', 'dbd'].includes(disease.id)) {
-        score += 22;
-        matched.push('Hypotension/shock');
+    // ========================================
+    // TOXICOLOGY / INTOXICATION ANALYSIS (IS 1.19 & 1.20)
+    // ========================================
+    if (searchText.includes('keracunan') || searchText.includes('intoksikasi') || searchText.includes('poison') || searchText.includes('minum zat')) {
+      if (disease.id === 'intoksikasi-kimia') {
+        score += 40;
+        matched.push('[HIGH] Riwayat paparan zat beracun');
       }
     }
 
-    // ========================================
-    // SKIN & ALLERGY
-    // ========================================
-
-    if (searchText.includes('rash') || searchText.includes('ruam') || searchText.includes('gatal') || searchText.includes('urtikaria')) {
-      if (['alergi-dermatitis', 'dbd'].includes(disease.id)) {
-        score += 18;
-        matched.push('Ruam/gatal');
-      }
-
-      // Urticaria → Allergy
-      if (searchText.includes('urtikaria') || searchText.includes('hives') || searchText.includes('bentol')) {
-        if (disease.id === 'alergi-dermatitis') {
-          score += 25;
-          matched.push('Urtikaria → suspect allergy');
-        }
-      }
-    }
-
-    // Anaphylaxis
-    if (searchText.includes('anaphylaxis') || 
-        ((searchText.includes('rash') || searchText.includes('ruam')) && 
-         (searchText.includes('dyspnea') || searchText.includes('sesak')) &&
-         (searchText.includes('hypotension') || searchText.includes('shock')))) {
-      if (disease.id === 'alergi-dermatitis') {
+    // Methanol / Oplosan
+    if ((searchText.includes('miras') || searchText.includes('oplosan') || searchText.includes('alkohol')) && 
+        (searchText.includes('mata kabur') || searchText.includes('pandangan gelap') || searchText.includes('snowfield'))) {
+      if (disease.id === 'intoksikasi-kimia') {
         score += 50;
-        matched.push(' ANAPHYLAXIS → EMERGENCY!');
+        matched.push('[SPECIFIC] Suspek Keracunan Metanol (Oplosan)');
       }
     }
 
-    // ========================================
-    // MUSCULOSKELETAL & TRAUMA
-    // ========================================
-
-    // Trauma
-    if (searchText.includes('trauma') || searchText.includes('injury') || searchText.includes('fall') || 
-        searchText.includes('jatuh') || searchText.includes('kecelakaan')) {
-      if (disease.id === 'fraktur') {
-        score += 28;
-        matched.push('Riwayat trauma');
-      }
-
-      // Exclude non-traumatic if clear trauma
-      if (!['fraktur'].includes(disease.id) && (searchText.includes('accident') || searchText.includes('kecelakaan'))) {
-        score -= 20;
-        matched.push(' Trauma history → less likely non-traumatic');
+    // Pufferfish / Ikan Buntal
+    if (searchText.includes('makan ikan') && (searchText.includes('kebas mulut') || searchText.includes('parestesia') || searchText.includes('lemah otot'))) {
+      if (disease.id === 'intoksikasi-kimia') {
+        score += 50;
+        matched.push('[SPECIFIC] Suspek Keracunan Ikan Buntal (Tetrodotoxin)');
       }
     }
 
-    // Deformity
-    if ((searchText.includes('deformity') || searchText.includes('bengkok')) &&
-        (searchText.includes('cannot move') || searchText.includes('tidak bisa gerak'))) {
-      if (disease.id === 'fraktur') {
-        score += 35;
-        matched.push(' Deformity + immobility → FRACTURE!');
+    // Paracetamol
+    if (searchText.includes('parasetamol') || searchText.includes('paracetamol') || searchText.includes('panadol')) {
+      if (disease.id === 'intoksikasi-kimia') {
+        score += 45;
+        matched.push('[SPECIFIC] Overdosis Parasetamol');
       }
     }
 
-    // ========================================
-    // TROPICAL DISEASES
-    // ========================================
-
-    // Travel to endemic area
-    if (searchText.includes('travel') || searchText.includes('perjalanan') || searchText.includes('papua') || searchText.includes('ntt')) {
-      if (['malaria', 'leptospirosis'].includes(disease.id)) {
-        score += 20;
-        matched.push('Travel to endemic area');
+    if (searchText.includes('minum') && (searchText.includes('pembersih') || searchText.includes('deterjen') || searchText.includes('asam') || searchText.includes('basa'))) {
+      if (disease.id === 'intoksikasi-kimia') {
+        score += 40;
+        matched.push('[HIGH] Riwayat ingesti zat korosif');
       }
     }
 
-    // Flood exposure → Leptospirosis
-    if (searchText.includes('flood') || searchText.includes('banjir') || searchText.includes('water exposure')) {
-      if (disease.id === 'leptospirosis') {
-        score += 30;
-        matched.push(' Flood exposure → SUSPECT LEPTOSPIROSIS!');
-      }
-    }
-
-    // Jaundice
-    if (searchText.includes('jaundice') || searchText.includes('icterus') || searchText.includes('kuning') || searchText.includes('mata kuning')) {
-      if (['leptospirosis', 'typhoid-fever', 'upper-gi-bleeding'].includes(disease.id)) {
-        score += 20;
-        matched.push('Jaundice');
-      }
-    }
-
-    // Weight loss
-    if (searchText.includes('weight loss') || searchText.includes('berat badan turun') || searchText.includes('kurus')) {
-      if (['tuberkulosis-paru', 'hiv-opportunistic', 'diabetes-melitus-tipe-2', 'typhoid-fever'].includes(disease.id)) {
-        score += 18;
-        matched.push('Weight loss');
-      }
-    }
-
-    // COVID: Anosmia
-    if (searchText.includes('anosmia') || searchText.includes('loss of smell') || searchText.includes('hilang penciuman')) {
-      if (disease.id === 'covid-19') {
-        score += 35;
-        matched.push(' Anosmia → HIGHLY SPECIFIC FOR COVID-19!');
-      }
-    }
-
-    // ========================================
-    // ADDITIONAL TARGETED QUESTIONS
-    // ========================================
-    if (score > 30) {
-      if (disease.id === 'acs') {
-        questions.push('Apakah ada riwayat diabetes, hipertensi, atau merokok?');
-        questions.push('Apakah pasien berkeringat dingin saat nyeri?');
-        questions.push('Apakah ada riwayat penyakit jantung keluarga?');
+    if (score >= 40) {
+      if (disease.isEmergency) score += 10;
+      
+      if (disease.id === 'intoksikasi-kimia') {
+        questions.push('Kapan tepatnya waktu paparan/kejadian?');
+        questions.push('Apakah ada kelainan penglihatan atau mulut terasa terbakar?');
+        questions.push('Apakah pasien sempat muntah atau dipaksa muntah?');
+        questions.push('Ada riwayat masalah kejiwaan atau keinginan menyakiti diri?');
+      } else if (disease.id === 'acute-kidney-injury') {
+        questions.push('Apakah ada riwayat perdarahan hebat atau diare sebelum urine berkurang?');
+        questions.push('Apakah pasien menggunakan obat anti-nyeri (NSAID) dalam jangka panjang?');
+      } else if (disease.id === 'diabetes-melitus') {
+        questions.push('Apakah ada luka di kaki yang sulit sembuh?');
+        questions.push('Berapa hasil pemeriksaan gula darah sewaktunya?');
+      } else if (disease.id === 'hipertensi-dewasa') {
+        questions.push('Apakah ada pandangan kabur atau nyeri dada saat ini?');
+        questions.push('Berapa tekanan darah tertinggi yang pernah tercatat?');
+      } else if (disease.id === 'dispepsia') {
+        questions.push('Apakah nyeri berkurang atau justru memberat setelah makan?');
+      } else if (disease.id === 'acute-gastroenteritis') {
+        questions.push('Berapa kali BAB dalam 24 jam terakhir? Apakah ada lendir atau darah?');
+      } else if (disease.id === 'acs') {
+        questions.push('Apakah nyeri terasa seperti tertindih beban berat?');
       } else if (disease.id === 'stroke-iskemik') {
-        questions.push('Apakah ada kelemahan satu sisi tubuh?');
-        questions.push('Apakah bicara pelo atau wajah tidak simetris?');
-        questions.push('Apakah ada riwayat hipertensi atau AF?');
-      } else if (disease.id === 'pulmonary-embolism') {
-        questions.push('Apakah ada riwayat perjalanan jauh atau immobilisasi?');
-        questions.push('Apakah ada bengkak di kaki?');
-        questions.push('Apakah ada riwayat DVT atau operasi?');
-      } else if (disease.id === 'acute-appendicitis') {
-        questions.push('Apakah nyeri dimulai dari pusar lalu pindah ke kanan bawah?');
-        questions.push('Apakah ada demam atau mual/muntah?');
-        questions.push('Apakah nyeri bertambah saat berjalan atau batuk?');
-      } else if (disease.id === 'tuberkulosis-paru') {
-        questions.push('Apakah batuk sudah lebih dari 2 minggu?');
-        questions.push('Apakah ada keringat malam atau berat badan turun?');
-        questions.push('Apakah ada kontak dengan penderita TB?');
-      } else if (disease.id === 'pneumonia-komunitas') {
-        questions.push('Apakah ada batuk berdahak kuning/hijau?');
-        questions.push('Apakah ada sesak napas atau nyeri dada saat bernapas?');
-        questions.push('Apakah pasien memiliki komorbid (DM, jantung, paru)?');
-      } else if (disease.id === 'dbd') {
-        questions.push('Apakah demam sudah 2-7 hari?');
-        questions.push('Apakah ada perdarahan (gusi, hidung, bintik merah)?');
-        questions.push('Apakah ada hasil lab trombosit rendah?');
-      } else if (disease.id === 'diabetes-melitus-tipe-2') {
-        questions.push('Apakah ada riwayat keluarga diabetes?');
-        questions.push('Apakah ada obesitas atau kurang aktivitas fisik?');
-        questions.push('Apakah sudah cek gula darah atau HbA1c?');
-      } else if (disease.id === 'asthma-exacerbation') {
-        questions.push('Apakah ada riwayat asma sebelumnya?');
-        questions.push('Apakah ada faktor pencetus (alergen, asap, cuaca)?');
-        questions.push('Apakah menggunakan inhaler? Seberapa sering?');
-      } else if (disease.id === 'sepsis') {
-        questions.push('Apakah ada tanda infeksi (luka, pneumonia, ISK)?');
-        questions.push('Apakah tekanan darah rendah atau denyut jantung cepat?');
-        questions.push('Apakah ada gangguan organ (sesak, oliguria, confusion)?');
-      } else if (disease.id === 'meningitis') {
-        questions.push('Apakah ada kaku kuduk (leher kaku)?');
-        questions.push('Apakah ada riwayat kontak dengan penderita meningitis?');
-        questions.push('Apakah sudah dilakukan lumbar puncture?');
-      } else if (disease.id === 'heart-failure') {
-        questions.push('Apakah sesak lebih berat saat berbaring (orthopnea)?');
-        questions.push('Apakah ada bengkak di kedua kaki?');
-        questions.push('Apakah ada riwayat penyakit jantung sebelumnya?');
-      } else if (disease.id === 'hypertension') {
-        questions.push('Berapa tekanan darah terakhir yang diukur?');
-        questions.push('Apakah ada riwayat keluarga hipertensi atau penyakit jantung?');
-        questions.push('Apakah ada riwayat DM, kolesterol tinggi, atau merokok?');
-        questions.push('Apakah sudah pernah minum obat darah tinggi sebelumnya?');
-      } else if (disease.id === 'svt') {
-        questions.push('Apakah jantung berdebar dimulai TIBA-TIBA (seperti on/off switch)?');
-        questions.push('Apakah pernah mengalami episode serupa sebelumnya?');
-        questions.push('Apakah ada chest pain, pusing, atau hampir pingsan?');
-        questions.push('Apakah episode berhenti dengan cara tertentu (Valsalva, batuk, dll)?');
-      } else if (disease.id === 'vertigo') {
-        questions.push('Apakah pusing diprovokasi perubahan posisi kepala (miring, menoleh, menengadah)?');
-        questions.push('Berapa lama durasi setiap episode pusing? (detik, menit, jam?)');
-        questions.push('Apakah ada gangguan pendengaran atau telinga berdenging (tinnitus)?');
-        questions.push('Apakah ada kelemahan anggota gerak, bicara pelo, atau pandangan ganda?');
-        questions.push('Apakah ada riwayat trauma kepala atau BPPV sebelumnya?');
+        questions.push('Kapan tepatnya waktu terakhir pasien terlihat normal?');
+      } else if (disease.id === 'insect-bite-reaction') {
+        questions.push('Apakah ada sesak napas atau bengkak pada bibir/suara serak?');
       }
     }
 
@@ -1202,7 +540,7 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       suggestions.push({
         diseaseId: disease.id,
         diseaseName: disease.name,
-        probability: Math.min(score, 95),
+        probability: Math.min(score, 98),
         matchedCriteria: matched,
         additionalQuestions: questions,
       });

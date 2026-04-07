@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { AnamnesisData, calculateCompletion, generateSuggestions } from '../lib/anamnesisEngine';
+import { dynamicPathways } from '../lib/dynamicPathways';
 
 const initialData: AnamnesisData = {
   onset: {
@@ -818,7 +819,9 @@ export default function GuidedAnamnesisPage() {
                       )}
 
                       <Link
-                        to={`/pathway/${suggestion.diseaseId}`}
+                        to={dynamicPathways[suggestion.diseaseId] 
+                          ? `/pathway-dynamic/${suggestion.diseaseId}` 
+                          : `/pathway-checklist/${suggestion.diseaseId}`}
                         className="block mt-2.5 text-center py-2 bg-purple-600 text-white rounded-lg text-xs font-bold hover:bg-purple-700 transition-colors"
                       >
                         View Clinical Pathway →

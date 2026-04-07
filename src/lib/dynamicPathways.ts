@@ -14,6 +14,7 @@ import { diabetesMelitusPathway } from './pathways/diabetes-melitus';
 import { diareDewasaPathway } from './pathways/diare-dewasa';
 import { dispepsiaPathway } from './pathways/dispepsia';
 import { insectBitePathway } from './pathways/reaksi-gigitan-serangga';
+import { intoksikasiKimiaPathway } from './pathways/intoksikasi-kimia';
 
 export interface PathwayChecklistItem {
  id: string;
@@ -96,6 +97,7 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
  // NYERI KEPALA TIPE TEGANG (TTH) - PPK Neurologi PERDOSSI 2023 + ICHD-3
  // Imported from separate file, severity-based branching (Infrequent/Frequent/Chronic)
 'tension-type-headache': tthPathway,
+  'intoksikasi-kimia': intoksikasiKimiaPathway,
 
  // ANGINA PEKTORIS STABIL (APS) - PNPK Kemenkes HK.01.07/MENKES/1419/2023 + ESC 2019
  // ISCHEMIA Trial 2020, COMPASS 2018. 16 nodes, PTP-guided, FFR-integrated

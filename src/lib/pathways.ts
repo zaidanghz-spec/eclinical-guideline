@@ -24,8 +24,8 @@ export interface ClinicalPathway {
 
 export const pathways: Record<string, ClinicalPathway> = {
   // ACUTE CORONARY SYNDROME (STEMI)
-  'acs': {
-    diseaseId: 'acs',
+  'sindrom-koroner-akut': {
+    diseaseId: 'sindrom-koroner-akut',
     steps: [
       {
         type: 'assessment',
@@ -119,8 +119,8 @@ export const pathways: Record<string, ClinicalPathway> = {
   },
 
   // STROKE ISKEMIK
-  'stroke': {
-    diseaseId: 'stroke',
+  'stroke-iskemik': {
+    diseaseId: 'stroke-iskemik',
     steps: [
       {
         type: 'assessment',
@@ -221,113 +221,9 @@ export const pathways: Record<string, ClinicalPathway> = {
     ],
   },
 
-  // DENGUE HEMORRHAGIC FEVER
-  'dengue': {
-    diseaseId: 'dengue',
-    steps: [
-      {
-        type: 'assessment',
-        title: 'Diagnosis & Klasifikasi DHF',
-        description: 'Kumpulkan kriteria DHF (WHO):',
-        criteria: [
-          'Demam tinggi mendadak 2-7 hari',
-          'Manifestasi perdarahan (petechiae, gusi berdarah, dll)',
-          'Trombositopenia <100,000/μL',
-          'Hemokonsentrasi: Ht naik ≥20% baseline',
-        ],
-        details: 'DHF = demam + 2 dari (hemorrhagic manifestation, thrombocytopenia, plasma leakage)',
-      },
-      {
-        type: 'assessment',
-        title: 'Lab Awal',
-        description: 'CBC lengkap + NS1/IgM/IgG dengue:',
-        criteria: [
-          'Hb, Hematokrit, Trombosit, Leukosit',
-          'Dengue NS1 antigen atau IgM/IgG',
-          'Ureum/Kreatinin, SGOT/SGPT, Albumin',
-        ],
-        details: 'Hematokrit (Ht) adalah marker plasma leakage. Ht naik ≥20% = significant leakage',
-      },
-      {
-        type: 'decision',
-        title: 'Ada WARNING SIGNS?',
-        description: 'Nyeri perut hebat, muntah persisten, perdarahan mukosa, letargi, Ht naik cepat?',
-        details: 'Warning signs = tanda fase kritis (plasma leakage). Butuh rawat inap + monitoring ketat',
-        branches: {
-          yes: 'DHF dengan warning signs → RAWAT INAP, monitor ketat!',
-          no: 'Dengue fever tanpa warning → Rawat jalan jika compliance baik',
-        },
-      },
-      {
-        type: 'decision',
-        title: 'SHOCK (Severe Dengue)?',
-        description: 'Nadi lemah, pulse pressure <20 mmHg, hipotensi, akral dingin?',
-        details: 'Dengue Shock Syndrome (DSS) = severe dengue. Butuh resusitasi cairan agresif + ICU',
-        criteria: [
-          'Tekanan darah turun / pulse pressure <20',
-          'Nadi lemah, akral dingin, CRT >2 detik',
-          'Penurunan kesadaran',
-        ],
-        branches: {
-          yes: 'DENGUE SHOCK → Resusitasi cairan AGRESIF! ICU!',
-          no: 'Belum shock, tapi monitor ketat (bisa deteriorate cepat di fase kritis)',
-        },
-      },
-      {
-        type: 'action',
-        title: 'Resusitasi Cairan DSS',
-        description: 'Fase kritis (hari 3-7): plasma leakage maksimal',
-        medications: [
-          { name: 'RL/NaCl 0.9%', dose: '20 ml/kg bolus', route: 'IV', duration: '15-30 menit' },
-        ],
-        details: 'Reassess post bolus. Jika masih shock → ulangi 10-20 ml/kg. Jika persisten → colloid',
-        redFlags: [
-          'Shock persisten setelah 2-3 bolus → consider colloid (Dextran/Gelatin)',
-          'Ht turun drastis tanpa perbaikan → curiga perdarahan internal',
-          'Overhidrasi → pulmonary edema (monitor respiratory distress)',
-        ],
-      },
-      {
-        type: 'action',
-        title: 'Maintenance Fluid (Warning Signs)',
-        description: 'Jika tidak shock tetapi ada warning signs:',
-        medications: [
-          { name: 'Ringer Laktat', dose: '5-7 ml/kg/jam', route: 'IV infus', duration: 'Titrasi based on response' },
-        ],
-        criteria: [
-          'Monitor: Urine output >0.5 ml/kg/jam',
-          'Monitor: Ht tiap 4-6 jam',
-          'Reduce rate jika Ht turun, urine adequate, vital stable',
-        ],
-      },
-      {
-        type: 'decision',
-        title: 'Indikasi Transfusi Trombosit?',
-        description: 'Trombosit <50,000 DAN perdarahan aktif signifikan?',
-        details: 'Transfusi trombosit TIDAK rutin. Hanya jika perdarahan aktif + plt <50,000',
-        branches: {
-          yes: 'Transfusi trombosit 1 unit',
-          no: 'Observasi. Trombosit naik spontan di fase recovery',
-        },
-      },
-      {
-        type: 'info',
-        title: 'Fase Recovery & Discharge',
-        description: 'Fase recovery (hari 6-10): plasma reabsorpsi',
-        criteria: [
-          'Tidak demam >48 jam tanpa antipiretik',
-          'Kondisi klinis membaik',
-          'Ht stabil, Trombosit >50,000 trending up',
-          'Tidak ada respiratory distress',
-        ],
-        details: 'Diuresis (urine output naik) menandakan fase recovery. KURANGI IV fluid untuk hindari overhidrasi',
-      },
-    ],
-  },
-
   // PNEUMONIA
-  'pneumonia': {
-    diseaseId: 'pneumonia',
+  'pneumonia-komunitas': {
+    diseaseId: 'pneumonia-komunitas',
     steps: [
       {
         type: 'assessment',
@@ -402,111 +298,6 @@ export const pathways: Record<string, ClinicalPathway> = {
           'Antipiretik (paracetamol)',
           'Jika tidak improve → re-assess, foto ulang, culture',
           'Discharge: afebrile >24h, stable vitals, toleransi oral',
-        ],
-      },
-    ],
-  },
-
-  // TUBERCULOSIS
-  'tuberculosis': {
-    diseaseId: 'tuberculosis',
-    steps: [
-      {
-        type: 'assessment',
-        title: 'Screening TB',
-        description: 'Gejala cardinal TB:',
-        criteria: [
-          'Batuk produktif >2 minggu',
-          'Demam (sering subfebril sore hari)',
-          'Keringat malam',
-          'Penurunan berat badan',
-          'Riwayat kontak TB',
-        ],
-      },
-      {
-        type: 'action',
-        title: 'Diagnostik TB',
-        description: 'Confirm TB:',
-        criteria: [
-          'Foto thorax: infiltrat upper lobe, cavitation',
-          'Sputum BTA mikroskopis (3x: S-P-S)',
-          'GeneXpert MTB/RIF (gold standard, hasil 2 jam)',
-          'Kultur sputum (jika available)',
-        ],
-        details: 'GeneXpert detect MTB & rifampicin resistance',
-      },
-      {
-        type: 'decision',
-        title: 'BTA+ atau GeneXpert MTB detected?',
-        description: 'Hasil BTA positif atau GeneXpert positif?',
-        branches: {
-          yes: 'TB confirmed → Mulai OAT',
-          no: 'Jika suspek kuat + foto sugestif → TB probable, OAT trial',
-        },
-      },
-      {
-        type: 'assessment',
-        title: 'Check Resistensi',
-        description: 'GeneXpert detect rifampicin resistance:',
-        redFlags: [
-          'Rif Resistance Detected → Suspek MDR-TB → RUJUK program MDR-TB',
-          'Riwayat OAT sebelumnya (relaps/default/gagal) → risiko resistensi',
-        ],
-      },
-      {
-        type: 'action',
-        title: 'OAT Kategori 1 (TB Sensitif)',
-        description: 'Program Nasional TB Indonesia:',
-        medications: [
-          { 
-            name: 'Fase Intensif (2 bulan)', 
-            dose: 'RHZE daily (Rifampicin, Isoniazid, Pyrazinamide, Ethambutol)',
-            duration: '2 bulan (8 minggu)'
-          },
-          { 
-            name: 'Fase Lanjutan (4 bulan)', 
-            dose: 'RH daily (Rifampicin, Isoniazid)',
-            duration: '4 bulan'
-          },
-        ],
-        details: 'Total 6 bulan. Dosis FDC based on BB. HARUS diminum SETIAP HARI',
-        redFlags: [
-          'Hepatotoksisitas: Monitor SGOT/SGPT. Jika >3x ULN atau ikterik → stop OAT',
-          'Ethambutol neuritis optik: Gangguan penglihatan warna → stop Ethambutol',
-          'Rifampicin causes orange urine (benign, counsel patient)',
-        ],
-      },
-      {
-        type: 'action',
-        title: 'DOTS & Monitoring',
-        description: 'Directly Observed Therapy Short-course:',
-        criteria: [
-          'PMO (Pengawas Minum Obat) observe patient minum obat',
-          'Follow-up sputum BTA: Bulan 2, 5, 6',
-          'Monitor BB tiap kunjungan',
-          'Foto thorax bulan 2 dan 6',
-        ],
-        details: 'DOTS = kunci sukses program TB Indonesia',
-      },
-      {
-        type: 'decision',
-        title: 'BTA negatif akhir bulan 2?',
-        description: 'Sputum BTA negatif setelah fase intensif?',
-        branches: {
-          yes: 'Good response! Lanjut fase lanjutan 4 bulan',
-          no: 'BTA+ → extend fase intensif 1 bulan. Jika tetap+ → suspect failure/MDR',
-        },
-      },
-      {
-        type: 'info',
-        title: 'Infection Control',
-        description: 'TB airborne disease:',
-        criteria: [
-          'Pasien BTA+: isolasi ventilasi baik, masker bedah',
-          'Petugas: N95 mask',
-          'Setelah 2 minggu OAT: infectivity turun drastis',
-          'Contact tracing: screening kontak serumah',
-          'Profilaksis INH untuk anak <5 tahun kontak TB',
         ],
       },
     ],

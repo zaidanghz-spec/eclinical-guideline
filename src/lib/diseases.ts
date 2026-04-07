@@ -31,13 +31,13 @@ export const diseases: Disease[] = [
     keywords: ['sesak napas', 'edema', 'orthopnea', 'dyspnea', 'fatigue']
   },
   {
-    id: 'hipertensi',
+    id: 'hipertensi-dewasa',
     name: 'Hipertensi Dewasa (PNPK 2021)',
     nameEn: 'Hypertension',
     organSystem: 'kardiovaskular',
     isEmergency: false,
-    prevalenceIndonesia: '34% orang dewasa Indonesia (Riskesdas 2018)',
-    keywords: ['blood pressure', 'tekanan darah tinggi', 'headache', 'sakit kepala', 'dizziness', 'pusing', 'high blood pressure', 'darah tinggi', 'krisis hipertensi', 'emergency']
+    prevalenceIndonesia: '34.1% penduduk dewasa (Riskesdas 2018)',
+    keywords: ['blood pressure', 'tekanan darah tinggi', 'headache', 'sakit kepala', 'dizziness', 'pusing', 'high blood pressure', 'darah tinggi', 'krisis hipertensi', 'emergency', 'tengkuk kaku', 'leher kaku']
   },
   {
     id: 'svt',
@@ -119,7 +119,7 @@ export const diseases: Disease[] = [
   {
     id: 'covid-19',
     name: 'COVID-19',
-    nameEn: 'COVID-19',
+    nameEn: 'COVD-19',
     organSystem: 'respirasi',
     isEmergency: false,
     prevalenceIndonesia: 'Endemic di Indonesia sejak 2020',
@@ -202,8 +202,8 @@ export const diseases: Disease[] = [
     nameEn: 'Dyspepsia & H. Pylori',
     organSystem: 'gastrointestinal',
     isEmergency: false,
-    prevalenceIndonesia: 'Sangat tinggi di rawat jalan (~30% keluhan perut)',
-    keywords: ['maag', 'nyeri ulu hati', 'dispepsia', 'dyspepsia', 'gerd', 'asam lambung', 'h. pylori', 'perut perih']
+    prevalenceIndonesia: 'Keluhan tersering #1 di poli penyakit dalam',
+    keywords: ['maag', 'nyeri ulu hati', 'dispepsia', 'dyspepsia', 'gerd', 'asam lambung', 'h. pylori', 'perut perih', 'kembung', 'perut sebah', 'mual', 'cepat kenyang', 'rasa penuh']
   },
   {
     id: 'acute-gastroenteritis',
@@ -306,13 +306,13 @@ export const diseases: Disease[] = [
 
   // ENDOKRIN & METABOLIK (5 penyakit)
   {
-    id: 'diabetes-melitus-tipe-2',
+    id: 'diabetes-melitus',
     name: 'Diabetes Melitus Tipe 2',
     nameEn: 'Diabetes Mellitus Type 2',
     organSystem: 'endokrin',
     isEmergency: false,
-    prevalenceIndonesia: 'Prevalensi 10.7% populasi dewasa Indonesia (Riskesdas 2018) - 19.5 juta penderita',
-    keywords: ['diabetes', 'dm', 'gula darah tinggi', 'polyuria', 'polydipsia', 'polyphagia', 'hba1c', 'kencing manis', 'metabolic syndrome']
+    prevalenceIndonesia: 'Prevalensi 10.7% populasi dewasa Indonesia (Riskesdas 2018)',
+    keywords: ['diabetes', 'dm', 'gula darah tinggi', 'polyuria', 'polydipsia', 'polyphagia', 'hba1c', 'kencing manis', 'metabolic syndrome', 'sering kencing', 'sering haus', 'haus terus', 'lapar terus', 'berat badan turun', 'luka sulit sembuh']
   },
   {
     id: 'dka',
@@ -358,7 +358,7 @@ export const diseases: Disease[] = [
   // ALERGI & DERMATOLOGI
   {
     id: 'alergi-dermatitis',
-    name: 'Alergi & Dermatitis',
+    name: 'Alery & Dermatitis',
     nameEn: 'Allergy & Dermatitis',
     organSystem: 'kulit-alergi',
     isEmergency: false,
@@ -366,14 +366,14 @@ export const diseases: Disease[] = [
     keywords: ['alergi', 'gatal', 'ruam', 'urtikaria', 'eksim', 'dermatitis', 'atopic', 'eczema', 'contact dermatitis', 'seborrheic', 'anaphylaxis', 'allergy']
   },
   {
-    id: 'reaksi-gigitan-serangga',
+    id: 'insect-bite-reaction',
     name: 'Reaksi Gigitan Serangga / Arthropoda',
     nameEn: 'Insect Bite / Sting Reaction',
     organSystem: 'kulit-alergi',
     isEmergency: true,
     timeToIntervention: 'Segera (<20 menit) pantau syok anafilaktif',
     prevalenceIndonesia: 'Tinggi insidensinya untuk gigitan tawon (Vespa affinis), ubur-ubur, dan serangga lain',
-    keywords: ['gigitan serangga', 'insect bite', 'sengatan lebah', 'bengkak', 'anafilaksis', 'tawon', 'ubur-ubur', 'kelabang', 'T63.4']
+    keywords: ['gigitan serangga', 'insect bite', 'sengatan lebah', 'bengkak', 'anafilaksis', 'tawon', 'ubur-ubur', 'kelabang', 'T63.4', 'ant', 'semut', 'nyamuk', 'serangga', 'bentol']
   },
 
   // MUSKULOSKELETAL & TRAUMA
@@ -406,6 +406,16 @@ export const diseases: Disease[] = [
     keywords: ['rheumatoid', 'RA', 'arthritis', 'joint pain', 'swelling', 'morning stiffness', 'synovitis', 'RF', 'anti-CCP', 'MTX', 'methotrexate', 'DMARD', 'biologics', 'autoimmune', 'rematik', 'sendi bengkak']
   },
   {
+    id: 'intoksikasi-kimia',
+    name: 'Intoksikasi & Keracunan Akut (IS 1.19 & 1.20)',
+    nameEn: 'Acute Poisoning & Chemical Injury',
+    organSystem: 'emergency-toxicology',
+    isEmergency: true,
+    timeToIntervention: 'Segera (<15 menit resusitasi & dekontaminasi)',
+    prevalenceIndonesia: 'Penyebab 5-10% admisi IGD di RS rujukan (terutama Oplosan, Pestisida, Parasetamol)',
+    keywords: ['keracunan', 'intoksikasi', 'poisoning', 'oplosan', 'metanol', 'methanol', 'parasetamol', 'paracetamol', 'panadol', 'pufferfish', 'ikan buntal', 'baygon', 'pestisida', 'organofosfat', 'zat korosif', 'asam', 'basa', 'minyak tanah', 'bensin', 'chemical injury', 'suicide', 'bunuh diri']
+  },
+  {
     id: 'acute-kidney-injury',
     name: 'Gangguan Ginjal Akut (GGA)',
     nameEn: 'Acute Kidney Injury (AKI)',
@@ -413,7 +423,7 @@ export const diseases: Disease[] = [
     isEmergency: true,
     timeToIntervention: 'Segera',
     prevalenceIndonesia: 'Insidensi meningkat pada pasien ICU dan pasca pembedahan',
-    keywords: ['aki', 'gga', 'gagal ginjal akut', 'kreatinin', 'oliguria', 'cuci darah', 'dialisis', 'kidney injury']
+    keywords: ['aki', 'gga', 'gagal ginjal akut', 'kreatinin', 'oliguria', 'cuci darah', 'dialisis', 'kidney injury', 'urine sedikit']
   }
 ];
 
@@ -481,6 +491,14 @@ export const organSystems = [
     icon: '',
     color: 'orange',
     count: diseases.filter(d => d.organSystem === 'muskuloskeletal').length
+  },
+  {
+    id: 'emergency-toxicology',
+    name: 'Gawat Darurat & Toksikologi',
+    nameEn: 'Emergency & Toxicology',
+    icon: '',
+    color: 'red',
+    count: diseases.filter(d => d.organSystem === 'emergency-toxicology').length
   },
 ];
 
