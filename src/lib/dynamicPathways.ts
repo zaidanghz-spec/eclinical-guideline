@@ -16,6 +16,7 @@ import { dispepsiaPathway } from './pathways/dispepsia';
 import { insectBitePathway } from './pathways/reaksi-gigitan-serangga';
 import { intoksikasiKimiaPathway } from './pathways/intoksikasi-kimia';
 import { fibrilasiAtriumPathway } from './pathways/fibrilasi-atrium';
+import { otitisEksternaPathway } from './pathways/otitis-eksterna';
 
 export interface PathwayChecklistItem {
  id: string;
@@ -94,6 +95,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 
  // FIBRILASI ATRIUM NON-VALVULAR - PERKI 2019 / InaHRS
  'arrhythmias': fibrilasiAtriumPathway,
+
+ // OTITIS EKSTERNA - KMK 1186/2022 + PERHATI-KL + AAO-HNSF 2014
+ 'otitis-eksterna': otitisEksternaPathway,
 
  // BENIGN PAROXYSMAL POSITIONAL VERTIGO (BPPV) - PPK Neurologi PERDOSSI 2023
  // Imported from separate file (14 nodes, 9 checklist + 5 decision)

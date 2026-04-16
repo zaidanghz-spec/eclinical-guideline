@@ -375,6 +375,15 @@ export const diseases: Disease[] = [
     prevalenceIndonesia: 'Tinggi insidensinya untuk gigitan tawon (Vespa affinis), ubur-ubur, dan serangga lain',
     keywords: ['gigitan serangga', 'insect bite', 'sengatan lebah', 'bengkak', 'anafilaksis', 'tawon', 'ubur-ubur', 'kelabang', 'T63.4', 'ant', 'semut', 'nyamuk', 'serangga', 'bentol']
   },
+  {
+    id: 'otitis-eksterna',
+    name: 'Otitis Eksterna (KMK 1186/2022)',
+    nameEn: 'Otitis Externa',
+    organSystem: 'kulit-alergi',
+    isEmergency: false,
+    prevalenceIndonesia: 'Kasus THT tersering di fasilitas primer. Insiden 1% populasi per tahun. OE Maligna: komplikasi fatal pada DM/imunokompromais',
+    keywords: ['otitis eksterna', 'telinga gatal', 'telinga nyeri', 'ear pain', 'otalgia', 'swimmers ear', 'furunkel telinga', 'liang telinga', 'mae', 'discharge telinga', 'otomikosis', 'oe maligna', 'otitis externa']
+  },
 
   // MUSKULOSKELETAL & TRAUMA
   {
