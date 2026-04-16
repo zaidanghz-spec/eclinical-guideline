@@ -384,6 +384,15 @@ export const diseases: Disease[] = [
     prevalenceIndonesia: 'Kasus THT tersering di fasilitas primer. Insiden 1% populasi per tahun. OE Maligna: komplikasi fatal pada DM/imunokompromais',
     keywords: ['otitis eksterna', 'telinga gatal', 'telinga nyeri', 'ear pain', 'otalgia', 'swimmers ear', 'furunkel telinga', 'liang telinga', 'mae', 'discharge telinga', 'otomikosis', 'oe maligna', 'otitis externa']
   },
+  {
+    id: 'konjungtivitis',
+    name: 'Konjungtivitis Akut (KMK 1186/2022)',
+    nameEn: 'Conjunctivitis',
+    organSystem: 'kulit-alergi',
+    isEmergency: false,
+    prevalenceIndonesia: 'Kasus mata tersering di FKTP Indonesia. Chemical injury = darurat kebutaan. Adenovirus (EKC) bisa wabah di sekolah/kantor',
+    keywords: ['mata merah', 'red eye', 'konjungtivitis', 'conjunctivitis', 'gatal mata', 'mata berair', 'mata belekan', 'discharge mata', 'mata gatal', 'mata meradang', 'mata sakit', 'iritasi mata', 'chemical eye', 'paparan kimia mata']
+  },
 
   // MUSKULOSKELETAL & TRAUMA
   {

@@ -17,6 +17,7 @@ import { insectBitePathway } from './pathways/reaksi-gigitan-serangga';
 import { intoksikasiKimiaPathway } from './pathways/intoksikasi-kimia';
 import { fibrilasiAtriumPathway } from './pathways/fibrilasi-atrium';
 import { otitisEksternaPathway } from './pathways/otitis-eksterna';
+import { konjungtivitisPathway } from './pathways/konjungtivitis';
 
 export interface PathwayChecklistItem {
  id: string;
@@ -98,6 +99,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 
  // OTITIS EKSTERNA - KMK 1186/2022 + PERHATI-KL + AAO-HNSF 2014
  'otitis-eksterna': otitisEksternaPathway,
+
+ // KONJUNGTIVITIS AKUT - KMK 1186/2022 + AAO PPP 2023
+ 'konjungtivitis': konjungtivitisPathway,
 
  // BENIGN PAROXYSMAL POSITIONAL VERTIGO (BPPV) - PPK Neurologi PERDOSSI 2023
  // Imported from separate file (14 nodes, 9 checklist + 5 decision)
