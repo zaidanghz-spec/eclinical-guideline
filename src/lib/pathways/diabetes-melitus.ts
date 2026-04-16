@@ -1,7 +1,7 @@
 import { DynamicPathway } from '../dynamicPathways';
 
 export const diabetesMelitusPathway: DynamicPathway = {
-  diseaseId: 'diabetes-melitus-tipe-2',
+  diseaseId: 'diabetes-melitus',
   diseaseName: 'Diabetes Melitus Tipe 2 Dewasa (PNPK 2020)',
   startNodeId: 'dm-initial-evaluation',
   nodes: {

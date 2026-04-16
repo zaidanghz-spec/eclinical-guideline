@@ -76,7 +76,7 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
  'acute-kidney-injury': acuteKidneyInjuryPathway,
 
  // DIABETES MELITUS TIPE 2 - PNPK 2020 & PERKENI 2021
- 'diabetes-melitus-tipe-2': diabetesMelitusPathway,
+ 'diabetes-melitus': diabetesMelitusPathway,
 
  // DISPEPSIA & H. PYLORI - PGI 2021
  'dispepsia': dispepsiaPathway,
