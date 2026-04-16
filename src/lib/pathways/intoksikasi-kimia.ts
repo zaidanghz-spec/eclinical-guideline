@@ -513,7 +513,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
         {
           id: 'para-fungsi-hati-serial',
           title: 'Monitor Fungsi Hati Serial — ALT/AST Tiap 12–24 Jam',
-          description: 'Baseline SGPT/SGOT saat masuk. Ulangi 24 jam, 48 jam, 72 jam. ALT/SGPT >1000 IU/L: hepatotoksisitas signifikan → pertimbangkan transplantasi hati. Tanda gagal hati berat: INR >6.5, kreatinin >300 µmol/L (Kriteria King's College → transplantasi!). Konsul Gastro-Hepatologi segera.',
+          description: 'Baseline SGPT/SGOT saat masuk. Ulangi 24 jam, 48 jam, 72 jam. ALT/SGPT >1000 IU/L: hepatotoksisitas signifikan → pertimbangkan transplantasi hati. Tanda gagal hati berat: INR >6.5, kreatinin >300 µmol/L (Kriteria Kings College → transplantasi!). Konsul Gastro-Hepatologi segera.',
           required: true,
           category: 'assessment'
         },
