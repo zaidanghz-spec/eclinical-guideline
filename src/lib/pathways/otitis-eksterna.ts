@@ -33,37 +33,37 @@ export const otitisEksternaPathway: DynamicPathway = {
       description: 'Otitis Eksterna (OE) = peradangan liang telinga luar (MAE). Diagnosis KLINIS — tidak butuh CT atau kultur untuk kasus biasa. Gunakan otoskop klinik biasa + lampu senter. WAJIB singkirkan OE Maligna pada pasien DM/imunokompromais.',
       items: [
         {
+          id: 'oe-anamnesis-cepat',
+          title: 'Anamnesis — Keluhan Utama & Riwayat',
+          description: '(1) Seit kapan nyeri/gatal telinga? Onset akut <3 minggu? (2) Riwayat berenang/menyelam/diving? (Swimmers ear = OE difusa tersering). (3) Sering mengorek kuping dengan cotton bud atau benda tajam? (mikrotrauma → pintu masuk bakteri). (4) Ada riwayat DM, HIV, steroid kronik, atau imunokompromais? (RED FLAG OE Maligna!). (5) Pernah OE sebelumnya? Pengobatan apa? Respons terapi sebelumnya?',
+          required: true,
+          category: 'assessment'
+        },
+        {
           id: 'oe-vital-signs',
           title: 'Vital Signs — TTV Lengkap',
-          description: 'Tensi, Suhu, SpO₂ (oxymeter). PENTING pada suspek OE Maligna: demam >38°C, TD, dan nadi. Suhu menjadi penanda sistemik — OE simpleks biasanya AFEBRIS. Jika demam tinggi + pasien DM → RED FLAG OE Maligna!',
+          description: 'Tensi, Suhu (termometer), SpO₂ (oxymeter). OE simpleks biasanya AFEBRIS. Demam >38°C + pasien DM/lansia/imunokompromais → RED FLAG OE Maligna! Catat baseline sebelum terapi.',
           required: true,
           category: 'assessment'
         },
         {
           id: 'oe-tragus-test',
-          title: 'TRAGUS TEST + AURICLE PULL TEST — Diagnosis Klinis Utama!',
-          description: 'Tekan tragus (tonjolon tulang rawan depan lubang telinga) → NYERI = OE positif. Tarik daun telinga ke atas-belakang → NYERI = OE positif. Kedua manuver ini membedakan OE dari Otitis Media Akut (OMA) — OMA: tanpa nyeri tarik aurikula. Positif salah satu → sangat sugestif OE.',
+          title: 'TRAGUS TEST + AURICLE PULL TEST — Pemeriksaan Fisik Kunci!',
+          description: 'Tekan tragus (tonjolon tulang rawan depan lubang telinga) → NYERI = OE positif. Tarik daun telinga ke atas-belakang → NYERI = OE positif. Ini membedakan OE dari Otitis Media Akut (OMA) — pada OMA tidak ada nyeri tarik aurikula. Salah satu positif → sangat sugestif OE.',
           required: true,
           category: 'assessment'
         },
         {
           id: 'oe-inspeksi-mae',
-          title: 'Inspeksi Liang Telinga (MAE) dengan Lampu/Senter',
-          description: 'Gunakan otoskop klinik atau lampu senter + spekulum telinga (jika ada). Nilai: (1) MAE edema/menyempit? (2) Discharge — serous/purulen/berbau? (3) Warna MAE: kemerahan difus (OE difusa) vs tonjolan/furunkel (OE sirkumskripta). (4) MAE tertutup total? → bersihkan dulu dengan suction.',
-          required: true,
-          category: 'assessment'
-        },
-        {
-          id: 'oe-anamnesis-cepat',
-          title: 'Anamnesis Cepat — 5 Pertanyaan Kunci',
-          description: '(1) Berapa lama nyeri telinga? (<3 minggu = akut). (2) Riwayat berenang/menyelam? (swimmers ear = OE difusa tersering). (3) Sering mengorek kuping dengan cotton bud/benda tajam? (trauma mikrotrauma → OE). (4) Ada riwayat DM atau imunokompromais? (RED FLAG OE Maligna!). (5) Pernah OE sebelumnya? Pengobatan apa?',
+          title: 'Inspeksi MAE dengan Lampu/Senter',
+          description: 'Gunakan otoskop klinik atau lampu senter + spekulum telinga. Nilai: (1) MAE edema/menyempit? (2) Discharge — serous/purulen/berbau busuk? (3) Warna: kemerahan difus (OE difusa) vs tonjolan/furunkel (OE sirkumskripta) vs putih seperti kapas (otomikosis). (4) MAE tertutup total oleh edema? → bersihkan dulu dengan SUCTION sebelum tetes apapun.',
           required: true,
           category: 'assessment'
         },
         {
           id: 'oe-red-flag-maligna',
           title: 'RED FLAG — Screen OE Maligna (WAJIB pada DM/Lansia/Imunokompromais!)',
-          description: 'OE Maligna = OE Necrotizing = DARURAT! Cari pada pasien DM, HIV, steroid kronik, keganasan, transplantasi: (1) Nyeri telinga SANGAT BERAT tidak proporsional, (2) Discharge purulen berbau busuk, (3) Jaringan granulasi di dasar MAE (persimpangan tulang-tulang rawan), (4) Demam, tidak membaik dengan terapi topikal, (5) Parese N. Fasialis (VII) atau saraf kranial lain. → RUJUK CITO ke SpTHT + CT Temporal!',
+          description: 'OE Maligna = OE Necrotizing = DARURAT THT! Cari pada pasien DM, HIV, steroid kronik, keganasan, transplantasi organ: (1) Nyeri telinga SANGAT BERAT tidak proporsional, (2) Discharge purulen berbau busuk, (3) Jaringan granulasi di dasar MAE (persimpangan tulang-tulang rawan), (4) Demam tinggi, tidak membaik dengan topikal setelah 48–72 jam, (5) Kelemahan otot wajah/Parese N. Fasialis (VII) → RUJUK CITO ke SpTHT + CT Temporal!',
           required: true,
           category: 'safety'
         }
