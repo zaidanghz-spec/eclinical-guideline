@@ -257,5 +257,9 @@ export const diabetesMelitusPathway: DynamicPathway = {
         }
       ]
     }
-  }
+  },
+  references: [
+    'PNPK Tata Laksana Diabetes Melitus Tipe 2 Dewasa (KMK RI No. HK.01.07/MENKES/603/2020)',
+    'Pedoman Pengelolaan dan Pencegahan Diabetes Melitus Tipe 2 Dewasa di Indonesia - PERKENI 2021'
+  ]
 };

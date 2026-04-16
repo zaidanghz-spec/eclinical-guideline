@@ -473,6 +473,28 @@ export default function DynamicPathwayPage() {
             </button>
           </motion.div>
         )}
+
+        {/* Clinical References Section */}
+        {pathway?.references && pathway.references.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="mt-12 p-6 bg-slate-100/50 rounded-2xl border border-slate-200"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <FileText className="w-5 h-5 text-slate-500" />
+              <h4 className="font-bold text-slate-800">Referensi Klinis:</h4>
+            </div>
+            <ul className="space-y-2">
+              {pathway.references.map((ref, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 italic">
+                  <span>[{idx + 1}]</span>
+                  <span>{ref}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
       </div>
 
       {/* Variation Modal */}

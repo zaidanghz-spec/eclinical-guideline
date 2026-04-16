@@ -59,6 +59,7 @@ export interface DynamicPathway {
  diseaseName: string;
  startNodeId: string;
  nodes: Record<string, PathwayNode>;
+ references?: string[];
 }
 
 export const dynamicPathways: Record<string, DynamicPathway> = {
