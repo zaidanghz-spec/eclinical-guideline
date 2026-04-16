@@ -70,7 +70,7 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 'dbd': dbdPathway,
 
  // HIPERTENSI DEWASA - PNPK Kemenkes 2021
- 'hipertensi': hipertensiPathway,
+ 'hipertensi-dewasa': hipertensiPathway,
 
  // ACUTE KIDNEY INJURY (AKI) - KDIGO Guidelines
  'acute-kidney-injury': acuteKidneyInjuryPathway,
