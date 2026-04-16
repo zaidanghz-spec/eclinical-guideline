@@ -18,7 +18,7 @@ import { intoksikasiKimiaPathway } from './pathways/intoksikasi-kimia';
 import { fibrilasiAtriumPathway } from './pathways/fibrilasi-atrium';
 import { otitisEksternaPathway } from './pathways/otitis-eksterna';
 import { konjungtivitisPathway } from './pathways/konjungtivitis';
-
+import { sprainStrainPathway } from './pathways/sprain-strain';
 export interface PathwayChecklistItem {
  id: string;
  title: string;
@@ -102,6 +102,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
 
  // KONJUNGTIVITIS AKUT - KMK 1186/2022 + AAO PPP 2023
  'konjungtivitis': konjungtivitisPathway,
+
+ // SPRAIN DAN STRAIN
+ 'sprain-strain': sprainStrainPathway,
 
  // BENIGN PAROXYSMAL POSITIONAL VERTIGO (BPPV) - PPK Neurologi PERDOSSI 2023
  // Imported from separate file (14 nodes, 9 checklist + 5 decision)

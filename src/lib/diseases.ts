@@ -406,6 +406,15 @@ export const diseases: Disease[] = [
     keywords: ['fraktur', 'patah tulang', 'trauma', 'fracture', 'open fracture', 'closed fracture', 'gustilo', 'compartment syndrome', 'bone', 'ortopedi']
   },
   {
+    id: 'sprain-strain',
+    name: 'Sprain dan Strain (Keseleo/Terkilir)',
+    nameEn: 'Sprain and Strain (Soft Tissue Injury)',
+    organSystem: 'muskuloskeletal',
+    isEmergency: false,
+    prevalenceIndonesia: 'Kasus cedera tersering di FKTP / IGD (Olahraga, aktivitas harian, KLL ringan)',
+    keywords: ['keseleo', 'terkilir', 'sprain', 'strain', 'otot robek', 'ligamen robek', 'ankle sprain', 'bengkak sendi', 'cedera', 'trauma', 'PRICE', 'POLICE', 'ottawa', 'nyeri sendi']
+  },
+  {
     id: 'polymyalgia-rheumatica',
     name: 'Polymyalgia Rheumatica (PMR)',
     nameEn: 'Polymyalgia Rheumatica',
