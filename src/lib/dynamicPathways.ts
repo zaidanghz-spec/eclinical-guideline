@@ -15,6 +15,7 @@ import { diareDewasaPathway } from './pathways/diare-dewasa';
 import { dispepsiaPathway } from './pathways/dispepsia';
 import { insectBitePathway } from './pathways/reaksi-gigitan-serangga';
 import { intoksikasiKimiaPathway } from './pathways/intoksikasi-kimia';
+import { fibrilasiAtriumPathway } from './pathways/fibrilasi-atrium';
 
 export interface PathwayChecklistItem {
  id: string;
@@ -90,6 +91,9 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
  // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
  // Imported from separate file for better organization (14 nodes, 92 items)
 'svt': svtPathway,
+
+ // FIBRILASI ATRIUM NON-VALVULAR - PERKI 2019 / InaHRS
+ 'arrhythmias': fibrilasiAtriumPathway,
 
  // BENIGN PAROXYSMAL POSITIONAL VERTIGO (BPPV) - PPK Neurologi PERDOSSI 2023
  // Imported from separate file (14 nodes, 9 checklist + 5 decision)
