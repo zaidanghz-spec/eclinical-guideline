@@ -15,10 +15,10 @@ import {
   X,
   FileText,
   Sparkles,
-  Target,
   TrendingUp,
   Pill,
-  Save
+  Save,
+  Calendar
 } from 'lucide-react';
 import { diseases } from '../lib/diseases';
 import { dynamicPathways, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
@@ -42,8 +42,9 @@ export default function DynamicPathwayPage() {
   const [pendingBranchId, setPendingBranchId] = useState<string | null>(null);
   const [showVariationModal, setShowVariationModal] = useState(false);
   const [variationReason, setVariationReason] = useState('');
-  const [pathwayHistory, setPathwayHistory] = useState<Array<{ nodeId: string; nodeName: string }>>([]);
+  const [pathwayHistory, setPathwayHistory] = useState<Array<{ nodeId: string; nodeName: string; completedAt?: string }>>([]);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionStartedAt, setSessionStartedAt] = useState<string | null>(null);
   const [savingDraft, setSavingDraft] = useState(false);
 
   // Patient code modal state
@@ -72,6 +73,9 @@ export default function DynamicPathwayPage() {
       if (currentSession.pathway_history) setPathwayHistory(currentSession.pathway_history);
       if (currentSession.decisions) setDecisions(currentSession.decisions);
       if (currentSession.variations) setVariations(currentSession.variations);
+      // Track the original session start date for multi-day detection
+      const startedAt = currentSession.startedAt || currentSession.started_at || currentSession.startedAt;
+      if (startedAt) setSessionStartedAt(startedAt);
     }
   }, [currentSession]);
 
@@ -87,9 +91,11 @@ export default function DynamicPathwayPage() {
     setPatientCodeError('');
     
     if (disease && pathway && user) {
+      const now = new Date().toISOString();
       const session = await createSession(diseaseId || '', disease.name, patientCode.trim());
       if (session) {
         setSessionId(session.id);
+        setSessionStartedAt(session.startedAt || now);
         setShowPatientCodeModal(false);
         toast.success('Session started', { description: `Patient: ${patientCode.trim()}` });
       }
@@ -102,6 +108,16 @@ export default function DynamicPathwayPage() {
       nodeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [currentNodeId]);
+
+  // Compute which day of the pathway we are currently on
+  const currentDay = useMemo(() => {
+    if (!sessionStartedAt) return 1;
+    const start = new Date(sessionStartedAt);
+    const today = new Date();
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return Math.round((todayDay.getTime() - startDay.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  }, [sessionStartedAt]);
 
   // Check if current checklist node is complete
   const isCurrentNodeComplete = useMemo(() => {
@@ -342,6 +358,24 @@ export default function DynamicPathwayPage() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        {/* Multi-day Banner — only shown when session spans multiple days */}
+        {currentDay > 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg shadow-blue-200">
+              <Calendar className="w-5 h-5 flex-shrink-0" />
+              <div>
+                <div className="font-bold text-lg">Pathway — Hari ke-{currentDay}</div>
+                <div className="text-blue-100 text-xs">
+                  Dimulai: {sessionStartedAt ? new Date(sessionStartedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : ''} · Hari ini: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Current Node */}
         <div ref={nodeRef}>
