@@ -178,24 +178,33 @@ export default function DynamicPathwayPage() {
   const isCurrentNodeComplete = useMemo(() => {
     if (!currentNode || currentNode.type !== 'checklist') return true;
     const node = currentNode as ChecklistNode;
-    const requiredItems = node.items.filter(item => item.required);
-    return requiredItems.every(item => {
+    // In nurse-only mode, we ignore items that require a doctor for progression
+    const itemsToVerify = node.items.filter(item => {
+      if (!item.required) return false;
+      if (effectiveMode === 'nurse-only' && (item as any).role === 'doctor') return false;
+      return true;
+    });
+    
+    if (itemsToVerify.length === 0) return true;
+
+    return itemsToVerify.every(item => {
       const isChecked = checkedSteps[item.id];
       const hasNote = stepNotes[item.id] && stepNotes[item.id].trim().length > 0;
       return isChecked || hasNote;
     });
-  }, [currentNode, checkedSteps, stepNotes]);
+  }, [currentNode, checkedSteps, stepNotes, effectiveMode]);
 
   // Get incomplete steps for current node
   const incompleteSteps = useMemo(() => {
     if (!currentNode || currentNode.type !== 'checklist') return [];
     const node = currentNode as ChecklistNode;
     return node.items.filter(item => {
+      if (effectiveMode === 'nurse-only' && (item as any).role === 'doctor') return false;
       const isChecked = checkedSteps[item.id];
       const hasNote = stepNotes[item.id] && stepNotes[item.id].trim().length > 0;
       return !(isChecked || hasNote);
     });
-  }, [currentNode, checkedSteps, stepNotes]);
+  }, [currentNode, checkedSteps, stepNotes, effectiveMode]);
 
   const handleToggle = (stepId: string) => {
     setCheckedSteps(prev => ({
@@ -509,8 +518,16 @@ export default function DynamicPathwayPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        {/* Multi-day Banner */}
+        {!disease || !pathway ? (
+          <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-slate-100">
+            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-slate-900">Pathway Data Not Found</h2>
+            <p className="text-slate-600 mb-6">The pathway you are looking for might have been moved or removed.</p>
+            <button onClick={() => navigate('/home')} className="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors">Back to Home</button>
+          </div>
+        ) : (
+          <>
+            {/* Multi-day Banner */}
         {currentDay > 1 && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
             <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg shadow-blue-200">
@@ -1026,7 +1043,8 @@ function ChecklistNodeComponent({
   onToggle, 
   onNotesChange,
   onToggleNotes,
-  isComplete
+  isComplete,
+  effectiveMode
 }: { 
   node: ChecklistNode; 
   checkedSteps: Record<string, boolean>;
