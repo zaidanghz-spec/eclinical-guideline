@@ -392,12 +392,9 @@ export const diseases: Disease[] = [
       {
     id: 'myalgia',
     name: 'Myalgia / Nyeri Otot Non-Spesifik',
-    englishName: 'Myalgia / Non-Specific Muscle Pain',
-    description: 'Diagnosis dan tatalaksana nyeri otot, singkirkan red-flags.',
-    conditionType: 'Otot & Sendi',
-    urgencyLevel: 'URGENT',
-    urgencyLabel: 'Eksklusi komplikasi (1-3 hari)',
-    steps: 12,
+    nameEn: 'Myalgia / Non-Specific Muscle Pain',
+    organSystem: 'muskuloskeletal',
+    isEmergency: false,
     prevalenceIndonesia: 'Termasuk dalam 10 penyakit terbanyak di Puskesmas dan Poli Umum klinik primer.',
     keywords: ['myalgia', 'nyeri otot', 'kaku otot', 'pegal', 'otot tegang', 'rhabdomyolysis', 'sams', 'statin', 'm79.1', 'pegal linu', 'kram']
   },
