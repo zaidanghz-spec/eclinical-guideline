@@ -108,15 +108,23 @@ export default function DynamicPathwayPage() {
     if (!currentNode || currentNode.type !== 'checklist') return true;
     const node = currentNode as ChecklistNode;
     const requiredItems = node.items.filter(item => item.required);
-    return requiredItems.every(item => checkedSteps[item.id]);
-  }, [currentNode, checkedSteps]);
+    return requiredItems.every(item => {
+      const isChecked = checkedSteps[item.id];
+      const hasNote = stepNotes[item.id] && stepNotes[item.id].trim().length > 0;
+      return isChecked || hasNote;
+    });
+  }, [currentNode, checkedSteps, stepNotes]);
 
   // Get incomplete steps for current node
   const incompleteSteps = useMemo(() => {
     if (!currentNode || currentNode.type !== 'checklist') return [];
     const node = currentNode as ChecklistNode;
-    return node.items.filter(item => !checkedSteps[item.id]);
-  }, [currentNode, checkedSteps]);
+    return node.items.filter(item => {
+      const isChecked = checkedSteps[item.id];
+      const hasNote = stepNotes[item.id] && stepNotes[item.id].trim().length > 0;
+      return !(isChecked || hasNote);
+    });
+  }, [currentNode, checkedSteps, stepNotes]);
 
   const handleToggle = (stepId: string) => {
     setCheckedSteps(prev => ({
