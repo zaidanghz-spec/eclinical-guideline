@@ -389,7 +389,6 @@ export const diseases: Disease[] = [
 
   // MUSKULOSKELETAL & TRAUMA
   {
-      {
     id: 'myalgia',
     name: 'Myalgia / Nyeri Otot Non-Spesifik',
     nameEn: 'Myalgia / Non-Specific Muscle Pain',
