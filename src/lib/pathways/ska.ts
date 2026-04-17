@@ -37,6 +37,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Panggil nama, tepuk bahu. Raba nadi karotis.\n✅ SADAR + ADA NADI → Lanjut assessment cepat.\n🚨 TIDAK SADAR / TIDAK ADA NADI → MULAI CPR SEGERA + panggil bantuan + RUJUK CITO! (→ Protokol Aritmia/Cardiac Arrest)',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'ska-anamnesis-nyeri',
@@ -44,6 +45,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Onset: Kapan mulai? Mendadak saat istirahat atau saat aktivitas?\nQuality: Seperti ditekan batu berat, diremas, rasa terbakar?\nRadiation: Menjalar ke lengan kiri, leher, rahang, atau punggung?\nSeverity: Skala nyeri 1–10?\nTime: Sudah berapa lama? > 20 menit tanpa henti → curiga STEMI!\nGejala penyerta: Keringat dingin, mual, muntah, sesak, palpitasi, sinkop.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ska-anamnesis-risiko',
@@ -51,6 +53,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Tanyakan: Hipertensi? DM? Kolesterol? Merokok? Riwayat PJK/STEMI sebelumnya? Pernah PCI atau CABG? Obat yang diminum saat ini (antikoagulan, statin, beta-bloker)? Riwayat alergi aspirin?',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ska-ttv-cepat',
@@ -58,6 +61,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Tekanan darah: sistolik < 90 = SYOK KARDIOGENIK!\nNadi: takikardia > 100 atau bradikardia < 60?\nSpO₂: < 90% → pasang O₂ segera. < 95% → pertimbangkan O₂.\nRR: Cepat dan dangkal? Curiga edema paru.\nSUHU: Demam → curiga perikarditis atau miokarditis.',
           required: true,
           category: 'assessment'
+          role: 'both',
         },
         {
           id: 'ska-pemfis',
@@ -65,6 +69,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Auskultasi jantung: S3 gallop (gagal jantung akut?), murmur baru (regurgitasi mitral akut / VSD?).\nAuskultasi paru: ronki di basal bilateral (edema paru akut).\nVena jugularis: JVP meningkat (gagal jantung kanan)?\nEkstremitas: akral dingin, sianosis (curiga syok kardiogenik).',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ska-ekg-stat',
@@ -72,6 +77,7 @@ export const skaPathway: DynamicPathway = {
           description: 'EKG adalah SATU-SATUNYA alat diagnostik definitif SKA di klinik tanpa lab troponin (Rujuk RS).\nREKAM SEKARANG — sambil anamnesis dan pemeriksaan fisik berlangsung.\n\nPerhatikan:\n• ST Elevasi ≥ 1 mm di ≥ 2 lead bersebelahan → STEMI\n• LBBB baru atau didapat baru → Setara STEMI (Sgarbossa criteria)\n• ST Depresi / T Inversi → NSTEMI/UAP\n• EKG Normal bukan menyingkirkan SKA — 6% STEMI EKG awal normal!\nJika awal normal tapi nyeri tipikal → ULANG EKG tiap 15–30 menit!',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ska-o2',
@@ -79,6 +85,7 @@ export const skaPathway: DynamicPathway = {
           description: 'SpO₂ < 90% → O₂ 4–8 L/menit via masker atau nasal kanul. Target SpO₂ ≥ 90–94%.\nJANGAN berikan O₂ rutin jika SpO₂ ≥ 94% — oksigen berlebih pada normoksia dapat memperluas area infark (ESC 2023 rekomendasi IIa).',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'ska-akses-iv',
@@ -86,6 +93,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Pasang IV line 18G atau lebih besar di lengan antecubital. Mulai infus NaCl 0.9% atau RL pelan (KVO). Pasang elektroda EKG untuk monitoring kontinu selama pasien masih di klinik. Siapkan defibrillator/AED jika tersedia.',
           required: true,
           category: 'action'
+          role: 'both',
         }
       ],
       nextNodeId: 'ska-ekg-decision'
@@ -143,6 +151,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Aspirin (asam asetilsalisilat) DIKUNYAH (bukan ditelan utuh) 160–320 mg. Onset lebih cepat jika dikunyah. KONTRAINDIKASI: Riwayat alergi aspirin yang terbukti (urtikaria/anafilaksis), perdarahan GI aktif. Jangan tunda menunggu konfirmasi — manfaat jauh melebihi risiko pada STEMI tipikal.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'stemi-nitrat',
@@ -150,6 +159,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Isosorbid Dinitrat (ISDN) 5 mg sublingual ATAU Nitrogliserin spray 0.4 mg sublingual.\nTujuan: Vasodilatasi → kurangi preload → kurangi nyeri iskemik.\nKONTRAINDIKASI ABSOLUT: TD sistolik < 90 mmHg, bradikardia < 50, penggunaan PDE-5 inhibitor (sildenafil/tadalafil) dalam 24–48 jam, infark ventrikel kanan (ST elevasi di V4R).',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'stemi-morfin',
@@ -157,6 +167,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Morfin 2–4 mg IV perlahan jika nyeri tidak berkurang dengan nitrogliserin. Dapat diulang tiap 5–15 menit.\nCATATAN ESC 2023: Data observasional menunjukkan morfin dapat menghambat absorpsi oral antiplatelet (P2Y12 inhibitor) → berikan hanya jika nyeri sangat berat dan tidak terkontrol. Monitor pernapasan (siapkan nalokson jika ada).',
           required: false,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'stemi-identifikasi-lokasi',
@@ -164,6 +175,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Lead EKG yang terkena → lokasi infark:\n• II, III, aVF → Inferior (RCA) — Waspadai infark ventrikel kanan!\n• I, aVL, V5–V6 → Lateral (LCX)\n• V1–V4 → Anterior/Anteroseptal (LAD) — Terluas, risiko gagal jantung terbesar\n• V1–V2 ST depresi + T positif tinggi → Posterior (cek V7–V9)\nInferior STEMI: Selfie lead kanan (V3R, V4R) untuk deteksi RV infark.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'stemi-time-onset',
@@ -171,6 +183,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Catat: (1) Waktu onset nyeri (kapan pertama mulai), (2) Waktu EKG direkam, (3) Waktu aspirin diberikan, (4) Waktu rujukan diberangkatkan.\nInformasi ini KRITIS untuk tim RS menentukan strategi reperfusi:\n• Onset < 12 jam: Reperfusi masih sangat bermanfaat\n• Onset > 12 jam: PCI masih boleh jika ada nyeri persisten atau hemodinamik tidak stabil',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'stemi-rujuk-pci',
@@ -178,6 +191,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Hubungi RS tujuan SEBELUM pasien berangkat — minta mereka siapkan Cath Lab.\nJika RS PCI dapat dicapai < 120 menit → TUJUAN LANGSUNG RS PCI (Primary PCI).\nJika RS PCI > 120 menit → TUJU RS TERDEKAT untuk FIBRINOLISIS, lalu transfer ke PCI center.\nAMBULAN wajib ada: IV tetap jalan, O₂ tetap, monitor EKG, EKG fisik dibawa dokter pendamping.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'stemi-surat-rujukan',
@@ -185,6 +199,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Isi surat rujukan:\n• Identitas pasien, BB, TB\n• Waktu onset nyeri, waktu EKG\n• Interpretasi EKG (lokasi, derajat ST elevasi)\n• Obat yang sudah diberikan + waktu pemberian\n• Vital signs serial\n• Riwayat: HT, DM, alergi aspirin/kontras\n• STATUS NPO (puasa) untuk persiapan Cath Lab\nKIRIM FOTO EKG via WhatsApp ke dokter IGD RS tujuan sebelum pasien tiba!',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'stemi-syok-kardiogenik',
@@ -192,6 +207,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Syok kardiogenik pada STEMI = mortalitas 50–80% tanpa intervensi dini.\nTindakan di klinik:\n• Posisi pasien flat (BUKAN Trendelenburg — meningkatkan preload jantung yang gagal)\n• Cairan SANGAT HATI-HATI: jika syok bukan akibat hypovolemia → cairan bisa memperburuk edema paru\n• Norepinefrin sebagai vasopressor jika tersedia (dopamin sudah tidak direkomendasikan ESC 2023)\n• RUJUK CITO — syok kardiogenik butuh PCI + IABP/Impella segera.',
           required: false,
           category: 'safety'
+          role: 'nurse',
         }
       ]
     },
@@ -211,6 +227,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Sama seperti STEMI — aspirin dikunyah segera. Kontraindikasi: riwayat alergi aspirin terbukti atau perdarahan GI aktif.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'nest-nitrat',
@@ -218,6 +235,7 @@ export const skaPathway: DynamicPathway = {
           description: 'ISDN 5 mg sublingual atau Nitrogliserin spray 0.4 mg sublingual untuk kontrol nyeri.\nKontraindikasi sama dengan STEMI: TD < 90, bradikardia, PDE-5 inhibitor, infark RV.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'nest-serial-ekg',
@@ -225,6 +243,7 @@ export const skaPathway: DynamicPathway = {
           description: 'NSTEMI dapat berkembang menjadi STEMI dalam hitungan menit (progressive occlusion). Rekam ulang EKG tiap 15–30 menit. Jika muncul ST Elevasi baru → eskalasi ke protokol STEMI segera!',
           required: true,
           category: 'assessment'
+          role: 'both',
         },
         {
           id: 'nest-stratifikasi-risiko',
@@ -232,6 +251,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Risiko SANGAT TINGGI (rujuk dalam < 2 jam):\n• Hemodinamik instabil / syok kardiogenik\n• Nyeri dada refrakter meski sudah nitrogliserin\n• Gagal jantung akut / edema paru\n• Aritmia ventrikel yang mengancam jiwa (VT/VF)\n• Perubahan dinamis ST-T di EKG serial\n\nRisiko TINGGI (rujuk dalam < 24 jam):\n• ST Depresi luas ≥ 0.5 mm\n• T Inversi dalam di lead prekordial\n• Troponin (Rujuk RS) positif (jika tersedia)\n• TIMI Score ≥ 3 / GRACE Score > 140',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'nest-rujuk',
@@ -239,6 +259,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Hubungi IGD RS tujuan, kabarkan pasien datang dengan suspek ACS non-STEMI.\nKirim foto EKG terakhir via WhatsApp ke dokter IGD.\nSelama transport: monitor SpO₂ dan EKG kontinu, IV tetap jalan, O₂ sesuai target.\nDokter pendamping harus membawa: surat rujukan lengkap + kertas EKG asli.',
           required: true,
           category: 'action'
+          role: 'doctor',
         },
         {
           id: 'nest-surat-rujukan',
@@ -246,6 +267,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Cantumkan: Waktu onset nyeri, EKG serial (termasuk waktu masing-masing), obat yang sudah diberikan + waktu, vital signs serial, faktor risiko KV, riwayat alergi aspirin/kontras, dan status NPO.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -265,6 +287,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Jika EKG pertama normal tapi nyeri dada tipikal → rekam ulang tiap 15–30 menit minimal 2 kali lagi. Infark posterior dan RV bisa EKG awal normal/samar. Pertimbangkan lead tambahan V7–V9 (posterior) dan V3R–V4R (RV).',
           required: true,
           category: 'assessment'
+          role: 'both',
         },
         {
           id: 'eval-diagnosa-banding',
@@ -272,6 +295,7 @@ export const skaPathway: DynamicPathway = {
           description: '⚠️ Kondisi serius yang harus disingkirkan:\n• DISEKSI AORTA: Nyeri punggung tembus, TD kedua lengan beda > 20, nadi asimetris → RUJUK CITO!\n• EMBOLI PARU: Sesak mendadak, takikardia, S1Q3T3 di EKG, faktor risiko DVT/imobilisasi → RUJUK!\n• PERIKARDITIS: Nyeri lebih ringan saat merebah, lebih baik duduk condong, saddle-shaped ST elevasi difus, PR depresi\n• SPASME ESOFAGUS: Mirip nyeri dada iskemik, respons nitrat, tapi tidak ada perubahan EKG\n• GERD: Rasa terbakar epigastrium, memburuk setelah makan\n• MUSKULOSKELETAL: Nyeri tajam, direproduksi tekanan dada, berubah posisi',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'eval-tindak-lanjut',
@@ -279,6 +303,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Jika TIDAK BISA MENYINGKIRKAN SKA dengan pasti → RUJUK ke RS untuk troponin (Rujuk RS) serial.\nJika sangat yakin diagnosis non-kardiak dan pasien stabil → rawat jalan dengan instruksi jelas:\n• Edukasi kapan harus segera ke IGD (nyeri dada tipikal, sesak, sinkop)\n• Kontrol ulang dalam 24–48 jam\n• Aspirin empiris boleh dipertimbangkan jika ada faktor risiko KV multipel',
           required: true,
           category: 'action'
+          role: 'nurse',
         }
       ],
       nextNodeId: 'ska-post-event-monitoring'
@@ -299,6 +324,7 @@ export const skaPathway: DynamicPathway = {
           description: 'DAPT = Aspirin + P2Y12 inhibitor (Clopidogrel, Ticagrelor, atau Prasugrel) wajib diminum minimal 12 bulan pasca PCI atau ACS.\nTANYAKAN tiap kunjungan: Apakah kedua obat masih diminum? Ada perdarahan (gusi, tinja hitam)?\nJANGAN HENTIKAN sendiri — risiko stent thrombosis akut yang mematikan!',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'post-statin',
@@ -306,6 +332,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Rosuvastatin 20–40 mg atau Atorvastatin 40–80 mg/hari harus diminum pasca ACS, target LDL < 55 mg/dL (PERKI 2022 / ESC 2023).\nCek efek samping: miopati (nyeri otot), kenaikan enzim hati. Jangan dihentikan tanpa konsultasi dokter.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'post-beta-bloker',
@@ -313,6 +340,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Bisoprolol 2.5–10 mg atau Carvedilol 3.125–25 mg/hari diindikasikan pada pasca STEMI, terutama jika LVEF ≤ 40% atau ada gagal jantung. Pantau bradikardia, hipotensi, bronkospasme.',
           required: false,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'post-ekg-kontrol',
@@ -320,6 +348,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Rekam EKG setiap 3–6 bulan atau jika ada keluhan baru. Perhatikan: Aritmia pasca infark (VT, FA), Aneurisma ventrikel (ST elevasi persisten), Q patologis permanen (tanda bekas infark).',
           required: true,
           category: 'assessment'
+          role: 'both',
         },
         {
           id: 'post-modifikasi-risiko',
@@ -327,6 +356,7 @@ export const skaPathway: DynamicPathway = {
           description: 'TD: Target < 130/80 mmHg.\nGula darah: HbA1c < 7% pada DM.\nLDL: Target < 55 mg/dL.\nMerokok: BERHENTI TOTAL — merokok pasca ACS meningkatkan risiko re-infark 50%.\nAktivitas fisik: Cardiac rehabilitation, mulai dengan jalan kaki 30 menit/hari.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'post-edukasi-red-flags',
@@ -334,6 +364,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Instruksikan pasien dan keluarga: Hubungi 119/IGD SEGERA jika:\n• Nyeri dada seperti dulu (atau lebih berat) saat istirahat > 5 menit\n• Sesak napas mendadak atau memburuk tiba-tiba\n• Jantung berdebar sangat cepat atau tidak teratur mendadak\n• Pingsan atau hampir pingsan\n• Keringat dingin mendadak tanpa penyebab jelas\nJANGAN tunggu atau coba minum obat dulu — hubungi bantuan segera!',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'post-rujuk-kardio',
@@ -341,6 +372,7 @@ export const skaPathway: DynamicPathway = {
           description: 'Rujuk kembali ke SpJantung jika:\n• Pasca ACS: evaluasi ekokardiografi (Rujuk RS) (LVEF), stress test, atau angiografi lanjutan perlu\n• Gejala angina berulang meski sudah terapi optimal\n• Efek samping obat mayor yang perlu penyesuaian\n• LVEF ≤ 35% setelah 3 bulan terapi → evaluasi ICD',
           required: true,
           category: 'action'
+          role: 'doctor',
         }
       ]
     }

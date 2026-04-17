@@ -31,6 +31,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Buka jalan napas dengan jaw thrust (jika curiga cedera servikal). Bersihkan darah/muntahan dengan SUCTION jika ada. Jaga leher tetap netral (pasang collar jika tersedia).',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'fraktur-breathing',
@@ -38,6 +39,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Pasang oksimetri. Inspeksi dada: napas simetris? Ada jejas? Auskultasi: suara napas kiri-kanan sama? Jika SpO2 < 94% → beri O2. Curiga tension pneumothorax jika: deviasi trakea, hipersonor satu sisi, JVP meningkat → RUJUK CITO.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-circulation',
@@ -45,6 +47,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Ukur tekanan darah dan nadi. Tekan langsung perdarahan eksternal dengan kasa steril. Pasang IV line 2 jalur jika bisa. Tanda syok: TD sistolik < 90, nadi > 100, akral dingin, CRT > 2 detik → tangani segera.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-tourniquet',
@@ -52,6 +55,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Pasang tourniquet jika perdarahan ekstremitas tidak terkontrol dengan penekanan langsung. Catat WAKTU pemasangan. Jangan lebih dari 2 jam tanpa pelepasan sementara.',
           required: false,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-disability',
@@ -59,6 +63,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Nilai GCS (Eye/Verbal/Motor) + reaksi pupil. Periksa motorik dan sensorik semua ekstremitas. Curiga cedera spinal: kelemahan bilateral, priapismus, atau syok neurogenik (bradikardia + hipotensi) → jangan mobilisasi, stabilisasi dan RUJUK.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-exposure',
@@ -66,6 +71,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Buka pakaian untuk periksa seluruh tubuh (anterior dan posterior/log roll jika curiga spinal). Cari perdarahan tersembunyi di abdomen, pelvis, atau paha. Tutup kembali dengan selimut setelah selesai untuk cegah hipotermia.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-shock-class',
@@ -73,6 +79,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Kelas I (< 15% EBV): nadi & TD normal.\nKelas II (15-30%): takikardia, TD masih aman.\nKelas III (30-40%): takikardia + hipotensi.\nKelas IV (> 40%): takikardi berat, hipotensi berat, kesadaran turun.\nEstimasi kehilangan darah: Fraktur femur ~1-1.5L. Fraktur pelvis hingga 3L.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'fraktur-ekg-indikasi',
@@ -80,6 +87,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Lakukan EKG jika: trauma tumpul dada (curiga kontusio miokard), pasien > 50 tahun, atau mekanisme sinkop/jatuh. Perhatikan aritmia atau perubahan ST. Lampirkan di surat rujukan.',
           required: false,
           category: 'assessment'
+          role: 'both',
         }
       ],
       nextNodeId: 'fraktur-life-threat-decision'
@@ -129,6 +137,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Bolus 500-1000 mL cepat jika TD sistolik < 90. Target: TD sistolik 80-90 mmHg (permissive hypotension pada trauma tanpa cedera kepala). Jangan overload cairan.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-emerg-perdarahan',
@@ -136,6 +145,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Tekan langsung. Gunakan tourniquet pada perdarahan masif ekstremitas. Improvised pelvic binder (bedsheet diikat melingkar pelvis) jika curiga fraktur pelvis. JANGAN cabut benda yang menancap.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-emerg-bidai',
@@ -143,6 +153,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Bidai dengan bahan apapun yang tersedia (kayu, karton). Pastikan bidai mencakup sendi di atas dan bawah fraktur. Tujuan: kurangi nyeri, cegah cedera jaringan lunak bertambah, kurangi perdarahan.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-emerg-analgesik',
@@ -150,6 +161,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Ketorolac 30 mg IV (jika hemodinamik stabil) ATAU Tramadol 50 mg IV lambat. Morfin 2-4 mg IV titrasi hanya jika tersedia dan hemodinamik aman. Nyeri tidak terkontrol memperburuk syok.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'fraktur-emerg-monitor-transport',
@@ -157,6 +169,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'SpO2 dan nadi kontinu via oksimetri. TD setiap 5-10 menit. Suction standby jika risiko muntah. Pastikan IV line tetap berfungsi. Oksigen nasal kanul tetap terpasang.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'fraktur-emerg-rujukan',
@@ -164,6 +177,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Cantumkan: mekanisme cedera, vital signs serial, temuan primary survey, tindakan yang sudah dilakukan, waktu tourniquet jika ada, cairan yang masuk, dan NPO status.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -183,6 +197,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'High-energy (KLL, jatuh > 3 meter, tertimpa benda berat) → curiga fraktur multipel + cedera internal.\nLow-energy (jatuh dari berdiri, terpeleset) pada usia > 50 tahun → curiga fraktur kerapuhan/osteoporosis.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-anamnesis-gejala',
@@ -190,6 +205,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Tanyakan: nyeri lokasi, bengkak, tidak bisa digerakkan, mati rasa. Riwayat: osteoporosis, obat pengencer darah (Warfarin, aspirin, DOAC), alergi obat, jam makan terakhir (persiapan anestesi di RS).',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-look',
@@ -197,6 +213,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Perhatikan: deformitas (angulasi, rotasi, pemendekan), edema, memar (ekimosis), luka terbuka (tulang terekspos?), kulit tegang/menonjol oleh fragmen (tented skin), warna kulit (pucat = gangguan vaskular).',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-feel',
@@ -204,6 +221,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Palpasi lembut sepanjang tulang. Nyeri tekan lokal pada tulang = sangat sugestif fraktur. Krepitasi JANGAN sengaja dicari — hanya catat jika terasa saat pemeriksaan. Suhu kulit distal (dingin = gangguan vaskular).',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-move',
@@ -211,6 +229,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'JANGAN paksa gerak jika ada deformitas jelas. Minta pasien gerakkan sendiri (active ROM) sendi di atas dan di bawah cedera. Gerakan abnormal pada shaft = fraktur. Ketidakmampuan gerak aktif = kehilangan fungsi.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-neurovascular',
@@ -218,6 +237,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'VASKULAR: raba nadi distal (dorsalis pedis/tibialis posterior pada kaki; radialis/ulnaris pada tangan), CRT (< 2 detik normal), warna dan suhu kulit.\nNEUROLOGIS: rasa raba halus dan kekuatan gerak jari.\nDOKUMENTASI sebelum DAN sesudah setiap manipulasi!',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'fraktur-pelvis-spine',
@@ -225,6 +245,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Pelvis: kompresi AP dan lateral gentle SEKALI saja (tidak diulang). Spine: palpasi processus spinosus dari atas ke bawah — nyeri midline atau step deformity? Jika curiga: jangan mobilisasi, pertahankan posisi log roll.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fraktur-ottawa-rules',
@@ -232,6 +253,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Ottawa Ankle Rules: POSITIF (perlu rontgen) jika: tidak bisa weight-bear 4 langkah ATAU nyeri tekan pada maleolus posterior/ujung fibula/basis metatarsal V/navikular.\nJika NEGATIF: kemungkinan fraktur < 2%, bisa rujukan non-urgent.',
           required: false,
           category: 'assessment'
+          role: 'doctor',
         }
       ],
       nextNodeId: 'fraktur-open-closed-decision'
@@ -289,6 +311,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Grade I: luka < 1 cm, bersih.\nGrade II: luka > 1 cm, tanpa avulsi berat.\nGrade IIIA: jaringan lunak cukup menutup tulang.\nGrade IIIB: jaringan lunak tidak cukup, perlu rekonstruksi.\nGrade IIIC: ada cedera arteri yang perlu reparasi (risiko amputasi 25%).',
           required: true,
           category: 'assessment'
+          role: 'doctor',
         },
         {
           id: 'fraktur-open-abx',
@@ -296,6 +319,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Grade I-II: Cefazolin 2 g IV (atau Cefuroxime 1.5 g IV).\nGrade III: Cefazolin 2 g IV + Gentamisin 5 mg/kgBB IV.\nKontaminasi tanah/sawah: tambah Penisilin dosis tinggi (untuk Clostridium).\nAlergi sefalosporin: Klindamisin 900 mg IV.\nJANGAN tunggu rujukan — berikan sekarang!',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'fraktur-open-tetanus',
@@ -303,6 +327,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Semua fraktur terbuka → berikan:\n• TT 0.5 mL IM jika belum booster > 10 tahun atau status tidak diketahui.\n• TIG 250-500 IU IM di ekstremitas berbeda jika riwayat imunisasi tidak lengkap/tidak pernah.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'fraktur-open-foto-luka',
@@ -310,6 +335,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Foto dengan penggaris sebagai skala. Tujuan: RS rujukan tidak perlu buka ulang perban (mengurangi risiko kontaminasi ulang). Lampirkan foto di surat rujukan.',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'fraktur-open-irigasi',
@@ -317,6 +343,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Irigasi 1-2 L NaCl 0.9% untuk membilas kontaminan kasar. JANGAN gunakan antiseptik (povidon-iod, klorheksidin, H2O2) — merusak jaringan dan tidak lebih efektif dari salin saja (FLOW Trial, Lancet 2015). Jangan lakukan debridemen agresif di klinik.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-open-tutup-luka',
@@ -324,6 +351,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Tutup dengan kasa steril basah (dibasahi NaCl 0.9%), balut. JANGAN: masukkan tulang yang mencuat ke dalam, jahit luka, atau tutup rapat (meningkatkan risiko infeksi anaerob). Penutupan definitif di OK oleh operator.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-open-bidai',
@@ -331,6 +359,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Gunakan backslab/posterior slab (BUKAN gips sirkumferensial — meningkatkan risiko kompartemen). Pastikan bidai mencakup sendi 1 tingkat di atas dan bawah fraktur. Cek neurovaskular distal SETELAH bidai terpasang.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-open-analgesik',
@@ -338,6 +367,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Paracetamol 1 g IV + Ketorolac 30 mg IV (jika tidak ada risiko perdarahan berat). Tramadol 50-100 mg IV lambat jika masih nyeri. Morfin 2-4 mg IV titrasi jika tersedia dan hemodinamik stabil.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'fraktur-open-rujuk-ok',
@@ -345,6 +375,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Surat rujukan wajib cantumkan: waktu kejadian, mekanisme, grade Gustilo, foto luka, antibiotik yang diberikan + waktu pemberian, status tetanus, status neurovaskular distal, vital signs, EKG jika dilakukan.',
           required: true,
           category: 'safety'
+          role: 'doctor',
         }
       ]
     },
@@ -364,6 +395,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Suspect fraktur jika ≥ 3 dari: mekanisme cedera adekuat, nyeri tekan lokal tepat pada tulang, deformitas (angulasi/rotasi/pemendekan), krepitasi, gerakan abnormal, atau hilang fungsi.\nSemua suspect fraktur → bidai dan rujuk untuk rontgen.',
           required: true,
           category: 'assessment'
+          role: 'doctor',
         },
         {
           id: 'fraktur-closed-kompartemen-skrining',
@@ -371,6 +403,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Tanda AWAL yang harus dikenali:\n• Nyeri tidak sebanding dengan cedera (pain out of proportion)\n• Nyeri saat jari digerakkan pasif (pain with passive stretch)\nTanda LANJUT (sudah terlambat!): mati rasa, pucat, nadi menghilang, paralisis.\nHigh-risk: fraktur tibia, forearm, supracondylar humerus (anak). Jika curiga → RUJUK SEGERA.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'fraktur-closed-bidai',
@@ -378,6 +411,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Gunakan backslab/posterior slab (BUKAN gips melingkar penuh — risiko kompartemen). Bidai mencakup sendi 1 tingkat di atas dan bawah fraktur. Padding di tonjolan tulang (maleolus, olekranon). Cek neurovaskular SETELAH bidai.\nPanduan lokasi:\n• Klavikula/bahu: arm sling\n• Forearm: sugar-tong splint\n• Pergelangan tangan: thumb spica / volar slab\n• Tungkai bawah: long-leg posterior slab\n• Ankle: backslab posterior\n• Jari: buddy-taping',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'fraktur-closed-neurovascular-post-bidai',
@@ -385,6 +419,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Bidai yang terlalu ketat bisa menekan pembuluh darah/saraf. Wajib periksa ulang: nadi distal, CRT, sensasi, dan gerak jari. Bandingkan dengan status sebelum bidai. Jika nadi hilang atau kesemutan baru → longgarkan bidai segera.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'fraktur-closed-analgesik',
@@ -392,6 +427,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Step 1: Paracetamol 500-1000 mg oral setiap 6 jam (minum rutin, bukan hanya saat nyeri).\nStep 2: tambah NSAID — Ibuprofen 400 mg 3x/hari sesudah makan (HATI-HATI pada lansia/gagal ginjal, max 5-7 hari).\nStep 3: tambah Tramadol 50 mg 3-4x/hari jika nyeri berat.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'fraktur-closed-rice',
@@ -399,6 +435,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Rest: hindari tumpuan berat pada fraktur ekstremitas bawah (gunakan tongkat/kruk).\nIce: kompres es 20 menit on/off selama 48-72 jam pertama.\nCompression: balut elastis gentle.\nElevation: tinggikan lebih tinggi dari jantung (bantal di bawah betis, BUKAN di bawah lutut).',
           required: true,
           category: 'action'
+          role: 'nurse',
         }
       ],
       nextNodeId: 'fraktur-urgency-decision'
@@ -464,6 +501,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Jika ada deformitas berat yang menyebabkan tented skin atau gangguan neurovaskular: lakukan traksi inline gentle sebelum splint. JIKA TIDAK terlatih: splint as-is dan RUJUK — jangan paksakan reposisi tanpa rontgen.',
           required: false,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'urgent-bidai-optimal',
@@ -471,6 +509,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Posisi fungsional: ankle 90°, lutut fleksi ringan (10-15°), siku 90°, pergelangan tangan netral. Padding di tonjolan tulang. Backslab/posterior slab (bukan gips melingkar). Ikat dengan elastic bandage.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'urgent-npo',
@@ -478,6 +517,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Kemungkinan besar butuh operasi atau sedasi untuk reposisi di RS. Instruksikan: makanan padat puasa 6 jam, cairan jernih puasa 2 jam. Catat jam makan terakhir dalam surat rujukan.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'urgent-monitor-serial',
@@ -485,6 +525,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Sampai pasien ditransfer: periksa nadi distal, CRT, sensasi, gerak jari. Catat tiap pemeriksaan. Jika memburuk → longgarkan splint, jika tetap memburuk → curiga kompartemen → rujuk lebih cito.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'urgent-surat-rujukan',
@@ -492,6 +533,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Wajib cantumkan: waktu cedera + mekanisme, temuan Look/Feel/Move, status neurovaskular (sebelum dan sesudah bidai), analgesik yang diberikan, splint yang dipasang, vital signs (termasuk EKG jika ada), komorbid + obat rutin, NPO status.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -511,6 +553,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Paracetamol 500-1000 mg setiap 6 jam (minum rutin, bukan hanya saat nyeri). Ibuprofen 400 mg 3x/hari sesudah makan (maksimal 5-7 hari). Tramadol 50 mg 3x/hari jika nyeri masih berat.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'semi-edukasi-splint',
@@ -518,6 +561,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Jaga splint tetap kering (bungkus plastik saat mandi). Elevasi anggota gerak saat istirahat. Gerakkan jari tangan/kaki setiap jam untuk mencegah kaku. JANGAN lepas splint sendiri. JANGAN masukkan benda ke dalam splint.',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'semi-red-flags',
@@ -525,6 +569,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Segera kembali atau ke IGD jika:\n• Nyeri semakin berat meski sudah minum obat (curiga kompartemen!)\n• Jari tangan/kaki mati rasa, kesemutan, atau tidak bisa digerakkan\n• Jari pucat, dingin, atau kebiruan\n• Splint terasa sangat ketat tiba-tiba\n• Muncul bau busuk dari luka/splint',
           required: true,
           category: 'safety'
+          role: 'both',
         },
         {
           id: 'semi-followup',
@@ -532,6 +577,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Berikan surat pengantar ke RS untuk rontgen konfirmasi fraktur dan evaluasi rencana definitif (konservatif atau operasi). Jika tidak ada ortopedi di RS terdekat, arahkan ke RS lain yang tersedia.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -551,6 +597,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Ekstremitas atas: arm sling.\nEkstremitas bawah: kurangi tumpuan beban (gunakan tongkat/kruk).\nIga: Analgesik adekuat adalah tatalaksana utama (bukan elastic bandage ketat — menghambat napas dalam dan meningkatkan risiko pneumonia).\nJari: buddy-taping.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'conservative-analgesik',
@@ -558,6 +605,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Paracetamol 500-1000 mg setiap 6 jam + Ibuprofen 400 mg 3x/hari sesudah makan (5-7 hari). Tramadol 50 mg 3x/hari jika masih nyeri signifikan.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'conservative-nutrisi',
@@ -565,6 +613,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Kalsium 1000 mg/hari dari makanan (susu, keju, ikan kecil) + suplemen jika kurang. Vitamin D cukup (paparan matahari pagi + suplemen 800-1200 IU/hari jika lansia). Protein adekuat. Berhenti merokok (merokok memperlambat penyembuhan tulang 2-3x).',
           required: false,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'conservative-followup',
@@ -572,6 +621,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Surat pengantar untuk rontgen konfirmasi. Beberapa fraktur (skaphoid, stress fracture) baru tampak di rontgen setelah 2-3 minggu. Kembalikan jika: nyeri semakin berat, bengkak progresif, atau fungsi memburuk.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -591,6 +641,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Kapan tungkai mulai pucat/dingin/nadi hilang? Ini menentukan apakah masih dalam golden period (< 6 jam). Cantumkan waktu ini di surat rujukan sebagai informasi terpenting bagi bedah vaskular.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'nv-hard-signs',
@@ -598,6 +649,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Hard signs (butuh OR segera): nadi tidak teraba distal, perdarahan pulsatil, hematoma membesar, bruit/thrill, iskemia distal (6P: Pain, Pallor, Pulselessness, Paresthesia, Paralysis, Poikilothermia).\nSoft signs (butuh angiografi): nadi lemah/asimetri, hematoma stabil non-pulsatil.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'nv-realign',
@@ -605,6 +657,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Deformitas berat bisa menekan atau menekuk arteri. Lakukan traksi inline gentle untuk restore alignment. Cek ulang nadi setelah koreksi — jika nadi kembali: splint, monitor ketat, tetap rujuk. Jika nadi tetap hilang: RUJUK CITO tanpa menunda.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'nv-splint-transport',
@@ -612,6 +665,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Bidai untuk stabilisasi (JANGAN ketat — mengurangi perfusi). Elevasi tungkai ringan. IV line + oksigen tetap berjalan. Analgesik IV. Monitor SpO2 + TD kontinu. Hubungi RS tujuan terlebih dahulu untuk persiapan tim bedah vaskular.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'nv-surat-rujukan',
@@ -619,6 +673,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Wajib cantumkan: waktu onset iskemia, hard signs yang ditemukan, upaya realignment + hasilnya, status neurovaskular serial (sebelum dan sesudah), vital signs, mekanisme cedera.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -638,6 +693,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Curiga jika: jatuh dari berdiri (low-energy), usia > 50 tahun (terutama wanita postmenopause), lokasi khas: pergelangan tangan, pinggul (femur proksimal), tulang belakang, bahu.\nFraktur pada batang tulang panjang pasien tua → anggap patologis sampai terbukti sebaliknya.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fragility-fraktur-hip-urgent',
@@ -645,6 +701,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Fraktur proksimal femur pada lansia: operasi dalam 36-48 jam menurunkan mortalitas secara bermakna. Delay > 48 jam meningkatkan mortalitas hingga 41%. Rujuk hari ini jika curiga fraktur pinggul.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'fragility-risiko-jatuh',
@@ -652,6 +709,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Tanyakan: riwayat jatuh sebelumnya? Obat yang meningkatkan risiko jatuh (sedatif, antihipertensi, hipoglikemik)? Gangguan penglihatan/keseimbangan? Bahaya di rumah (lantai licin, tangga gelap)?\nPeriksa hipotensi ortostatik: ukur TD baring lalu berdiri — jika sistolik turun > 20 mmHg → risiko jatuh tinggi.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'fragility-vitamin-d',
@@ -659,6 +717,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Berikan dari sekarang tanpa menunggu DXA:\n• Vitamin D3 800-1200 IU/hari\n• Kalsium ≥ 800 mg/hari (dari makanan + suplemen)\nRujuk ke spesialis untuk DXA bone scan dan evaluasi terapi bisphosphonate jika indikasi.',
           required: false,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'fragility-edukasi',
@@ -666,6 +725,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Latihan keseimbangan (Tai Chi, latihan proprioception). Review semua obat-obatan — kurangi polifarmasi. Modifikasi lingkungan rumah: karpet anti-slip, pegangan di kamar mandi, pencahayaan cukup. Berhenti merokok + kurangi alkohol.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -685,6 +745,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Lepas semua: splint, balut elastis, gips, pakaian ketat. Bahkan cutting splint saja dapat menurunkan tekanan kompartemen hingga 40%. Lakukan SEBELUM tindakan lain apapun.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'kompart-posisi',
@@ -692,6 +753,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'SALAH: elevasi tinggi (menurunkan arterial perfusion pressure).\nBETUL: posisikan setinggi jantung saja — menjaga keseimbangan antara perfusi arteri dan pengurangan edema vena.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'kompart-oksigen-monitoring',
@@ -699,6 +761,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Oksigen 2-4 L/menit nasal kanul. SpO2 + HR kontinu via oksimetri. TD setiap 15 menit. IV line untuk analgesik — JANGAN menahan analgesik, nyeri kompartemen sangat berat.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'kompart-rujuk',
@@ -706,6 +769,7 @@ export const frakturPathway: DynamicPathway = {
           description: 'Tekankan di surat rujukan: "suspect compartment syndrome, butuh fasciotomy segera."\nCantumkan: waktu onset nyeri memberat, temuan klinis (6P), tindakan yang sudah dilakukan (splint dilepas, posisi). Transport ambulans jika tersedia.',
           required: true,
           category: 'action'
+          role: 'doctor',
         }
       ]
     }

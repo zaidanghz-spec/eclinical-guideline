@@ -32,6 +32,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Lakukan evaluasi etiologi nyeri (PQRST):\n• Provocating: apa yang memicu? (olahraga, angkat berat, postur buruk)\n• Quality: pegal, kram, ketarik?\n• Region: terlokalisir (1 area) atau difus (seluruh tubuh)?\n• Onset: tiba-tiba atau bertahap?\n• Time: sudah berapa lama? Pegal pagi hari (morning stiffness)?\n\nNyeri terlokalisir → curiga tegang otot/cedera.\nNyeri difus/seluruh tubuh → curiga infeksi virus, kelelahan kronis, atau efek obat.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'mya-anamnesis-penyerta',
@@ -39,6 +40,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Pertanyaan penting:\n• Demam? (Hati-hati: Dengue, Chikungunya, Leptospirosis, Influenza sering presentasi myalgia difus + demam)\n• Kelemahan otot yang nyata? (Sulit berdiri dari duduk, sulit angkat tangan)\n• Warna urin gelap seperti teh? (Curiga rhabdomyolysis)\n• Baru minum obat Kholesterol (Statin)?\n• Riwayat trauma otot baru-baru ini?',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'mya-red-flags',
@@ -46,6 +48,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Hati-hati dan periksa lebih lanjut jika ada:\n• Kelemahan otot progresif yang nyata (paresis)\n• Urin berwarna gelap / coklat tua (rhabdomyolysis)\n• Demam tinggi mendadak (infeksi sistemik)\n• Myalgia sangat berat disertai pasien syok/toksik\n• Usia > 50 tahun dengan nyeri bahu/panggul & kaku pagi hari > 45 menit (Polymyalgia Rheumatica)\n• Riwayat konsumsi statin akut dengan nyeri otot berat',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'mya-ttv',
@@ -53,6 +56,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Suhu: ≥ 38°C + myalgia → curiga Myalgia Infeksiosa (virus/bakteri).\nNadi: takikardia → bisa karena dehidrasi (infeksi) atau nyeri hebat.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'mya-pemfis-lokal',
@@ -60,6 +64,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: '1. Inspeksi: ada bengkak memerah (inflamasi)? ada memar teraba keras (hematoma/compartment)?\n2. Palpasi: raba otot yang nyeri — teraba spasme/kaku? Adakah nyeri tekan fokal? Adakah bengkak sendi (arthritis — bukan myalgia)?\n3. Neurologis Bedside: Tes kekuatan motorik (cukup tahanan tangan) dan refleks patella kasar. Jika ada kelemahan motorik nyata → BUKAN myalgia biasa (→ rujuk neuro).',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         }
       ],
       nextNodeId: 'myalgia-triage-decision'
@@ -117,6 +122,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Curiga Rhabdomyolysis!\n→ Pasang IV line dengan NaCl 0.9% (Normal Saline). Hidrasi agresif segera untuk mencegah GGA (Acute Kidney Injury).\n→ JANGAN beri NSAID (diklofenak/ibuprofen/meloksikam) — bahaya untuk ginjal.\n→ Rujuk CITO ke IGD RS untuk lab enzim otot (CPK) dan fungsi ginjal.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'rjf-statin-stop',
@@ -124,6 +130,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'SAMS (Statin-Associated Muscle Symptoms) — nyeri otot difus, kram, yang muncul minggu/bulan pertama konsumsi Simvastatin/Atorvastatin/Rosuvastatin.\n→ STOP obat statin segera.\n→ Edukasi pasien bahwa nyeri akan berkurang setelah obat dihentikan (2–4 minggu).\n→ Rujuk Spesialis Penyakit Dalam untuk ganti terapi lipid jika nyeri hebat.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'rjf-polimialgia-cek',
@@ -131,6 +138,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Nyeri otot + kaku di bahu, leher, atau panggul tiap pagi > 45 menit pada orang tua (bukan nyeri sendi, tapi otot proksimal).\n→ PPK menyarankan rujuk SpPD/Konsultan Reumatologi untuk pertimbangan terapi kortikosteroid.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     },
@@ -150,6 +158,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Gunakan Parasetamol 500–1000 mg tiap 6–8 jam.\n⚠️ JANGAN BERI NSAID / KORTIKOSTEROID pada hari 1–3 demam!\nJika ini adalah Demam Berdarah Dengue (DBD) awal, NSAID meningkatkan risiko perdarahan GI.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'inf-hidrasi',
@@ -157,6 +166,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Anjurkan pasien minum cukup air putih 2 L/hari tubuh. Dehidrasi akibat demam dapat memperparah rasa myalgia.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'inf-pemantauan-infeksi',
@@ -164,6 +174,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Lakukan edukasi tanda darurat:\nBila demam sudah > 3 hari → minta test darah rutin/NS1.\nBila ada bintik merah, gusi berdarah, mual hebat, atau nyeri betis hebat pasca banjir (Lepto) → segera kembali ke faskes.',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ],
       nextNodeId: 'myalgia-edukasi-followup'
@@ -184,6 +195,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Pilih salah satu (Berikan maksimal 5–7 hari):\n• Ibuprofen 400 mg 3x/hari sesudah makan\n• Natrium Diklofenak 25–50 mg 2–3x/hari\n• Meloksikam 7.5–15 mg 1x/hari\n• Parasetamol 500mg 3x/hari (Pilihan jika pasien lansia/ada riwayat maag)',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'mek-relaksan-otot',
@@ -191,6 +203,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Tambahkan perelaksasi otot jangka sangat pendek (3–5 hari) jika palpasi otot sangat keras / spasme gerak:\n• Eperisone HCl 50 mg 3x/hari\n• ATAU Diazepam 2 mg 2x/hari (hati-hati sedasi)',
           required: false,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'mek-topikal-patch',
@@ -198,6 +211,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Krim natrium diklofenak 1%, krim capsaicin, menthol, atau plester analgetik.\nMemiliki profil keamanan jauh lebih baik dari obat oral untuk myalgia fokal ringan. Gosok area yang pegal secukupnya 3–4x sehari.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'mek-rice',
@@ -205,6 +219,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: '• REST: Istirahatkan otot yang nyeri 1–2 hari dari aktivitas berat/mengangkat\n• HEAT/COLD: Kompres es jika < 48 jam paska cedera aktivitas. Kompres hangat jika pegal kronik / > 48 jam.\n• GENTLE STRETCHING: Lakukan peregangan otot perlahan 3x/hari.',
           required: true,
           category: 'action'
+          role: 'nurse',
         }
       ],
       nextNodeId: 'myalgia-edukasi-followup'
@@ -225,6 +240,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: '• Anjurkan tidak dalam satu posisi yang sama > 1-2 jam. Berdiri dan stretching setelah duduk lama di depan laptop.\n• Angkat barang: berjongkok dulu, lalu berdiri dengan punggung lurus (angkat menggunakan paha, BUKAN punggung).\n• Tidur dengan bantal yang sejajar postur leher.',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'edu-kepatuhan-obat',
@@ -232,6 +248,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Peringatkan pasien selalu minum Ibuprofen / Diklofenak / Meloksikam SETELAH MAKAN KEMAMPUAN untuk mencegah iritasi lambung.\nHentikan obat begitu otot terasa sembuh (jangan ditelan jangka rutin mingguan).',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'edu-kapan-kembali',
@@ -239,6 +256,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Pasien harus kembali bila:\n• Nyeri otot tidak membaik setelah 1 minggu pengobatan\n• Muncul demam tinggi mendadak\n• Timbul ruam di kulit\n• Rasa kebas atau kesemutan menjalar (suspek keterlibatan saraf / HNP)',
           required: true,
           category: 'safety'
+          role: 'nurse',
         }
       ]
     }

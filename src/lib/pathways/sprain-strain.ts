@@ -21,6 +21,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Kapan dan bagaimana cedera terjadi? (Mendarat salah, terpelintir, terbentur). Apakah ada bunyi "pop" / "krek" saat kejadian (tanda robekan ligamen parah)? Apakah bisa berjalan/menahan beban sesaat setelah kejadian dan saat ini?',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ss-ttv',
@@ -28,6 +29,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Cek Tensi, Suhu, Nadi (TTV dasar minimal). Nyeri hebat dapat menaikkan TD dan nadi. Suhu biasanya normal (jika demam tanpa sumber lain, pikirkan infeksi, walau jarang di cedera tertutup).',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ss-look-feel-move',
@@ -35,6 +37,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'LOOK: Bengkak? Memar (ekimosis)? Deformitas (perubahan bentuk tulang/sendi yang menyolok)? \nFEEL: Nyeri tekan pada jaringan lunak vs tulang? Teraba panas? \nMOVE: Range of Motion (ROM) terbatas karena nyeri? Sendi teraba longgar/instabil?',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ss-ottawa-rules',
@@ -42,6 +45,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Klinik TANPA X-Ray WAJIB merujuk jika (Ottawa Ankle/Knee Rules): \n1. Nyeri tekan BONE (tulang) di batas posterior malleolus lateral/medial (6 cm ke atas), base metacarpal ke-5, atau tulang navicular. \n2. ATAU Pasien sama sekali TIDAK BISA menahan beban (jalan 4 langkah) baik saat kejadian maupun di klinik.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'ss-neurovaskular',
@@ -49,6 +53,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Cek CRT (Capillary Refill Time < 2 detik), Raba denyut nadi di bawah area cedera (dorso pedis / radialis), Cek sensorik/rasa di ujung jari. Defisit = DARURAT (Sindrom Kompartemen/Cedera Pembuluh Darah) -> RUJUK CITO!',
           required: true,
           category: 'safety'
+          role: 'nurse',
         }
       ],
       nextNodeId: 'ss-triage-decision'
@@ -98,6 +103,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Pasang spalk (bidai) atau mitela/sling. Bidai harus melingkupi satu persendian di atas dan di bawah area cedera untuk menstabilkan. Jangan dibebat terlalu kencang (cek pulsasi distal setelah pasang bidai).',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'ref-analgesik',
@@ -105,6 +111,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Gunakan Paracetamol 500-1000 mg oral, atau NSAID (Ibuprofen 400 mg / Asam Mefenamat 500mg) dengan makanan/antasida jika ada riwayat dispepsia, sambil menunggu dirujuk.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'ref-rujuk-cepat',
@@ -112,6 +119,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Siapkan surat rujukan memuat detail: Mekanisme cedera, hasil pemeriksaan (red flag), jam kejadian, obat yang sudah diberikan, dan indikasi permintaan Roentgen/X-Ray.',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'ref-edukasi-larangan-urut',
@@ -119,6 +127,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Beritahu pasien dan keluarga sebelum merujuk, JANGAN DIPIJAT/DIURUT ke tukang pijat tulang. Dapat menyebabkan pembengkakan jaringan memburuk, emboli, atau memperparah fraktur tertutup menjadi terbuka.',
           required: true,
           category: 'safety'
+          role: 'both',
         }
       ]
     },
@@ -138,6 +147,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'PROTECT: Lindungi area dari cedera lebih lanjut. REST: Istirahatkan bagian yang cedera. Kurangi tumpuan beban (weight-bearing). Jika kaki, bisa pakai tongkat kruk sementara. Jika lengan, kurangi aktivitas mengangkat.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'price-ice',
@@ -145,6 +155,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'PENTING: Gunakan kompres es (ice pack / es dibungkus handuk) selama 15-20 menit, diulang setiap 2-3 jam pada 48 jam pertama. AWAS: Jangan taruh es langsung ke kulit (bisa frostbite). JANGAN KOMPRES PANAS/HANGAT di 48 jam pertama (memperburuk bengkak)!',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'price-compression',
@@ -152,6 +163,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Balut area cedera dengan perban elastis (tensocrepe). Balut dari bagian distal (ujung) ke proksimal (atas) untuk mendorong aliran balik vena. Jangan terlalu ketat. Jika jari membiru, kesemutan, atau dingin, segera LONGGARKAN.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'price-elevation',
@@ -159,6 +171,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Posisikan area yang cedera sedikit lebih tinggi dari level jantung, terutama saat duduk atau tidur. Cth: ganjal pergelangan kaki dengan bantal. Membantu gravitasi mengurangi pembengkakan/edema.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'ss-nsaid',
@@ -166,6 +179,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Ibuprofen 400 mg 3x sehari ATAU Asam Mefenamat 500 mg 3x sehari (pc). Jika pasien lansia / ada riwayat ulkus peptikum, ganti dengan obat COX-2 inhibitor, atau Paracetamol 500-1000 mg 3-4x sehari.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'ss-edukasi-bahaya-pijat',
@@ -173,6 +187,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Hindari H.A.R.M: (Heat/Panas, Alkohol, Running/Aktivitas Berat, Massage/Pijat) pada 72 jam pertama karena akan meningkatkan aliran darah dan memperparah bengkak dan nyeri perut.',
           required: true,
           category: 'safety'
+          role: 'both',
         }
       ],
       nextNodeId: 'ss-education-followup'
@@ -193,6 +208,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Minta pasien datang kembali setelah 3-5 hari untuk evaluasi ulang tingkat nyeri, bengkak, dan instabilitas. Jika tidak membaik sama sekali atau memburuk, rujuk X-Ray.',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'ss-return-to-activity',
@@ -200,6 +216,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Setelah 72 jam dan nyeri berkurang, boleh mulai kompres hangat. Mulai gerakkan sendi perlahan (ROM aktif) tanpa beban berat. Aktivitas olahraga berat baru boleh setelah sendi bebas nyeri sepenuhnya (bisa 2-6 minggu).',
           required: true,
           category: 'action'
+          role: 'both',
         },
         {
           id: 'ss-red-flag-home',
@@ -207,6 +224,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Edukasi ke pasien, segera ke RS jika: Timbul kebas/kesemutan hebat ujung jari, area di bawah cedera menjadi dingin/pucat kebiruan, nyeri menjadi tidak tertahankan (curiga kompartemen sindrom), atau tidak membaik sama sekali setelah berhari-hari.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         }
       ]
     }

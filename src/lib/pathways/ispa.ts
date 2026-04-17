@@ -21,6 +21,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Berapa hari demam, batuk (kering vs berdahak), pilek, nyeri tenggorok? Apakah ada sesak napas akut? Riwayat alergi, asma, atau merokok?',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ispa-ttv',
@@ -28,6 +29,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Ukur Suhu, Tensi, Nadi, Oksimetri (SpO2), dan RR. \nCRITICAL: RR >24 x/menit pada dewasa (atau takipnea pada anak) + demam adalah prediktor terkuat pneumonia klinis. SpO2 < 92% = RED FLAG.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ispa-fisik-paru',
@@ -35,6 +37,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Inspeksi: Adakah retraksi dinding dada (tarikan otot sela iga/leher) saat napas? \nAuskultasi: Wheezing (mengi -> asma/PPOK), Ronki basah kasar/halus (curiga pneumonia/edema paru), atau suara napas menurun di satu sisi?',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ispa-fisik-orofaring',
@@ -42,6 +45,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Cek faring hiperemis, amandel membesar, atau adanya eksudat putih/kuning di tonsil (curiga faringitis bakteri/strep).',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         },
         {
           id: 'ispa-red-flags',
@@ -49,6 +53,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Perhatikan tanda gagal napas: SpO2 <92% room air, RR >30x/mnt, retraksi dada hebat, bibir sianosis (kebiruan), kesadaran menurun/letargi, atau tidak bisa bicara satu kalimat penuh.',
           required: true,
           category: 'safety'
+          role: 'nurse',
         }
       ],
       nextNodeId: 'ispa-triage-decision'
@@ -106,6 +111,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Berikan Oksigen nasal kanul 2-4 L/menit atau sungkup muka sederhana (simple mask) 6-8 L/menit. Targetkan SpO2 >94%.',
           required: true,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'ref-iv-line',
@@ -113,6 +119,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Pasang infus perifer (RL atau NaCl 0.9%) jika pasien tampak dehidrasi (demam tinggi lama, tidak mau makan/minum) atau takikardia parah.',
           required: false,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'ref-surat-rujuk',
@@ -120,6 +127,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Tulis surat rujukan dengan indikasi klinis susp. Pneumonia. Cantumkan hasil TTV (terutama RR dan SpO2 ruangan), temuan stetoskop, dan tindakan prarujukan (O2).',
           required: true,
           category: 'documentation'
+          role: 'both',
         },
         {
           id: 'ref-edukasi-pneumonia',
@@ -127,6 +135,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Jelaskan bahwa radang paru-paru tidak bisa didiagnosis pasti / diobati tuntas di faskes dasar tanpa X-Ray, sehingga butuh evaluasi lanjutan, agar nyawa tidak terancam.',
           required: true,
           category: 'safety'
+          role: 'both',
         }
       ]
     },
@@ -146,6 +155,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Berikan Salbutamol nebul (2.5 mg) dicampur NaCl 0.9% 2cc. Jika dewasi/PPOK, pertimbangkan Ipratropium Bromida kombinasi.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'nebu-oksigen',
@@ -153,6 +163,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Oksigen 2-4 L/m nasal kanul selama dan antar siklus nebulisasi bila SpO2 batas bawah (92-94%).',
           required: false,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'nebu-suction',
@@ -160,6 +171,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Jika ada penumpukan lendir hebat (ronki basah/gurgling) di saluran napas atas yang tidak bisa dibatukkan mandiri (pada anak/bayi), gunakan mesin suction dengan kateter lembut secara hati-hati (jangan lebih dari 10 detik per penarikan).',
           required: false,
           category: 'action'
+          role: 'nurse',
         },
         {
           id: 'nebu-evaluasi',
@@ -167,6 +179,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Dengarkan ulang (auskultasi). Hitung RR. \nJika wheezing hilang/berkurang drastis -> pasien aman pulang (pindah ke tatalaksana ISPA Ringan). \nJika masih mengi/sesak -> bisa ulang Nebul maksimal 3x jeda 20 menit. Masih gagal -> RUJUK IGD.',
           required: true,
           category: 'assessment'
+          role: 'nurse',
         }
       ],
       nextNodeId: 'ispa-mild-management'
@@ -187,6 +200,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Paracetamol 500 mg 3x sehari (dewasa) prn demam/nyeri seluruh badan/nyeri tenggorokan.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'mild-dekongestan',
@@ -194,6 +208,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Berikan obat flu kombinasi atau Cetirizine 1x10 mg (malam) + Pseudoefedrin untuk mengurangi pilek/hidung tersumbat.',
           required: true,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'mild-antititusif-mukolitik',
@@ -201,6 +216,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Jika batuk berdahak kental: Guaifenesin / Bromhexine (ekspektoran). \nJika batuk kering mengganggu tidur: Dextromethorphan (Gunakan hati-hati, jangan kombinasikan ekspektoran + penekan batuk di saat bersamaan!).',
           required: false,
           category: 'medication'
+          role: 'doctor',
         },
         {
           id: 'mild-no-antibiotik',
@@ -208,6 +224,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Antibiotik TIDAK meredakan flu/batuk virus (90% kasus bronkitis akut itu VIRUS). \nHANYA berikan Amoxicillin (500mg 3x sehari x 5-7 hari) JIKA: curiga kuat faringitis Streptococcus (demam mendadak, amandel eksudat bernanah, tanpa batuk pilek).',
           required: true,
           category: 'safety'
+          role: 'nurse',
         },
         {
           id: 'mild-edukasi-istirahat',
@@ -215,6 +232,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Gunakan masker, cuci tangan, perbanyak minum air hangat. Istirahat 3-5 hari di rumah. Kembali kontrol jika >5 hari demam tidak turun atau timbul sesak napas akut (waspada pneumonia sekunder).',
           required: true,
           category: 'documentation'
+          role: 'both',
         }
       ]
     }

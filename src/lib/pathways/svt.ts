@@ -34,6 +34,7 @@ export const svtPathway: DynamicPathway = {
  description:'Airway patent? Breathing adequate? Circulation (pulse, BP)? Disability (consciousness)? Exposure (monitor attachment)',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'svt-vital-signs-immediate',
@@ -41,6 +42,7 @@ export const svtPathway: DynamicPathway = {
  description:'Heart Rate (count!), BP, RR, SpO2, Temperature. Attach cardiac monitor IMMEDIATELY! HR usually 150-250 bpm for SVT.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'svt-symptoms-inquiry',
@@ -48,6 +50,7 @@ export const svtPathway: DynamicPathway = {
  description:'Palpitasi onset mendadak? Chest pain/discomfort? Dyspnea? Dizziness/presyncope? Syncope (red flag!)? Durasi episode?',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'svt-hemodynamic-stability-screen',
@@ -55,6 +58,7 @@ export const svtPathway: DynamicPathway = {
  description:'UNSTABLE jika: Altered mental status, Chest pain (ischemia), Acute heart failure (pulmonary edema), Hypotension (SBP <90 mmHg), Shock signs. ANY ONE = UNSTABLE!',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'svt-ecg-12-lead-stat',
@@ -62,6 +66,7 @@ export const svtPathway: DynamicPathway = {
  description:'MANDATORY! Record ECG DURING tachycardia untuk diagnosis. Jika converting spontan → record post-conversion ECG juga (WPW? delta wave?)',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'svt-ecg-interpretation-svt',
@@ -69,6 +74,7 @@ export const svtPathway: DynamicPathway = {
  description:'Narrow QRS (<120ms = supraventricular). Regular rhythm. HR 150-250 bpm. P wave: absent/inverted/after QRS (different from sinus). NO AV block.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'svt-differential-diagnosis-ecg',
@@ -76,6 +82,7 @@ export const svtPathway: DynamicPathway = {
  description:'AVNRT (most common, no visible P): HR 150-250, regular, retrograde P in QRS. AVRT (WPW): delta wave on baseline. Atrial flutter: sawtooth pattern. Atrial tach: visible P before QRS.',
  required: true,
  category:'assessment'
+          role: 'doctor',
  },
  {
  id:'svt-iv-access-large-bore',
@@ -83,6 +90,7 @@ export const svtPathway: DynamicPathway = {
  description:'Minimal 1 jalur IV perifer besar untuk adenosine/medications. Two lines preferred untuk unstable patients!',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'svt-oxygen-supplementation',
@@ -90,6 +98,7 @@ export const svtPathway: DynamicPathway = {
  description:'O2 nasal cannula 2-4 L/min jika SpO2 <94% atau dyspnea. Prepare for intubation jika unstable!',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'svt-crash-cart-standby',
@@ -97,6 +106,7 @@ export const svtPathway: DynamicPathway = {
  description:'Prepare defibrillator di bedside! Cardioversion pads ON patient jika unstable atau high-risk. Set synchronized mode!',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'svt-previous-episodes-history',
@@ -104,6 +114,7 @@ export const svtPathway: DynamicPathway = {
  description:'Pernah SVT sebelumnya? Frekuensi? Trigger? How terminated (spontan, vagal, meds, cardioversion)? Riwayat WPW atau ablation?',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'svt-cardiac-history-comorbid',
@@ -111,6 +122,7 @@ export const svtPathway: DynamicPathway = {
  description:'Structural heart disease (CAD, valvular, cardiomyopathy)? Heart failure? Previous MI? Medications (beta-blocker, digoxin, AAD)?',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'svt-contraindications-check',
@@ -118,6 +130,7 @@ export const svtPathway: DynamicPathway = {
  description:'Asthma/COPD severe (adenosine relative contraindication). Hypotension (avoid beta-blocker/CCB). WPW with AFib (NO adenosine/CCB/digoxin → VFib!).',
  required: true,
  category:'safety'
+          role: 'nurse',
  }
  ],
  nextNodeId:'svt-hemodynamic-stability-decision'
@@ -171,6 +184,7 @@ export const svtPathway: DynamicPathway = {
  description:'Alert cardiologist, anesthesiologist if available. Prepare for advanced airway management.',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'unstable-prepare-sedation',
@@ -178,6 +192,7 @@ export const svtPathway: DynamicPathway = {
  description:'Midazolam 1-2mg IV slow OR Propofol 0.5mg/kg OR Etomidate 0.1-0.2mg/kg. ONLY if hemodynamically allows! Skip jika syok/arrest imminent!',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'unstable-attach-pads',
@@ -185,6 +200,7 @@ export const svtPathway: DynamicPathway = {
  description:'Anterolateral position (right upper chest + left lateral). SET TO SYNCHRONIZED MODE! Check sync marker on QRS. NOT unsynchronized!',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'unstable-initial-energy-level',
@@ -192,6 +208,7 @@ export const svtPathway: DynamicPathway = {
  description:'Narrow-complex SVT: Start 50-100J. If fail → escalate 100-200J. Biphasic preferred. Charge defibrillator!',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'unstable-clear-shock',
@@ -199,6 +216,7 @@ export const svtPathway: DynamicPathway = {
  description:'Announce"oxygen OFF, everyone CLEAR!". Visual check all clear. Press SHOCK button. May need to hold button (synced shock has delay).',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'unstable-assess-rhythm-post-shock',
@@ -206,6 +224,7 @@ export const svtPathway: DynamicPathway = {
  description:'Check monitor: converted to sinus? Still SVT? Escalate energy if not converted. Maximum 3 attempts before pharmacological.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'unstable-post-cardioversion-ecg',
@@ -213,6 +232,7 @@ export const svtPathway: DynamicPathway = {
  description:'Document rhythm post-cardioversion. Look for WPW pattern (delta wave), pre-excitation. Assess for ischemia.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'unstable-monitor-vital-signs',
@@ -220,6 +240,7 @@ export const svtPathway: DynamicPathway = {
  description:'Vital signs setiap 5 menit x 30 menit. Watch for: recurrent SVT, hypotension (sedation), arrhythmias, skin burns.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'unstable-if-failed-cardioversion',
@@ -227,6 +248,7 @@ export const svtPathway: DynamicPathway = {
  description:'Consider: incorrect diagnosis (VT?), wrong energy, not synchronized, resistant SVT. Try pharmacological (amiodarone) OR repeat cardioversion higher energy.',
  required: false,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'unstable-icu-admission',
@@ -234,6 +256,7 @@ export const svtPathway: DynamicPathway = {
  description:'Unstable SVT → ICU monitoring post-cardioversion. Cardiology consult. Investigate underlying cause. Plan long-term management.',
  required: true,
  category:'action'
+          role: 'nurse',
  }
  ],
  nextNodeId:'svt-post-conversion-management'
@@ -255,6 +278,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jelaskan tujuan: stimulasi saraf vagus untuk"reset" jantung. Safe, non-invasive. Mungkin perlu beberapa kali attempt.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'vagal-continue-monitoring',
@@ -262,6 +286,7 @@ export const svtPathway: DynamicPathway = {
  description:'MANDATORY continuous monitor untuk detect conversion ATAU dangerous rhythm (bradycardia, asystole - rare tapi possible!).',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'vagal-modified-valsalva',
@@ -269,6 +294,7 @@ export const svtPathway: DynamicPathway = {
  description:'TECHNIQUE: 1) Strain against 10mL syringe selama 15 detik (supine), 2) IMMEDIATELY setelah strain → passive leg raise 45° selama 15 detik. SUCCESS RATE 43% (vs 17% standard Valsalva)! Evidence: REVERT trial.',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'vagal-carotid-sinus-massage',
@@ -276,6 +302,7 @@ export const svtPathway: DynamicPathway = {
  description:'TECHNIQUE: Palpate carotid pulse di bawah angle of jaw. Massage firm selama 5-10 detik. ONE SIDE only! CONTRAINDICATION: carotid bruit, stroke history, elderly >65yo. Risk: stroke, asystole!',
  required: false,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'vagal-ice-water-face-immersion',
@@ -283,6 +310,7 @@ export const svtPathway: DynamicPathway = {
  description:'TECHNIQUE: Immerse wajah di ice-cold water 10-15 detik OR ice pack di wajah. Especially effective di pediatric! Safe alternative ke carotid massage.',
  required: false,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'vagal-avoid-ineffective-methods',
@@ -290,6 +318,7 @@ export const svtPathway: DynamicPathway = {
  description:'JANGAN: eyeball pressure (retinal detachment risk!), abdominal pressure (ineffective), bilateral carotid massage (NEVER!). Cough alone (low efficacy).',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'vagal-assess-response',
@@ -297,6 +326,7 @@ export const svtPathway: DynamicPathway = {
  description:'SUCCESS: Tiba-tiba convert ke sinus rhythm (HR drop drastis, regular P waves). FAIL: tetap SVT. PARTIAL: sementara slow tapi tidak convert.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'vagal-document-results',
@@ -304,6 +334,7 @@ export const svtPathway: DynamicPathway = {
  description:'Catat: maneuver apa yang dicoba, berapa kali, response (convert/fail), ECG strip pre & post-maneuver.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'vagal-prepare-adenosine',
@@ -311,6 +342,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jika vagal maneuvers FAIL setelah 2-3 attempts → proceed to ADENOSINE (next step). Jangan delay >5-10 menit!',
  required: true,
  category:'action'
+          role: 'nurse',
  }
  ],
  nextNodeId:'svt-vagal-response-decision'
@@ -364,6 +396,7 @@ export const svtPathway: DynamicPathway = {
  description:'ABSOLUTE: 2nd/3rd degree AV block, sick sinus syndrome, severe asthma (bronchospasm!), WPW with AFib. RELATIVE: recent dipyridamole (potentiates!), theophylline (antagonizes).',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'adenosine-warn-patient',
@@ -371,6 +404,7 @@ export const svtPathway: DynamicPathway = {
  description:'EXPLAIN:"Obat ini akan membuat jantung berhenti sebentar (3-5 detik). Anda akan merasa: chest tightness, dyspnea, flushing, sense of impending doom. HANYA 10-15 detik! NORMAL!" Informed consent!',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'adenosine-prepare-dose',
@@ -378,6 +412,7 @@ export const svtPathway: DynamicPathway = {
  description:'Adenosine 6mg IV (first dose). Prepare TWO syringes: Syringe 1 = Adenosine 6mg, Syringe 2 = NS flush 20mL. Large-bore IV PROXIMAL (AC fossa preferred).',
  required: true,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'adenosine-rapid-push-technique',
@@ -385,6 +420,7 @@ export const svtPathway: DynamicPathway = {
  description:'TECHNIQUE: 1) Push adenosine CEPAT (<3 detik), 2) IMMEDIATELY follow dengan NS 20mL flush CEPAT, 3) ELEVATE arm untuk facilitate flow ke central circulation. SPEED IS CRITICAL (half-life 10 sec)!',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'adenosine-continuous-monitoring',
@@ -392,6 +428,7 @@ export const svtPathway: DynamicPathway = {
  description:'MANDATORY print/record ECG strip! Watch for: 1) Transient AV block (expected!), 2) Conversion to sinus, 3) Unmasking underlying atrial flutter/fib.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'adenosine-assess-first-dose',
@@ -399,6 +436,7 @@ export const svtPathway: DynamicPathway = {
  description:'SUCCESS: Convert to sinus rhythm. FAIL: Still SVT. DIAGNOSTIC: Unmask atrial flutter (sawtooth) atau AFib (irregular). If FAIL → repeat with HIGHER dose.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'adenosine-second-dose-12mg',
@@ -406,6 +444,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jika 6mg tidak convert → tunggu 1-2 menit, then give Adenosine 12mg dengan SAME rapid push technique. Success rate cumulative ~90%.',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'adenosine-third-dose-12mg',
@@ -413,6 +452,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jika masih gagal → boleh attempt ketiga 12mg. Total max 3 doses. Jika 3x gagal → consider alternative diagnosis atau alternative drugs.',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'adenosine-side-effects-management',
@@ -420,6 +460,7 @@ export const svtPathway: DynamicPathway = {
  description:'EXPECTED: Flushing (face red), dyspnea, chest pressure, brief asystole (3-5 sec), nausea. Self-limited 10-30 seconds! Reassure patient. RARE: prolonged asystole (prepare atropine!).',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'adenosine-if-atrial-flutter-unmasked',
@@ -427,6 +468,7 @@ export const svtPathway: DynamicPathway = {
  description:'Adenosine blocks AV node temporarily → unmask underlying atrial rhythm! Jika ternyata AFib/Flutter → different management (rate control, anticoagulation).',
  required: true,
  category:'assessment'
+          role: 'doctor',
  },
  {
  id:'adenosine-post-conversion-ecg',
@@ -434,6 +476,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jika berhasil convert → ECG lengkap untuk detect WPW (delta wave), ischemia, baseline abnormalities.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'adenosine-if-failed-three-doses',
@@ -441,6 +484,7 @@ export const svtPathway: DynamicPathway = {
  description:'Consider: 1) Diagnosis bukan AVNRT/AVRT (atrial tach?), 2) Alternative drugs (beta-blocker, CCB), 3) Electrical cardioversion. Consult cardiology!',
  required: true,
  category:'action'
+          role: 'nurse',
  }
  ],
  nextNodeId:'svt-adenosine-response-decision'
@@ -494,6 +538,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jika patient menjadi UNSTABLE (hypotension, altered MS, chest pain) → STOP pharmacological, proceed to CARDIOVERSION immediately!',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'alt-choose-agent-no-hf',
@@ -501,6 +546,7 @@ export const svtPathway: DynamicPathway = {
  description:'NO heart failure/LV dysfunction: Beta-blocker (metoprolol, esmolol) OR CCB (diltiazem, verapamil). WITH HF/LV dysfunction: Amiodarone ONLY (beta-blocker/CCB contraindicated!).',
  required: true,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'alt-beta-blocker-metoprolol',
@@ -508,6 +554,7 @@ export const svtPathway: DynamicPathway = {
  description:'Metoprolol 2.5-5mg IV slow push (over 2 min). May repeat q5min up to 15mg total. Monitor BP & HR! CONTRAINDICATION: asthma, severe bradycardia, hypotension, AV block.',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'alt-beta-blocker-esmolol',
@@ -515,6 +562,7 @@ export const svtPathway: DynamicPathway = {
  description:'Esmolol 500 mcg/kg bolus over 1 min, then infusion 50 mcg/kg/min. Advantage: ultra-short half-life (9 min) → easy titration, reversible if hypotension.',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'alt-ccb-diltiazem',
@@ -522,6 +570,7 @@ export const svtPathway: DynamicPathway = {
  description:'Diltiazem 0.25mg/kg (15-20mg) IV bolus over 2 min. If no response in 15 min → 0.35mg/kg (20-25mg). Then infusion 5-15 mg/h. Monitor BP closely!',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'alt-ccb-verapamil',
@@ -529,6 +578,7 @@ export const svtPathway: DynamicPathway = {
  description:'Verapamil 5-10mg (0.075-0.15 mg/kg) IV slow push over 2-3 min. May repeat 10mg after 15-30 min if needed. AVOID in WPW (can precipitate VFib!). Monitor BP!',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'alt-amiodarone-if-structural',
@@ -536,6 +586,7 @@ export const svtPathway: DynamicPathway = {
  description:'Amiodarone 150mg IV over 10 min, then infusion 1mg/min x 6h, then 0.5mg/min x 18h. SAFEST jika LV dysfunction! Slower onset but effective. Monitor QT interval!',
  required: false,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'alt-avoid-combination-negative-inotropes',
@@ -543,6 +594,7 @@ export const svtPathway: DynamicPathway = {
  description:'JANGAN combine beta-blocker + CCB (risk: severe bradycardia, hypotension, HF exacerbation)! Choose ONE class only!',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'alt-monitor-response',
@@ -550,6 +602,7 @@ export const svtPathway: DynamicPathway = {
  description:'GOAL: Rate control (<110 bpm) OR rhythm control (conversion to sinus). Monitor vital signs q5-10min. ECG continuous monitoring.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'alt-if-pharmacological-failed',
@@ -557,6 +610,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jika beta-blocker, CCB, dan amiodarone semua gagal → consider synchronized cardioversion (elective). Consult cardiology untuk ablation workup.',
  required: true,
  category:'action'
+          role: 'nurse',
  }
  ],
  nextNodeId:'svt-alternative-response-decision'
@@ -610,6 +664,7 @@ export const svtPathway: DynamicPathway = {
  description:'Explain procedure, risks (skin burn, arrhythmia, failed conversion), benefits, alternatives. Written consent jika kondisi memungkinkan.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'elective-npo-status',
@@ -617,6 +672,7 @@ export const svtPathway: DynamicPathway = {
  description:'Ideal: NPO 6-8 jam sebelum sedasi. Jika emergency → assess aspiration risk. Prepare suction.',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'elective-procedural-sedation',
@@ -624,6 +680,7 @@ export const svtPathway: DynamicPathway = {
  description:'Midazolam 1-2mg + Fentanyl 50mcg IV slow. OR Propofol 0.5-1mg/kg. OR Etomidate 0.1-0.2mg/kg. Titrasi to sedation. Monitor SpO2, BP, RR!',
  required: true,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'elective-synchronized-mode',
@@ -631,6 +688,7 @@ export const svtPathway: DynamicPathway = {
  description:'Defibrillator MUST be in SYNC mode! Check sync marker appears on each QRS. Energy: Start 100J, escalate to 200J if needed.',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'elective-deliver-shock',
@@ -638,6 +696,7 @@ export const svtPathway: DynamicPathway = {
  description:'"CLEAR!" → Visual check → Deliver shock. Assess rhythm immediately. Success rate >95% for SVT with cardioversion!',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'elective-post-procedure-monitoring',
@@ -645,6 +704,7 @@ export const svtPathway: DynamicPathway = {
  description:'Monitor vital signs q5min until awake. ECG continuous monitoring x 2-4 jam. Watch for recurrent SVT, arrhythmias, sedation effects.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'elective-cardiology-consult',
@@ -652,6 +712,7 @@ export const svtPathway: DynamicPathway = {
  description:'Refractory SVT needing cardioversion → HIGH-PRIORITY for catheter ablation referral! Cure rate >95% for AVNRT/AVRT!',
  required: true,
  category:'action'
+          role: 'nurse',
  }
  ],
  nextNodeId:'svt-post-conversion-management'
@@ -673,6 +734,7 @@ export const svtPathway: DynamicPathway = {
  description:'ECG lengkap: Regular P waves before each QRS, normal PR interval, narrow QRS. Look for WPW (delta wave), pre-excitation.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'post-symptom-resolution',
@@ -680,6 +742,7 @@ export const svtPathway: DynamicPathway = {
  description:'Palpitasi berhenti? Chest discomfort resolved? Dyspnea membaik? Patient merasa"normal" kembali?',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'post-vital-signs-normalization',
@@ -687,6 +750,7 @@ export const svtPathway: DynamicPathway = {
  description:'HR 60-100 bpm, BP normal, SpO2 >94%, no respiratory distress. Continue monitoring x 2-6 jam untuk detect recurrence.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'post-labs-troponin (Rujuk RS)-electrolytes',
@@ -694,6 +758,7 @@ export const svtPathway: DynamicPathway = {
  description:'Troponin (Rujuk RS) (jika ada chest pain → r/o MI). Electrolytes (K+, Mg2+ - low level → arrhythmogenic). TSH (hyperthyroidism → SVT trigger).',
  required: true,
  category:'assessment'
+          role: 'doctor',
  },
  {
  id:'post-echocardiography-if-indicated',
@@ -701,6 +766,7 @@ export const svtPathway: DynamicPathway = {
  description:'Echo jika: first episode SVT, structural heart disease suspected, prolonged tachycardia (tachycardia-induced cardiomyopathy?), recurrent episodes.',
  required: false,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'post-identify-triggers',
@@ -708,6 +774,7 @@ export const svtPathway: DynamicPathway = {
  description:'Common triggers: caffeine, alcohol, stress, sleep deprivation, decongestants, stimulants, exercise. Patient education: avoid triggers!',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'post-wpw-workup-if-delta-wave',
@@ -715,6 +782,7 @@ export const svtPathway: DynamicPathway = {
  description:'Delta wave → Wolff-Parkinson-White syndrome! HIGH-RISK for sudden death (AFib → VFib). URGENT cardiology referral untuk ablation! AVOID digoxin/CCB/adenosine!',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'post-patient-education',
@@ -722,6 +790,7 @@ export const svtPathway: DynamicPathway = {
  description:'Teach: recognize SVT symptoms (sudden palpitations), when to seek care (persistent >20 min, chest pain, syncope), vagal maneuvers at home (modified Valsalva).',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'post-discharge-or-admit',
@@ -729,6 +798,7 @@ export const svtPathway: DynamicPathway = {
  description:'DISCHARGE: First episode, benign etiology, rapid conversion, no WPW, reliable patient. ADMIT: Recurrent, structural HD, WPW, elderly, failed outpatient management.',
  required: true,
  category:'documentation'
+          role: 'both',
  }
  ],
  nextNodeId:'svt-recurrence-risk-decision'
@@ -791,6 +861,7 @@ export const svtPathway: DynamicPathway = {
  description:'Jelaskan: SVT bukan serangan jantung! Mayoritas benign, tidak life-threatening (kecuali WPW). Many people experience once in lifetime.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'first-lifestyle-modification',
@@ -798,6 +869,7 @@ export const svtPathway: DynamicPathway = {
  description:'AVOID: excessive caffeine (>3 cups/day), alcohol (especially binge), energy drinks, decongestants, cocaine/stimulants. Reduce stress, adequate sleep.',
  required: true,
  category:'action'
+          role: 'nurse',
  },
  {
  id:'first-teach-vagal-maneuvers',
@@ -805,6 +877,7 @@ export const svtPathway: DynamicPathway = {
  description:'Patient dapat try modified Valsalva jika episode rekuren: strain ke 10mL syringe 15 detik, lalu passive leg raise 15 detik. Success rate 43%!',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'first-emergency-plan',
@@ -812,6 +885,7 @@ export const svtPathway: DynamicPathway = {
  description:'Seek immediate care jika: episode >20-30 menit, chest pain, syncope, severe dyspnea, tidak resolve dengan vagal maneuvers. Call ambulance!',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'first-cardiology-followup',
@@ -819,6 +893,7 @@ export const svtPathway: DynamicPathway = {
  description:'Routine cardiology f/u untuk review ECG, echo results, discuss long-term plan. Evaluate need for prophylactic therapy jika recurrent.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'first-no-chronic-meds',
@@ -826,6 +901,7 @@ export const svtPathway: DynamicPathway = {
  description:'First episode → NO prophylactic medications. Wait & observe. Only start chronic therapy jika recurrent/frequent episodes.',
  required: true,
  category:'medication'
+          role: 'doctor',
  }
  ]
  },
@@ -846,6 +922,7 @@ export const svtPathway: DynamicPathway = {
  description:'ELIGIBLE: Infrequent episodes, hemodynamically stable saat SVT, NO WPW, NO severe structural HD, reliable patient, previous successful conversion dengan meds.',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'pip-choose-medication',
@@ -853,6 +930,7 @@ export const svtPathway: DynamicPathway = {
  description:'OPTION 1: Metoprolol 50-100mg PO. OPTION 2: Diltiazem 120-180mg PO. OPTION 3: Verapamil 120-240mg PO. Choose based on patient factors & previous response.',
  required: true,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'pip-prescribe-single-dose',
@@ -860,6 +938,7 @@ export const svtPathway: DynamicPathway = {
  description:'Rx: Metoprolol 50mg tabs, 10,"Take 1-2 tablets at onset of palpitations. Max 1 dose per day. Seek ER if not resolved in 60 min."',
  required: true,
  category:'medication'
+          role: 'doctor',
  },
  {
  id:'pip-patient-instructions',
@@ -867,6 +946,7 @@ export const svtPathway: DynamicPathway = {
  description:'1) Recognize SVT onset (sudden palpitations). 2) Try vagal maneuvers first. 3) If fail → take pill-in-pocket. 4) Rest, avoid driving. 5) Seek ER if not resolved in 60 min OR symptoms worsen.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'pip-safety-warnings',
@@ -874,6 +954,7 @@ export const svtPathway: DynamicPathway = {
  description:'JANGAN take jika: hypotension (dizzy, lightheaded), severe fatigue, chest pain ongoing. JANGAN combine dengan alcohol. JANGAN drive setelah take medication!',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'pip-log-episodes',
@@ -881,6 +962,7 @@ export const svtPathway: DynamicPathway = {
  description:'Patient catat: tanggal, waktu, duration, trigger, response to pill-in-pocket. Bring log ke follow-up untuk evaluate efficacy.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'pip-escalation-criteria',
@@ -888,6 +970,7 @@ export const svtPathway: DynamicPathway = {
  description:'Consider ablation jika: pill-in-pocket ineffective, episodes increase frequency (>1x/month), impaired QoL, patient preference for cure.',
  required: true,
  category:'action'
+          role: 'nurse',
  }
  ]
  },
@@ -908,6 +991,7 @@ export const svtPathway: DynamicPathway = {
  description:'CLASS I (Strong): WPW syndrome, Frequent symptomatic episodes, Failed/intolerant medications, Patient preference. CLASS IIa: Single episode + high-risk occupation (pilot, driver).',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'ablation-wpw-urgent',
@@ -915,6 +999,7 @@ export const svtPathway: DynamicPathway = {
  description:'Delta wave present → WPW → RISK sudden cardiac death (AFib → VFib via accessory pathway)! Ablation CURATIVE + eliminates SCD risk. PRIORITY referral!',
  required: true,
  category:'safety'
+          role: 'nurse',
  },
  {
  id:'ablation-explain-procedure',
@@ -922,6 +1007,7 @@ export const svtPathway: DynamicPathway = {
  description:'Minimally invasive, femoral vein access, intracardiac catheters, EP study to map circuit, radiofrequency energy to ablate. Duration 1-3 hours. Success >95%. Overnight stay usually.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'ablation-success-rates',
@@ -929,6 +1015,7 @@ export const svtPathway: DynamicPathway = {
  description:'AVNRT: 95-98% cure, <1% AV block. AVRT (WPW): 93-95% cure, <1% recurrence. Atrial tachycardia: 85-90%. Atrial flutter: >95% (very high success).',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'ablation-risks-complications',
@@ -936,6 +1023,7 @@ export const svtPathway: DynamicPathway = {
  description:'Major complications <1%: AV block needing pacemaker (<1%), cardiac tamponade (0.5%), stroke (<0.5%), vascular injury. Minor: bleeding, hematoma (2-3%).',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'ablation-pre-procedure-workup',
@@ -943,6 +1031,7 @@ export const svtPathway: DynamicPathway = {
  description:'ECG (12-lead in SR + during SVT if available), Echo, Labs (CBC, coag, Cr), Informed consent, NPO 6-8 jam, Anticoagulation status (hold DOACs 24-48h).',
  required: true,
  category:'assessment'
+          role: 'nurse',
  },
  {
  id:'ablation-post-procedure-expectations',
@@ -950,6 +1039,7 @@ export const svtPathway: DynamicPathway = {
  description:'Overnight monitoring. Resume normal activity 3-5 days. Avoid heavy lifting 1 week. Recurrence risk <5% (usually within 3 months). F/u cardiology 1 month.',
  required: true,
  category:'documentation'
+          role: 'both',
  },
  {
  id:'ablation-quality-of-life',
@@ -957,6 +1047,7 @@ export const svtPathway: DynamicPathway = {
  description:'Ablation = CURE! No more episodes, no chronic meds, no lifestyle restrictions, improved QoL. Cost-effective vs lifetime medications. Patient satisfaction >90%.',
  required: true,
  category:'documentation'
+          role: 'both',
  }
  ]
  }
