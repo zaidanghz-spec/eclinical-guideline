@@ -51,7 +51,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Tanda bahaya yang mengharuskan rujuk endoskopi (Rujuk RS) (bukan terapi empiris):\n• Disfagia progresif (sulit menelan makin lama makin berat)\n• Penurunan berat badan drastis tanpa sebab jelas\n• Muntah persisten dan berulang\n• Perdarahan GI: hematemesis (muntah darah) atau melena (BAB hitam)\n• Anemia yang tidak jelas penyebabnya\n• Teraba massa di abdomen\n• Onset baru pada usia ≥ 45 tahun\n• Riwayat keluarga kanker lambung atau kolorektal',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'disp-ttv',
@@ -165,7 +165,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Siapkan mesin suction di samping pasien. Jika muntah darah masif → suction segera untuk cegah aspirasi. Pasang oksimetri kontinu.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'dd-rujuk',
@@ -173,7 +173,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Cantumkan: TTV serial, estimasi volume perdarahan, EKG, obat yang diberikan, waktu onset.\nUntuk perdarahan GI: RS dengan fasilitas endoskopi (Rujuk RS) dan transfusi. Untuk STEMI: RS dengan Cath Lab.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -209,7 +209,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Cantumkan: usia pasien, onset keluhan, alarm features yang ditemukan, riwayat konsumsi NSAID/aspirin, TTV, dan temuan pemfis.\nTujuan: Endoskopi (Rujuk RS) diagnostik (EGD) dan/atau tes H. pylori (UBT/RUT/histologi).',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -269,7 +269,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Jadwalkan kontrol wajib dalam 2–4 minggu.\n• Gejala MEMBAIK → penjelasan on-demand therapy (PPI hanya saat gejala kumat)\n• Gejala TIDAK MEMBAIK dalam 4 minggu → RUJUK untuk endoskopi (Rujuk RS) dan tes H. pylori\n\nJangan berikan PPI > 8 minggu tanpa evaluasi ulang!',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'disp-evaluasi-respons'
@@ -322,7 +322,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'PGI 2021 merekomendasikan konfirmasi eradikasi dengan UBT atau tes feses (H. pylori stool antigen) minimal 4 minggu setelah antibiotik selesai.\nJika di klinik tidak tersedia → RUJUK ke fasilitas yang memiliki UBT untuk konfirmasi.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'disp-evaluasi-respons'
@@ -343,7 +343,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Gejala membaik dengan PPI empiris → alihkan ke "on-demand therapy": PPI hanya diminum saat gejala kambuh (bukan setiap hari terus menerus). Pantau penggunaan tidak boleh setiap hari jangka panjang tanpa evaluasi.\n\nPPI jangka panjang > 1 tahun: pantau risiko defisiensi Mg²⁺, B12, peningkatan risiko C. difficile.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'ev-respons-gagal',
@@ -359,7 +359,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Instruksikan pasien kembali segera jika:\n• Muntah darah atau BAB hitam (melena)\n• Nyeri perut tiba-tiba sangat berat\n• Demam tinggi bersamaan dengan nyeri perut\n• Tidak bisa minum atau makan sama sekali\n• Pusing atau pingsan (tanda syok)',
           required: true,
           category: 'safety',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'ev-edukasi-umum',
@@ -367,7 +367,7 @@ export const dispepsiaPathway: DynamicPathway = {
           description: 'Dispepsia cenderung kambuh jika faktor risiko tidak diubah:\n• Lanjutkan modifikasi gaya hidup (diet, stres, rokok)\n• Gunakan NSAID secara bijak — jika perlu NSAID jangka panjang, minta resep gastroproteksi (PPI bersamaan)\n• Timbang badan secara berkala — obesitas memperparah GERD/dispepsia',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     }

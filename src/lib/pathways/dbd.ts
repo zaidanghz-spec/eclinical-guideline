@@ -49,7 +49,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Tanyakan dan observasi:\n- Sakit perut / nyeri tekan perut terus-menerus?\n- Muntah persisten (> 3x dalam 24 jam)?\n- Lemah, letargi, atau gelisah?\n- Perdarahan mukosa (mimisan, gusi berdarah, BAB hitam/melena)?',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'dbd-rumpel-leede',
@@ -131,7 +131,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Pasang oksigen nasal kanul/NRM untuk optimalisasi jaringan di tengah penurunan perfusi (Syok).',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'dss-rujuk-ambulan',
@@ -139,7 +139,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Hubungi RS dengan fasilitas ruang HCU/ICU dan ketersediaan bank darah (bila perlu transfusi). Dampingi dengan perawat karena cairan harus tetap diguyur selama di ambulans sesuai respons tensi.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -159,7 +159,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Pasang infus Ringer Laktat (RL) 5-7 ml/kgBB/jam sambil menunggu proses rujukan RS selesai.',
           required: true,
           category: 'action',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'dws-hindari-oral',
@@ -167,7 +167,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Cegah aspirasi lambung jika pasien terus muntah; ganti hidrasi sepenuhnya via infus.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'dws-rujuk',
@@ -175,7 +175,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Buat surat rujukan menjelaskan adanya keluhan Alarm/Warning Signs. RS nantinya akan periksa Hematokrit & Trombosit.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -195,7 +195,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Pasien wajib minum cairan elektrolit/jus/susu (bukan sekedar air putih biasa) minimal 2-3 liter per hari. Susu, isotonik komersial, kaldu, atau oralit disarankan untuk cegah kebocoran plasma.',
           required: true,
           category: 'action',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'drj-antipiretik',
@@ -219,7 +219,7 @@ export const dbdPathway: DynamicPathway = {
           description: 'Jelaskan Fase Kritis terjadi saat demam TURUN (hari 3-5). Ajarkan keluarga waspada jika: \nPasien tidak mau minum, BAK tidak ada lebih dari 6 jam, nyeri perut sangat sakit, atau tiba-tiba lemas dingin. Jika hal ini terjadi: Segera ke IGD.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     }

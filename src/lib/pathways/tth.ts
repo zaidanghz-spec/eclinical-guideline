@@ -66,7 +66,7 @@ export const tthPathway: DynamicPathway = {
           description: 'RUJUK SEGERA jika ada SATU dari:\n• "Thunderclap" — nyeri kepala terberat seumur hidup, mendadak dalam detik → curiga SAH!\n• Demam + kaku kuduk + fotofobia → curiga Meningitis!\n• Defisit neurologis fokal (kelemahan, bicara pelo, gangguan penglihatan)\n• Penurunan kesadaran\n• Onset baru usia > 50 tahun\n• Progresif memberat dari hari ke hari\n• Riwayat kanker, HIV, atau immunocompromised\n• Papilledema (mata kabur + sakit kepala + mual hebat)',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'tth-ttv',
@@ -90,7 +90,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Palpasi nyeri tekan otot perikranial: temporalis, masseter, sternokleidomastoideus, trapezius, dan suboksipital.\nTTH sering disertai peningkatan tenderness otot perikranial.\nPeriksa range of motion (ROM) leher — nyeri servikogenik sebagai diagnosis banding.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'tth-ekg',
@@ -98,7 +98,7 @@ export const tthPathway: DynamicPathway = {
           description: 'EKG tidak rutin untuk TTH murni. Lakukan jika:\n• Usia ≥ 40 tahun\n• Ada keluhan nyeri dada atau palpitasi bersamaan\n• Hipertensi tidak terkontrol\n• Red flag terkait kardiovaskular\nPada TTH murni muda tanpa komorbid → EKG tidak wajib.',
           required: false,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'tth-red-flag-decision'
@@ -164,7 +164,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Rekam EKG untuk menyingkirkan penyebab kardiak (aritmia, iskemia). Lampirkan hasil EKG dalam surat rujukan.',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'ref-surat-rujukan',
@@ -172,7 +172,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Cantumkan: onset nyeri, karakter (thunderclap/progresif/dll), red flags yang ditemukan, TTV serial, pemeriksaan neurologis, obat yang sudah diberikan.\nPPK 2023: rujuk ke Spesialis Saraf jika nyeri kepala tidak membaik. Rujuk ke Spesialis Jiwa jika ada depresi berat dengan ide bunuh diri.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -245,7 +245,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Kompres panas atau dingin di area kepala/leher. Istirahat di ruangan tenang. Hindari pencetus: stres, kurang tidur, dehidrasi, melewatkan makan. Latihan relaksasi ringan.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'inf-edukasi',
@@ -253,7 +253,7 @@ export const tthPathway: DynamicPathway = {
           description: 'TTH adalah kondisi JINAK — tidak ada tumor otak atau stroke. Prognosis: bonam (vitam, fungsionam, sanationam).\nKeluarga bantu kurangi tekanan dan stres pasien.\nKembali ke klinik jika frekuensi meningkat > 4x/bulan.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'tth-nonfarmakologi'
@@ -282,7 +282,7 @@ export const tthPathway: DynamicPathway = {
           description: 'PERDOSSI 2023 / EFNS 2010 (Level A — Evidence terkuat):\nAmitriptyline mulai 10–25 mg/malam → titrasi +10 mg tiap 2 minggu → target 25–75 mg/malam. Durasi minimal 6 bulan.\nEfek samping: sedasi, mulut kering, konstipasi, retensi urin.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'freq-moh-skrining',
@@ -298,7 +298,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Frekuensi sedang-tinggi berhubungan erat dengan kecemasan dan depresi (60–70% kasus — Headache 2014).\nGAD-7 untuk kecemasan, PHQ-9 untuk depresi. Jika depresi berat dengan ide bunuh diri → RUJUK Spesialis Jiwa.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'freq-kontrol',
@@ -306,7 +306,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Evaluasi setelah 4 minggu: frekuensi serangan berkurang? Penggunaan analgetik masih < 2 hari/minggu? Efek samping profilaksis? Jika tidak membaik → rujuk Spesialis Saraf.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'tth-nonfarmakologi'
@@ -335,7 +335,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Analgetik boleh saat serangan, MAKSIMAL 2 hari/minggu.\n⚠️ HINDARI: penggunaan harian analgetik, sedatif, dan ergotamin (PERDOSSI 2023) → risiko MOH sangat tinggi!\nJika sudah terjadi MOH → withdrawal supervised + profilaksis amitriptylin dimulai bersamaan.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'kro-psikologis',
@@ -343,7 +343,7 @@ export const tthPathway: DynamicPathway = {
           description: 'TTH kronik erat dengan kecemasan (GAD) dan depresi. Lakukan PHQ-9 dan GAD-7.\n• Depresi → amitriptylin atau SSRI (Sertraline 50 mg, Fluoxetine 20 mg)\n• Kecemasan → CBT + amitriptylin\n• Jika depresi berat dengan ide bunuh diri → RUJUK Spesialis Jiwa\n\nCBT setara farmakologi untuk TTH kronik (Holroyd 2001, NEJM).',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'kro-hindari-benzo',
@@ -351,7 +351,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Golongan benzodiazepin dan butalbital bersifat adiktif dan dapat memperburuk nyeri kepala jangka panjang (PERDOSSI 2023). Gunakan sangat hati-hati, hanya jangka sangat pendek untuk kecemasan akut. Lebih utamakan amitriptylin atau SSRI/SNRI.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'kro-kontrol-bulanan',
@@ -359,7 +359,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Monitor setiap bulan selama 6 bulan: frekuensi hari nyeri kepala (headache diary), penggunaan analgetik per bulan, respons amitriptylin, mood dan kualitas tidur.\nTarget: reduksi ≥ 50% frekuensi dalam 3 bulan. Jika tidak membaik → rujuk Spesialis Saraf.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'tth-nonfarmakologi'
@@ -380,7 +380,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Makan teratur — hindari melewatkan makan. Minum 2–2.5 L air/hari. Batasi kafein ≤ 200 mg/hari (± 2 cangkir kopi). Hindari pemicu: MSG, tyramine (keju tua, wine).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'nf-terapi-fisik',
@@ -388,7 +388,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Kompres panas atau dingin di area temporal/oksipital/leher.\nMassage otot perikranial (temporalis, trapezius, suboksipital).\nManual terapi/mobilisasi servikal terbukti mengurangi frekuensi TTH (Cochrane 2004).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'nf-postur-ergonomi',
@@ -396,7 +396,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Koreksi forward head posture. Stretching leher dan bahu 2x/hari (10 menit). Monitor setinggi mata, kursi dengan lumbar support. Istirahat 5 menit tiap 1 jam duduk.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'nf-relaksasi-cbt',
@@ -404,7 +404,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Latihan relaksasi progresif otot. Mindfulness-based stress reduction. CBT untuk modifikasi pola pikir terkait nyeri kepala.\nCBT + relaksasi efektivitasnya setara amitriptylin untuk TTH kronik (Holroyd 2001).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'nf-tidur',
@@ -412,7 +412,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Tidur 7–8 jam per malam dengan jadwal konsisten. Hindari gadget 1 jam sebelum tidur. Hindari kafein setelah pukul 14.00. Atasi insomnia (evaluasi hubungan dengan kecemasan/depresi).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'nf-headache-diary',
@@ -420,7 +420,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Pasien catat: tanggal serangan, durasi (jam), intensitas (VAS 0–10), obat yang digunakan (jenis + dosis), faktor pencetus yang dicurigai.\nReview diary tiap kunjungan untuk evaluasi respons terapi dan deteksi MOH.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'tth-edukasi-followup'
@@ -465,7 +465,7 @@ export const tthPathway: DynamicPathway = {
           description: 'Instruksikan pasien/keluarga untuk segera ke fasilitas kesehatan jika:\n• Nyeri kepala TERBERAT seumur hidup yang datang mendadak\n• Demam + kaku leher\n• Kelemahan anggota gerak atau bicara pelo\n• Frekuensi bertambah > 4x/bulan\n• Karakter nyeri berubah\n• Tidak merespons analgetik biasa',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'edu-kriteria-rujuk',
@@ -473,7 +473,7 @@ export const tthPathway: DynamicPathway = {
           description: 'PERDOSSI 2023:\na) Nyeri kepala tidak membaik dengan tatalaksana di FKTP → rujuk Spesialis Saraf\nb) Depresi berat dengan kemungkinan bunuh diri → rujuk Spesialis Jiwa (rawat bersama neurolog)\n\nIndikasi lain: TTH kronik refrakter profilaksis 6 bulan, curiga patologi intrakranial.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     }

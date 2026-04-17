@@ -70,7 +70,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'OE Maligna = OE Necrotizing = DARURAT THT! Cari pada pasien DM, HIV, steroid kronik, keganasan, transplantasi organ: (1) Nyeri telinga SANGAT BERAT tidak proporsional, (2) Discharge purulen berbau busuk, (3) Jaringan granulasi di dasar MAE (persimpangan tulang-tulang rawan), (4) Demam tinggi, tidak membaik dengan topikal setelah 48–72 jam, (5) Kelemahan otot wajah/Parese N. Fasialis (VII) → RUJUK CITO ke SpTHT + CT Temporal!',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'oe-type-decision'
@@ -136,7 +136,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'GDS > 200 mg/dL pada pasien DM: perbaiki kondisi metabolik sebelum atau bersamaan rujuk. Hiperglikemia memperparah infeksi Pseudomonas. Berikan terapi DM sesuai protokol + konsul SpPD jika diperlukan. EKG jika ada aritmia/keluhan jantung pada pasien DM lansia.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'mal-antibiotik-sistemik',
@@ -152,7 +152,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Surat rujukan wajib berisi: riwayat DM/imunokompromais, temuan klinis (granulasi MAE, nyeri hebat, discharge berbau), obat yang sudah diberikan. Tujuan RS: harus ada SpTHT + CT Temporal (untuk evaluasi ekstensi infeksi ke tulang). Tidak bisa CT di klinik → langsung kirim ke RS dengan fasilitas CT.',
           required: true,
           category: 'action',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'mal-ekg-lansia',
@@ -160,7 +160,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'EKG tersedia di klinik → gunakan pada pasien lansia DM dengan keluhan nyeri dada, sesak, atau palpitasi sebelum dirujuk. Identifikasi aritmia atau iskemia yang perlu tatalaksana bersamaan sebelum transportasi.',
           required: false,
           category: 'assessment',
-          role: 'both',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'oe-education-followup'
@@ -181,7 +181,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Suction (yang tersedia di klinik) sangat efektif untuk ear toilet. Gunakan tip suction kecil/lembut (Fr 5–8 jika ada adaptor). Hisap debris, serumen cair, dan discharge dari MAE. Jika MAE terlalu sempit untuk suction → tampon + rujuk. PENTING: jangan suction terlalu dalam atau terlalu kuat (risiko trauma membran timpani).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'sir-insisi-drainase',
@@ -189,7 +189,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Jika furunkel sudah fluktuatif (lunak, berisi pus): insisi kecil dengan scalpel no. 11 atau jarum besar steril di titik paling fluktuatif. Drainase pus → bersihkan dengan suction. Pasang drain/tampon kecil jika perlu. Jika tidak fluktuatif (masih keras) → JANGAN insisi dulu, berikan antibiotik dan kompres hangat 3–4 hari.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'sir-antibiotik-oral',
@@ -234,7 +234,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Suction klinik = alat terbaik untuk ear toilet MAE yang penuh debris/discharge. Posisi pasien duduk, kepala miring, suction perlahan dari MAE. Bersihkan debris, serumen, pus, dan sel epitel mati. Tanpa ear toilet yang baik → tetes obat tidak akan menembus MAE yang tertutup → terapi gagal. Catatan: cara alternatif jika suction tidak cukup kecil: kapas lidi/cotton swab steril untuk menyeka dengan lembut.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'dif-tampon-mae-sempit',
@@ -242,7 +242,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Jika MAE sangat sempit akibat edema berat → tetes topikal tidak bisa masuk. Gunakan tampon/wick (kasa tipis atau spons komersial/Pope ear wick) → basahi dengan tetes antibiotik → masukkan perlahan ke MAE. Tampon menarik cairan obat masuk ke MAE. Cabut tampon setelah 2–3 hari. Jika tidak punya wick komersial: rujuk ke SpTHT untuk pemasangan tampon yang benar.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'dif-tetes-topikal',
@@ -303,7 +303,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Pada otomikosis, bersihkan SEMUA debris secara mekanik lebih penting dari antifungal topikal. Spora jamur (hifa) harus diangkat secara fisik. Suction klinik: hisap debris jamur dari MAE. Ulangi ear toilet setiap kontrol. Efektivitas antifungal topikal sangat berkurang jika MAE tidak bersih dulu.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'miko-antifungal-topikal',
@@ -319,7 +319,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Jika pasien sebelumnya pakai tetes antibiotik (neomisin, polimiksin) → HENTIKAN. Antibiotik mengubah flora MAE → overgrowth jamur. Asam asetat 2% bisa digunakan bersamaan sebagai acidifier. Hindari kelembaban berlebihan pada MAE selama pengobatan.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'miko-durasi-panjang',
@@ -372,7 +372,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Berbaring miring dengan telinga sakit menghadap ke atas. Teteskan obat pelan-pelan sesuai dosis. Tarik-ulur aurikula (daun telinga) beberapa kali untuk meratakan obat ke seluruh MAE. Tetap berbaring minimal 3–5 menit jangan langsung berdiri. Lakukan 2–4×/hari sesuai resep. Ketidakpatuhan cara tetes = penyebab utama kegagalan terapi topikal!',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'edu-mencegah-swimmers-ear',
@@ -380,7 +380,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Gunakan penutup telinga (earplug) saat berenang. Setelah renang: miringkan kepala, tarik daun telinga untuk mengeluarkan air, keringkan dengan hair dryer jarak jauh. Boleh prophylactic drops: asam asetat 2% beberapa tetes setelah renang untuk menjaga keasaman MAE.',
           required: false,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'edu-tanda-memburuk',
@@ -388,7 +388,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'Tidak ada perbaikan dalam 72 jam. Nyeri makin bertambah berat. Muncul demam. Muncul pembengkakan di belakang telinga (mastoiditis?). Muncul kesulitan mengunyah atau membuka mulut. Muncul kelemahan otot wajah (mulut mencong, kelopak mata tidak bisa menutup) → PARESE N VII = OE MALIGNA → IGD SEGERA!',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'edu-kontrol',
@@ -396,7 +396,7 @@ export const otitisEksternaPathway: DynamicPathway = {
           description: 'OE Difusa/Sirkumskripta: kontrol 7 hari untuk ear toilet ulang dan evaluasi respons. Otomikosis: kontrol tiap 1–2 minggu selama minimal 3 minggu. OE rekuren (>3×/tahun): rujuk SpTHT untuk evaluasi alergi, dermatitis, atau kondisi predisposisi lainnya.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     }

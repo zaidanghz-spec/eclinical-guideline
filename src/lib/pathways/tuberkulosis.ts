@@ -66,7 +66,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Suhu: Biasanya subfebris (37.5 - 38°C).\nNadi & SpO₂: Takikardi? Desaturasi? BB: Timbang BB wajib (untuk hitung dosis OAT nanti).\nPemfis dada: Suara napas bronkial, amforik (kavitas), redup saat perkusi, ronki basah kasar di apeks (paru atas).',
           required: true,
           category: 'assessment',
-          role: 'both'
+          role: 'nurse'
         }
       ],
       nextNodeId: 'tb-triage-decision'
@@ -140,7 +140,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Pasang IV line 2 jalur jika perdarahan masif (potensi syok hemoragik). Berikan bolus NaCl 0.9% atau RL 250-500 cc.',
           required: true,
           category: 'action',
-          role: 'both'
+          role: 'nurse'
         },
         {
           id: 'dar-rujuk',
@@ -148,7 +148,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Jalan langsung ke IGD RS. Dokter umum di klinik jangan attempt tindakan hemostatik paru tanpa fasilitas ICU. Edukasi keluarga: perdarahan masif paru fatal tanpa penanganan.',
           required: true,
           category: 'documentation',
-          role: 'doctor'
+          role: 'nurse'
         }
       ]
     },
@@ -168,7 +168,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'PNPK 2019 mewajibkan TCM (GeneXpert) sebagai alat diagnostik pertama! TCM langsung mendeteksi DNA bakteri dan resistensi Rifampisin secara bersamaan.',
           required: true,
           category: 'action',
-          role: 'doctor'
+          role: 'nurse'
         },
         {
           id: 'dx-kumpul-dahak',
@@ -184,7 +184,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Klinik swasta biasanya tidak punya TCM.\n→ Kirim spesimen pot dahak tersebut ke Puskesmas Rujukan / RS Jejaring TCM terdekat (lewat kurir faskes standar TB).\n→ ATAU instruksikan pasien membawa surat pengantar ke Puskesmas terdekat untuk periksa TCM.\n→ Tambahkan Rontgen Thorax jika keluhan sugestif tapi dahak sulit keluar / TCM tidak tersedia.',
           required: true,
           category: 'action',
-          role: 'nurse'
+          role: 'doctor'
         },
         {
           id: 'dx-simtomatis',
@@ -213,7 +213,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Rifampisin, Isoniazid, Pirazinamid beracun bagi hati.\nTanyakan keluhan utama: Mual/muntah berlebih? Lemas luar biasa? Mata jadi KUNING (jaundice)? Urin sekental/segelap air teh padahal bukan dehidrasi?\nJika Ya → STOP SEMUA OAT! Rujuk lab untuk tes SGOT/SGPT dan Bilirubin STAT.',
           required: true,
           category: 'safety',
-          role: 'both'
+          role: 'doctor'
         },
         {
           id: 'oat-evaluasi-kulit',
@@ -221,7 +221,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Ruam gatal ringan → Beri antihistamin, OAT lanjutkan perlahan.\nRuam berat/Stevens-Johnson (melepuh/lepas) → STOP OAT segera, rujukan rawat inap.',
           required: true,
           category: 'assessment',
-          role: 'both'
+          role: 'doctor'
         },
         {
           id: 'oat-neuropati',
@@ -291,7 +291,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Fase Intensif (2 bulan pertama) — (RHZE) diminum tiap hari:\n• BB 30-37 kg: 2 tablet/hari\n• BB 38-54 kg: 3 tablet/hari\n• BB 55-70 kg: 4 tablet/hari\n• BB >70 kg: 5 tablet/hari',
           required: true,
           category: 'medication',
-          role: 'doctor'
+          role: 'nurse'
         },
         {
           id: 'oat-warna-kencing',
@@ -299,7 +299,7 @@ export const tuberkulosisPathway: DynamicPathway = {
           description: 'Wajib diedukasikan bahwa air kencing dan keringat akan berubah warna jadi MERAH/ORANYE akibat obat Rifampisin. Ini NORMAL dan BUKAN BATUK DARAH.',
           required: true,
           category: 'documentation',
-          role: 'both'
+          role: 'nurse'
         },
         {
           id: 'oat-cara-minum',

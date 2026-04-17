@@ -48,7 +48,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Hati-hati dan periksa lebih lanjut jika ada:\n• Kelemahan otot progresif yang nyata (paresis)\n• Urin berwarna gelap / coklat tua (rhabdomyolysis)\n• Demam tinggi mendadak (infeksi sistemik)\n• Myalgia sangat berat disertai pasien syok/toksik\n• Usia > 50 tahun dengan nyeri bahu/panggul & kaku pagi hari > 45 menit (Polymyalgia Rheumatica)\n• Riwayat konsumsi statin akut dengan nyeri otot berat',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'mya-ttv',
@@ -64,7 +64,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: '1. Inspeksi: ada bengkak memerah (inflamasi)? ada memar teraba keras (hematoma/compartment)?\n2. Palpasi: raba otot yang nyeri — teraba spasme/kaku? Adakah nyeri tekan fokal? Adakah bengkak sendi (arthritis — bukan myalgia)?\n3. Neurologis Bedside: Tes kekuatan motorik (cukup tahanan tangan) dan refleks patella kasar. Jika ada kelemahan motorik nyata → BUKAN myalgia biasa (→ rujuk neuro).',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'myalgia-triage-decision'
@@ -130,7 +130,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'SAMS (Statin-Associated Muscle Symptoms) — nyeri otot difus, kram, yang muncul minggu/bulan pertama konsumsi Simvastatin/Atorvastatin/Rosuvastatin.\n→ STOP obat statin segera.\n→ Edukasi pasien bahwa nyeri akan berkurang setelah obat dihentikan (2–4 minggu).\n→ Rujuk Spesialis Penyakit Dalam untuk ganti terapi lipid jika nyeri hebat.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'rjf-polimialgia-cek',
@@ -138,7 +138,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Nyeri otot + kaku di bahu, leher, atau panggul tiap pagi > 45 menit pada orang tua (bukan nyeri sendi, tapi otot proksimal).\n→ PPK menyarankan rujuk SpPD/Konsultan Reumatologi untuk pertimbangan terapi kortikosteroid.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -158,7 +158,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Gunakan Parasetamol 500–1000 mg tiap 6–8 jam.\n⚠️ JANGAN BERI NSAID / KORTIKOSTEROID pada hari 1–3 demam!\nJika ini adalah Demam Berdarah Dengue (DBD) awal, NSAID meningkatkan risiko perdarahan GI.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'inf-hidrasi',
@@ -166,7 +166,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Anjurkan pasien minum cukup air putih 2 L/hari tubuh. Dehidrasi akibat demam dapat memperparah rasa myalgia.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'inf-pemantauan-infeksi',
@@ -174,7 +174,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Lakukan edukasi tanda darurat:\nBila demam sudah > 3 hari → minta test darah rutin/NS1.\nBila ada bintik merah, gusi berdarah, mual hebat, atau nyeri betis hebat pasca banjir (Lepto) → segera kembali ke faskes.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'myalgia-edukasi-followup'
@@ -219,7 +219,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: '• REST: Istirahatkan otot yang nyeri 1–2 hari dari aktivitas berat/mengangkat\n• HEAT/COLD: Kompres es jika < 48 jam paska cedera aktivitas. Kompres hangat jika pegal kronik / > 48 jam.\n• GENTLE STRETCHING: Lakukan peregangan otot perlahan 3x/hari.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         }
       ],
       nextNodeId: 'myalgia-edukasi-followup'
@@ -240,7 +240,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: '• Anjurkan tidak dalam satu posisi yang sama > 1-2 jam. Berdiri dan stretching setelah duduk lama di depan laptop.\n• Angkat barang: berjongkok dulu, lalu berdiri dengan punggung lurus (angkat menggunakan paha, BUKAN punggung).\n• Tidur dengan bantal yang sejajar postur leher.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'edu-kepatuhan-obat',
@@ -256,7 +256,7 @@ export const myalgiaPathway: DynamicPathway = {
           description: 'Pasien harus kembali bila:\n• Nyeri otot tidak membaik setelah 1 minggu pengobatan\n• Muncul demam tinggi mendadak\n• Timbul ruam di kulit\n• Rasa kebas atau kesemutan menjalar (suspek keterlibatan saraf / HNP)',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         }
       ]
     }

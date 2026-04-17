@@ -59,7 +59,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Tandai jika ada:\n• BAB berdarah atau berlendir banyak (disentri)\n• Demam > 38.5°C yang menetap > 72 jam\n• Penurunan berat badan drastis\n• Anemia\n• Usia > 50 tahun onset baru\n• Riwayat IBD atau keganasan GI dalam keluarga\n• Pasien immunocompromised (HIV, kemoterapi, transplantasi)\n• Tidak ada perbaikan setelah antibiotik empiris 3 hari',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'dr-ttv',
@@ -157,7 +157,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Bolus RL 500–1000 mL cepat (15–30 menit). Ulangi evaluasi TTV setelah setiap 500 mL.\nTarget: TD sistolik > 90 mmHg, nadi < 100, CRT < 2 detik.\nFormula Daldiyono jika kholera/dehidrasi berat:\nKebutuhan IV (L) = (Skor/15) × 10% × BB(kg)\n\nBerikan 50% dalam 1 jam pertama, sisa dalam 2–3 jam berikutnya.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'syok-o2-monitor',
@@ -173,7 +173,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Hentikan makan dan minum per oral jika syok atau muntah masif. Siapkan suction untuk antisipasi muntah dan aspirasi. JANGAN beri Loperamide pada pasien syok.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'syok-rujuk',
@@ -181,7 +181,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Hubungi RS tujuan terlebih dahulu. Transportasi dengan ambulans. Infus IV tetap jalan selama perjalanan. Dokter pendamping wajib ada.\nSurat rujukan: TTV serial, volume cairan yang sudah diberikan, estimasi kehilangan cairan, waktu onset.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -209,7 +209,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Lini pertama (Asia Tenggara, hindari resistensi Campylobacter terhadap kuinolon):\n• Azitromisin 500 mg 1× sehari selama 3 hari\n\nAlternatif:\n• Siprofloksasin 500 mg 2× sehari selama 3 hari\n• Levofloksasin 500 mg 1× sehari selama 3 hari\n\nKhusus C. difficile (diare pasca antibiotik): Metronidazole 500 mg 3× sehari × 10–14 hari.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'inf-hindari-loperamide',
@@ -217,7 +217,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Loperamide (antimotilitas) DILARANG pada diare berdarah atau demam tinggi.\nAlasan: memperlambat transit usus → bakteri invasif tertahan lebih lama → risiko komplikasi: megakolon toksik, sepsis sistemik, invasi dinding usus.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'inf-probiotik',
@@ -233,7 +233,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Pasien harus kembali dalam 48–72 jam:\n• Membaik (demam turun, BAB berdarah berkurang) → lanjut antibiotik sampai 3 hari\n• Tidak membaik atau memburuk → pertimbangkan: salah diagnosis, resistensi antibiotik, komplikasi (perforasi, megakolon) → RUJUK RS',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'diare-edukasi-followup'
@@ -262,7 +262,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Loperamide BOLEH diberikan pada diare non-inflamatorik tanpa demam:\n• Dosis awal: 4 mg oral\n• Kemudian: 2 mg setiap BAB cair\n• Maksimum: 16 mg/hari (dewasa), 8 mg/hari (lansia)\n• Maksimum penggunaan: 48 jam\n\nManfaat: memperpendek durasi diare ~1.5 hari, kurangi frekuensi 16%.\n\n⚠️ HENTIKAN jika: 42 jam tidak membaik, demam muncul, BAB berdarah muncul.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'non-probiotik',
@@ -286,7 +286,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Lanjutkan makan ringan — BRAT diet: pisang, nasi, apel kukus, roti tawar.\nHindari: susu sapi (laktosa), makanan berlemak, makanan pedas, kafein dan alkohol.\nMinum air atau oralit lebih banyak dari biasa.\nCuci tangan dengan sabun sebelum makan dan setelah BAB.',
           required: true,
           category: 'action',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'diare-edukasi-followup'
@@ -315,7 +315,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Pemeriksaan yang diperlukan di faskes lanjutan:\n• Kultur feses (sensitifitas rendah 2%, tapi standar untuk panduan)\n• PCR multipleks feses (GI Syndromic Panel) — lebih sensitif\n• Fecal Calprotectin — marker inflamasi usus (IBD vs IBS)\n• Celiac marker (anti-tTG IgA) jika curigai celiac\n• Kolonoskopi/biopsi jika alarm features (+)',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'kro-surat-rujukan',
@@ -323,7 +323,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Cantumkan: durasi diare, frekuensi per hari, karakter feses, alarm features yang ada, riwayat pengobatan dan respons, riwayat antibiotik, riwayat bepergian.\nKlasifikasikan untuk RS tujuan: apakah diare osmotik, sekretori, inflamatorik, malabsorpsi, atau fungsional?',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -343,7 +343,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Minum oralit atau cairan elektrolit setiap kali BAB cair.\nJika tidak ada oralit: air matang + 1 sdm gula + ½ sdt garam per 300 mL.\nJangan minum cairan yang terlalu manis (jus kemasan, soft drink) — memperparah diare osmotik.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'edu-higienitas',
@@ -359,7 +359,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Instruksikan kembali segera jika:\n• Tidak bisa minum sama sekali atau muntah setiap kali minum\n• Pusing, hampir pingsan, atau sudah pingsan\n• BAB hitam (melena) atau berdarah banyak tiba-tiba\n• Demam tinggi > 39°C yang menetap\n• Tidak ada BAK > 8 jam (tanda dehidrasi berat)\n• Kesadaran menurun atau anak rewel dan lesu extreme',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'edu-jadwal-kontrol',
@@ -367,7 +367,7 @@ export const diareDewasaPathway: DynamicPathway = {
           description: 'Diare non-inflamatorik: kembali jika tidak membaik dalam 3–5 hari.\nDiare inflamatorik dengan antibiotik: kembali dalam 48–72 jam untuk evaluasi.\nJika membaik penuh → tidak perlu kembali.\nJika tidak membaik → eskalasi terapi atau rujuk.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     }

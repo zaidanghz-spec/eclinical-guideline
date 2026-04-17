@@ -167,7 +167,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'EKG untuk mendeteksi aritmia (takikardia, SVT, ataupun perubahan ST yang mungkin terjadi pada anafilaksis berat pada pasien dengan faktor risiko jantung). Monitor nadi terus-menerus.',
           required: false,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'ana-rujuk',
@@ -219,7 +219,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Persiapkan spuit Epinefrin 0.3-0.5 mg siap pakai di dekat pasien. JIKA angioedema bertambah ke area laring/leher atau muncul sesak → injeksi segera tanpa menunggu konfirmasi lebih lanjut.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'angioedema-rujuk-pantau',
@@ -227,7 +227,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Angioedema yang alergi (bukan herediter) dengan area wajah/bibir: observasi minimal 4-6 jam di faskes atau rujuk RS. Angioedema yang tidak jelas penyebabnya → rujuk untuk evaluasi C1-inhibitor (Hereditary Angioedema).',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -247,7 +247,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Cetirizine 10 mg 1x sehari ATAU Loratadine 10 mg 1x sehari ATAU Fexofenadine 120-180 mg 1x sehari. Minum rutin selama 5-7 hari, bukan hanya saat gatal. \nEFEK: 1-2 jam. Aman pada kelelahan & mengemudi.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'urt-kortikosteroid-oral',
@@ -279,7 +279,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Hindari air panas (mandi air panas/sauna memperburuk urtikaria). \nHindari pakaian ketat/menggesek. \nHindari alkohol. \nHindari aspirin/NSAID (bisa memperburuk urtikaria histamin). \nHindari pencetus yang teridentifikasi.',
           required: true,
           category: 'safety',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'urt-kapan-kembali',
@@ -308,7 +308,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Evaluasi respons terapi. Apakah bentol/bengkak membaik? Adakah pencetus yang teridentifikasi selama seminggu ini? Lanjutkan atau hentikan antihistamin?',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'fl-skin-prick-test',
@@ -316,7 +316,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Jika alergi berulang/kronik (> 6 minggu = urtikaria kronik) atau penyebab tidak jelas, rujuk ke Spesialis Alergi-Imunologi untuk: Skin Prick Test, IgE spesifik, atau Uji Provocasi.',
           required: false,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'fl-epipen-prescription',
@@ -324,7 +324,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Berikan resep Epinefrin auto-injector (jika tersedia) untuk pasien dengan: Riwayat anafilaksis sebelumnya, Alergi makanan berat (kacang, seafood), atau Asma berat + alergi. Ajari pasien cara penggunaan.',
           required: false,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'fl-edukasi-kartu-alergi',
@@ -332,7 +332,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           description: 'Dokumentasikan di rekam medis dan anjurkan pasien menyimpan catatan: Alergen yang sudah terkonfirmasi, Riwayat reaksi terparah, Obat yang sudah terbukti aman untuk pasien ini. Berguna saat pasien berobat ke tempat lain.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     }

@@ -131,7 +131,7 @@ export const pneumoniaPathway: DynamicPathway = {
           description: 'Pasien wajib kembali ke klinik jika dalam 48-72 jam demam tidak turun, sesak napas bertambah berat, atau tidak bisa makan/minum. Jika membaik, teruskan antibiotik minimal 5-7 hari.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -151,7 +151,7 @@ export const pneumoniaPathway: DynamicPathway = {
           description: 'Berikan Oksigen nasal kanul 2-4 L/mnt jika pasien merasa sesak tetapi SpO₂ masih >90%.\nMinumkan Parasetamol jika demam tinggi mengurangi ketidaknyamanan saat perjalanan.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'ri-surat-rujuk',
@@ -159,7 +159,7 @@ export const pneumoniaPathway: DynamicPathway = {
           description: 'Tulis diagnosis Suspek Pneumonia Komunitas dengan rincian TTV dan Skor CRB-65. Cantumkan indikasi rujukan: "Membutuhkan foto polos dada (Chest X-Ray) dan evaluasi rawat inap".',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -195,7 +195,7 @@ export const pneumoniaPathway: DynamicPathway = {
           description: 'Pasang IV line jarum besar (18G/20G). Jika tensi hipotensi (sistolik <90 mmHg), loading resusitasi cairan NaCl 0.9% 500 cc cepat sambil dinilai respon vitalnya.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'dar-rujuk-ambulan',
@@ -203,7 +203,7 @@ export const pneumoniaPathway: DynamicPathway = {
           description: 'Hubungi RS rujukan untuk kamar HCU/ICU dan isolasi infeksi penyerta. Pakaikan pasien masker jika tidak terpasang NRM. Perawat harus mendampingi dengan tas emergency (suction portabel/oksigen).',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     }

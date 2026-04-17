@@ -158,7 +158,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'O₂ masker non-rebreather 10–15 LPM. Target SpO₂ ≥94%. Jika ada stridor berat/angioedema laring berkembang cepat → persiapkan intubasi atau krikotirotomi darurat. Jangan biarkan pasien sendirian saat O₂ dipasang!',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'ana-cairan',
@@ -206,7 +206,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Semua anafilaksis → rawat inap minimal 24 jam. Konsul Penyakit Dalam/Alergi-Imunologi. Setelah stabil: resepkan EpiPen auto-injector untuk dibawa pulang (jika tersedia). Edukasi: kunjungan ke dokter spesialis alergi untuk uji skin-prick dan imunoterapi venom.',
           required: true,
           category: 'action',
-          role: 'doctor',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'ib-discharge-edu'
@@ -281,7 +281,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Kikis/geser sengat menggunakan kartu kredit, kuku, atau tepi spatula. BUKAN dicabut dengan pinset. Makin cepat sengat dicabut, makin sedikit venom yang masuk. Jangan tunda >30 detik untuk mencari alat "yang benar".',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'loc-kompres-dingin',
@@ -289,7 +289,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Kompres es yang dibungkus kain 10–15 menit, ulangi tiap 1–2 jam. Mengurangi nyeri, pembengkakan, dan penyebaran venom lokal. JANGAN kompres panas (memperburuk peradangan). Untuk sengatan ubur-ubur: bilas dengan cuka 5% (menginaktivasi nematosit yang belum pecah), bukan air tawar!',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'loc-cuci-bersih',
@@ -297,7 +297,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Cuci area gigitan/sengatan dengan sabun dan air mengalir 10–15 menit. Untuk madu (ubur-ubur) gunakan cuka 5%. Untuk tungau (mite/scabies) → pertimbangkan skrining kontak dan permethrin.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'loc-antihistamin',
@@ -342,7 +342,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Sesak napas mendadak, suara serak/serak/stridor, bibir-lidah membengkak, kulit gatal sangat luas, pingsan/pusing berat, mual-muntah hebat, rasa "akan mati", detak jantung sangat cepat. JANGAN tunggu sampai parah — anafilaksis bisa fatal dalam 15–30 menit!',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'edu-epipen',
@@ -350,7 +350,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Resepkan EpiPen/Auvi-Q untuk: Pasien dengan riwayat anafilaksis sebelumnya, Penderita asma dengan alergi venom, Pasien yang jauh dari fasilitas kesehatan. Ajari cara penggunaan EpiPen: cap biru off, orange end to thigh, jab and hold 10 detik, rub area, segera ke RS walaupun sudah suntik!',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'edu-pencegahan',
@@ -358,7 +358,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Hindari area sarang lebah/tawon (terutama Vespa affinis yang sangat agresif). Pakai baju lengan panjang dan sepatu saat berkebun/sawah. Hindari parfum/wangi-wangian saat di luar ruangan. Jangan membunuh lebah/tawon sendirian — minta bantuan. Jangan tinggalkan makanan manis di luar ruangan.',
           required: true,
           category: 'action',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'edu-medic-alert',
@@ -366,7 +366,7 @@ export const insectBitePathway: DynamicPathway = {
           description: 'Rekomendasikan pasien dengan alergi venom berat untuk menggunakan gelang/ID medis alergi. Beri kartu/surat keterangan alergi venom yang bisa ditunjukkan di IGD manapun.',
           required: false,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'edu-rujuk-alergi',

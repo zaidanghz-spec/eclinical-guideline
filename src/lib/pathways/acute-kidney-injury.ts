@@ -76,7 +76,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Hiperkalemia (K⁺ > 5.5) adalah komplikasi GGA paling berbahaya dan dapat menyebabkan henti jantung mendadak.\n\nTanda EKG hiperkalemia (dari ringan ke berat):\n1. Tall peaked T-wave (T lancip tinggi)\n2. Pemanjangan PR interval\n3. Pelebaran QRS (> 120 ms)\n4. Sine wave pattern → VF/asistol!\n\nJika EKG menunjukkan tanda hiperkalemia → TANGANI SEGERA + RUJUK CITO!\nJika EKG normal → aman (kadar K⁺ kemungkinan < 6 mEq/L)',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'gga-pemfis',
@@ -150,7 +150,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Jika EKG menunjukkan tall T-wave atau QRS lebar:\n\n① Kalsium Glukonat 10% 10 mL IV perlahan 5–10 menit → STABILISASI membran jantung (efek dalam 1–3 menit, tahan 30–60 menit)\n\n② Insulin Reguler 10 unit IV + Dextrose 40% 50 mL IV → GESER K⁺ masuk sel (efek 15–30 menit)\n\n③ Salbutamol nebulizer 10–20 mg → GESER K⁺ masuk sel (alternatif/tambahan)\n\n④ Sodium Bikarbonat 8.4% 50 mL IV (jika ada asidosis bersamaan)\n\nTindakan ini SEMENTARA — K⁺ akan kembali naik jika tidak dialisis!',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'kri-airway-o2',
@@ -182,7 +182,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Hubungi RS tujuan terlebih dahulu — pastikan ada ICU dan fasilitas dialisis (hemodialisis atau CRRT).\nTransportasi dengan ambulans + pendamping. IV tetap jalan. Monitor EKG jika ada.\n\nSurat rujukan cantumkan:\n• Waktu onset oliguria/anuria\n• Volume urin terakhir yang terukur\n• EKG (foto/bawa printout)\n• Obat yang sudah diberikan (Ca Glukonat, Insulin, dll)\n• TTV serial\n• Penyebab yang dicurigai',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -210,7 +210,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Cairan pilihan: NaCl 0.9% (Normal Saline) atau Ringer Laktat.\nJangan gunakan koloid Starch (HES) — terbukti meningkatkan risiko GGA (KDIGO 2012)!\n\nDosis:\n• Dehidrasi ringan–sedang: 500 mL bolus dalam 30 menit, evaluasi TTV dan output urin\n• Dehidrasi berat/syok: 1000 mL dalam 30–60 menit → evaluasi ulang, ulangi jika perlu\n\nTarget: TD sistolik > 90–100 mmHg, nadi < 100, urin mulai keluar dalam 1–2 jam',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'pre-monitor-output',
@@ -218,7 +218,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Pasang kateter Foley untuk pengukuran akurat.\nJika urin MULAI KELUAR dalam 1–2 jam resusitasi → konfirmasi GGA pre-renal berhasil diatasi → lanjut observasi.\nJika TIDAK ada urin meski TD sudah > 90 → kemungkinan komponen intra-renal atau obstruksi → pertimbangkan rujuk.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'pre-atasi-penyebab',
@@ -226,7 +226,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Diare/muntah berat: lanjutkan cairan oral (oralit) jika bisa minum + IV.\nGagal jantung: HATI-HATI cairan — jangan beri terlalu banyak → akan memperburuk gagal jantung. Konsultasikan ke SpPD/SpJantung.\nSepsis: antibiotik empiris bersamaan cairan. Pertahankan MAP > 65 mmHg.\nPerdarahan: transfusi jika Hb < 7 g/dL → rujuk RS.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'pre-evaluasi-sijam',
@@ -234,7 +234,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Monitor TTV dan output urin setiap 2 jam setelah resusitasi.\nJika TIDAK membaik dalam 4–6 jam ATAU muncul tanda komplikasi (EKG abnormal, SpO₂ turun, kesadaran menurun) → RUJUK IGD RS.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'gga-supportive-care'
@@ -263,7 +263,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Batu ureter atau tumor yang obstruksi di atas level kandung kemih → kateter Foley TIDAK membantu!\nTanda: pasien tidak bisa kencing tapi kandung kemih kosong saat palpasi/perkusi.\n→ Perlu USG (Rujuk RS) untuk konfirmasi hidronefrosis\n→ Perlu ureteral stent atau nefrostomi perkutan di RS\n→ RUJUK ke SpUrologi / SpBedah segera!',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'pos-stop-obat-pemicu',
@@ -271,7 +271,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Obat yang dapat menyebabkan retensi urin/obstruksi fungsional:\n• Antikolinergik: antipsikotik (haloperidol, klorpromazin), antispasmodik, antihistamin generasi 1\n• Opioid\n• Dekongestan (pseudoefedrin)\n\nHentikan jika memungkinkan. Ganti dengan alternatif yang lebih aman.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'pos-monitor-pos-kateter',
@@ -300,7 +300,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Hitung input vs output setiap hari:\n• Jika DEHIDRASI (output > input) → beri cairan sampai haluaran urin terjaga\n• Jika OVERLOAD (edema, berat badan naik, SpO₂ turun) → RESTRIKSI cairan + pertimbangkan furosemide (HANYA jika ada overload terkonfirmasi, bukan sebagai profilaksis)\n\nJANGAN gunakan diuretik untuk "memacu" ginjal — tidak terbukti mencegah atau membalikkan GGA (KDIGO 2012 — Level A).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'sup-stop-nefrotoksik',
@@ -316,7 +316,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Batasi asupan KALIUM jika oliguria:\n• Hindari: pisang, kentang, tomat, kacang-kacangan, coklat, buah kering\n• Hindari: garam kalium (KCl) sebagai pengganti garam\n\nBatasi FOSFOR: susu, keju, daging merah berlebihan.\nProtein tidak perlu dibatasi ketat kecuali uremia berat.\nBatasi asupan cairan oral sesuai output urin + insensible loss (± 500–700 mL/hari).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'sup-pantau-ekg',
@@ -324,7 +324,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Rekam EKG ulang tiap 4–6 jam selama oliguria aktif atau setiap kali ada perubahan klinis.\nTanda memburuk: tall T-wave semakin prominen, PR memanjang, QRS melebar → tanda hiperkalemia meningkat → tangani + rujuk segera.',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'sup-indikasi-rujuk',
@@ -332,7 +332,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'RUJUK SEGERA jika:\n• Oliguria/anuria tidak membaik dalam 6–12 jam meski penyebab diatasi\n• Tanda hiperkalemia di EKG muncul atau memburuk\n• Edema paru / SpO₂ < 94% tidak membaik\n• Kesadaran menurun (ensefalopati uremikum)\n• GDS tidak terkontrol (hiperglikemia pada DM + GGA)\n• Perlu dialisis (kriteria TD)\n\nKriteria dialisis (TPdG) yang perlu segera di RS:\nAsidosis refrakter pH < 7.1, Hiperkalemia K > 6.5 mEq/L, Edema paru refrakter, Ensefalopati uremikum, Anuria Stadium 3.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'gga-monitoring-edukasi'
@@ -369,7 +369,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
           description: 'Instruksikan:\n• JANGAN minum NSAID (Ibuprofen, Diklofenak, dll) tanpa resep dokter\n• Jaga hidrasi yang cukup — minum 8 gelas air/hari, terutama saat cuaca panas\n• JANGAN minum jamu-jamu tak terstandarisasi\n• Jika mengalami diare/muntah berat → segera ke dokter, jangan tunda\n• Beritahu dokter lain bahwa pernah GGA sebelum diberi obat baru\n• Kontrol penyakit dasar: DM, hipertensi, batu ginjal',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'mon-kapan-segera',

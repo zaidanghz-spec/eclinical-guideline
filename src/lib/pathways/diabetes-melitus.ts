@@ -151,7 +151,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'JANGAN beri makanan/minuman oral → risiko aspirasi!\n\nTindakan:\n→ Pasang IV line\n→ Dextrose 40% 50 mL IV bolus cepat (= 20 gram glukosa)\n→ Lanjutkan infus Dextrose 5% atau 10% untuk maintenance\n→ Cek GDS setiap 15 menit\n→ Target GDS > 100 mg/dL\n→ Jika tidak tersedia D40: Glukagon 1 mg IM/SC (jika ada)\n→ Jika tidak ada kedua-duanya → RUJUK IGD RS SEGERA sambil pertahankan IV line.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'hipo-cari-penyebab',
@@ -167,7 +167,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Ajarkan pasien dan keluarga:\n• Selalu bawa makanan manis/permen ke mana-mana\n• Jangan melewatkan makan setelah minum OHO atau injeksi insulin\n• Kenali tanda awal hipoglikemia: keringat dingin, gemetar, pusing\n• Gunakan gelang/kartu identifikasi DM\n• Pantau GDS mandiri lebih ketat jika menggunakan insulin\n\nJika hipoglikemia berulang > 2x/minggu → REVISI DOSIS TERAPI!',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -211,7 +211,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Hubungi IGD RS tujuan terlebih dahulu. Transportasi dengan ambulans + dokter/tenaga kesehatan pendamping.\nIV drip NaCl tetap jalan selama perjalanan.\n\nSurat rujukan cantumkan: GDS awal, status kesadaran (GCS), TTV serial, volume cairan yang sudah diberikan, obat DM yang biasa diminum, dan waktu onset gejala.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -231,7 +231,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'PERKENI 2021 — Diagnosis DM ditegakkan jika:\n• GDP ≥ 126 mg/dL (puasa ≥ 8 jam), ATAU\n• GDS ≥ 200 mg/dL + gejala klasik (poliuria, polidipsia, polifagia, penurunan BB), ATAU\n• GD 2 jam pasca TTGO 75g ≥ 200 mg/dL, ATAU\n• HbA1c ≥ 6.5%\n\nJika tanpa gejala klasik → konfirmasi dengan pemeriksaan ke-2 pada hari berbeda.\n\nPRADIABETES: GDP 100–125 mg/dL (IFG) atau GD 2 jam TTGO 140–199 mg/dL (IGT) atau HbA1c 5.7–6.4%.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'dm-lab-rujuk',
@@ -239,7 +239,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Kunjungan pertama & tiap 3–6 bulan:\n• HbA1c (target < 7% untuk kebanyakan pasien)\n• GDP dan GD 2 jam pp\n\nKunjungan pertama & tiap tahun:\n• Profil lipid puasa: Kolesterol total, LDL, HDL, Trigliserida\n• Fungsi ginjal: Ureum, Kreatinin, eGFR\n• Urin rutin + rasio albumin-kreatinin (ACR) — deteksi nefropati dini\n• SGOT/SGPT — terutama jika konsumsi statin atau metformin\n\nRujukan spesialis:\n• Funduskopi (mata) — kunjungan pertama, lalu tiap tahun\n• ABI (Ankle-Brachial Index) — jika ada gejala PAD',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'dm-hba1c-nilai',
@@ -329,7 +329,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Jika ada SALAH SATU kondisi berikut → pertimbangkan SGLT2 inhibitor atau GLP-1 RA sebagai obat kedua SEGERA (bukan tunggu monoterapi gagal):\n• Penyakit kardiovaskular aterosklerotik (PKVAS): PJK, stroke, PAD\n• Gagal jantung (HFrEF maupun HFpEF)\n• Penyakit ginjal kronik (CKD — eGFR 25–60)\n\nSGLT2i: Empagliflozin, Dapagliflozin, Canagliflozin\nGLP-1 RA: Dulaglutide, Semaglutide, Liraglutide',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'mono-evaluasi-3-bulan',
@@ -337,7 +337,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Jika HbA1c BELUM MENCAPAI TARGET (< 7%) dalam 3 bulan monoterapi → eskalasi ke Dual Therapy.\nJika SUDAH TERCAPAI → lanjutkan monoterapi dengan monitoring 3–6 bulanan.\n\nTarget HbA1c dapat DIINDIVIDUALISASI:\n• Muda, baru DM, tanpa komorbid: < 6.5%\n• Kebanyakan pasien dewasa: < 7%\n• Lansia, hipoglikemia sering, harapan hidup terbatas: < 8%',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'dm-monitoring-komorbid'
@@ -358,7 +358,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Modifikasi gaya hidup tetap WAJIB bersamaan dengan semua terapi farmakologi. Evaluasi kepatuhan diet dan aktivitas fisik di setiap kunjungan.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'dual-algoritma',
@@ -403,7 +403,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Insulin basal (long-acting) dapat dimulai bersamaan dengan OHO:\n• Insulin Glargine atau Detemir:\n  - Dosis awal: 10 unit atau 0.1–0.2 unit/kgBB, sekali sehari malam hari\n  - Titrasi: naikkan 2–4 unit tiap 3–5 hari sampai GDP 80–130 mg/dL\n• Lanjutkan Metformin + SGLT2i/GLP-1 RA bersamaan\n\nEdukasi injeksi: teknik, rotasi situs, penyimpanan insulin.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'triple-evaluasi',
@@ -411,7 +411,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Jika target HbA1c belum tercapai dengan insulin basal + OHO → intensifikasi ke insulin prandial (basal-bolus) → RUJUK/konsultasi dokter spesialis penyakit dalam.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'dm-monitoring-komorbid'
@@ -432,7 +432,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Insulin SEGERA jika:\n• KAD atau SHH (→ rujuk IGD, insulin IV drip)\n• Penurunan BB > 10% dalam 1–3 bulan\n• Gejala hiperglikemia berat (poliuria masif, polidipsia, kelemahan ekstrem)\n• Hamil dengan DM (diabetes gestasional atau DM pra-eksisting)\n• Gagal ginjal (eGFR < 30) — banyak OHO terkontraindikasi\n• Infeksi berat/perioperatif',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'ins-basal',
@@ -440,7 +440,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Insulin Glargine 100 unit/mL atau Detemir:\n• Dosis awal: 10 unit atau 0.1–0.2 unit/kgBB, malam hari sebelum tidur\n• Titrasi setiap 3–5 hari: tambah 2 unit jika GDP > 130 mg/dL, kurangi 2 unit jika GDP < 80 mg/dL\n• OHO (terutama Metformin) dapat dilanjutkan bersamaan insulin basal\n• HENTIKAN Sulfonilurea jika mulai insulin basal (risiko hipoglikemia kumulatif)',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'ins-prandial',
@@ -485,7 +485,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'TD target < 130/80 mmHg pada DM (ADA 2024). Jika > 140/90 → mulai antihipertensi:\n• Lini pertama: ACE inhibitor (misal: Ramipril 5 mg, Lisinopril 10 mg) atau ARB (misal: Valsartan 80 mg, Losartan 50 mg)\n• ACEi/ARB diutamakan karena renoprotektif (melindungi ginjal dari nefropati diabetik)\n• JANGAN kombinasi ACEi + ARB\n\nJika TD masih tinggi dengan 1 obat → tambah CCB (Amlodipine 5 mg) atau HCT.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'mon-dislipidemia',
@@ -493,7 +493,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Target LDL:\n• DM tanpa PKVAS: LDL < 100 mg/dL\n• DM + PKVAS (very high risk): LDL < 70 mg/dL\n\nTerapi:\n• Statin intensitas sedang: Atorvastatin 10–20 mg ATAU Rosuvastatin 5–10 mg\n• Statin intensitas tinggi: Atorvastatin 40–80 mg atau Rosuvastatin 20–40 mg (jika PKVAS)\n\nPantau SGOT/SGPT 3 bulan setelah mulai statin. Waspada miopati (nyeri otot).',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'mon-antiplatelet',
@@ -509,7 +509,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Periksa:\n• Albumin-Kreatinin Rasio (ACR) urin sewaktu:\n  - Normal: < 30 mg/g\n  - Mikroalbuminuria: 30–300 mg/g → mulai ACEi/ARB\n  - Makroalbuminuria: > 300 mg/g → konsul nefrologi\n• Kreatinin serum + hitung eGFR\n\nJika eGFR < 60 → monitor 2–4x setahun. eGFR < 30 → rujuk nefrologi.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'mon-skrining-retinopati',
@@ -533,7 +533,7 @@ export const diabetesMelitusPathway: DynamicPathway = {
           description: 'Setiap 3 bulan: HbA1c, TTV, BB, cek kaki, kepatuhan obat.\nSetiap 6 bulan: profil lipid, fungsi ginjal (jika stabil).\nSetiap tahun: ECG, funduskopi (rujuk), ACR urin, foto thoraks.\n\nEdukasi diabetes berkelanjutan:\n• SMKB (Self-Monitoring of Blood Glucose) jika pakai insulin\n• Kenali tanda hipoglikemia dan cara mengatasinya\n• Manajemen DM saat sakit (sick day rules)\n• Vaksinasi: Influenza (tahunan), Pneumokokus, Hepatitis B',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     }

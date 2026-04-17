@@ -38,7 +38,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Tekanan darah (sistolik < 90 = INSTABIL!), Nadi (cepat/lambat/tidak teratur?), SpO2 (< 94% = pasang O2), RR, Suhu. \nHiti nadi selama 60 detik penuh untuk irama ireguler (AF).',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'ar-ekg-stat',
@@ -46,7 +46,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Sambil pasang EKG, tanyakan: keluhan apa (palpitasi, pingsan, sesak, nyeri dada, lemas)? Sudah berapa lama? Riwayat aritmia sebelumnya? Riwayat jantung, DM, hipertensi? Sedang minum obat apa?\nPasang monitor EKG lead II atau sadapan lengkap 12 lead jika memungkinkan.',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'ar-gejala-serius',
@@ -128,7 +128,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Gunakan mesin suction klinik jika ada muntahan atau sekret berlebih di orofaring SEBELUM memberikan ventilasi. Suction maksimal 10 detik, tidak boleh menghentikan CPR lebih dari itu.',
           required: false,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'cpr-oksigen',
@@ -152,7 +152,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Pasang lead EKG selama CPR. Setiap 2 menit hentikan kompresi < 10 detik untuk cek ritme: \n• VF / pVT (Shockable): → BUTUH DEFIBRILASI → di klinik tanpa AED: LANJUT CPR + RUJUK CITO!\n• Asistol / PEA (Non-shockable): → CPR + Epinefrin + Cari penyebab reversible (5H5T).',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'cpr-5h5t',
@@ -204,7 +204,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Rekam EKG 12-lead. Apakah ritme: Tachyarrhythmia sempit (SVT/AF cepat)? Tachyarrhythmia lebar (VT)? Atau bradiaritmia ekstrem?\nCatat dan simpan strip EKG untuk dokter RS.',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'unstable-amiodarone-vt',
@@ -212,7 +212,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'HANYA jika ritme WIDE COMPLEX (QRS > 120ms) + ada nadi:\nAmiodarone 150 mg IV dalam 10 menit → dilanjutkan 1 mg/menit per jam. \nJANGAN berikan jika ritme sempit (SVT/AF) atau tidak tahu jenis aritmia.',
           required: false,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'unstable-rujuk',
@@ -220,7 +220,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Aritmia instabil dengan nadi = indikasi SYNCHRONIZED CARDIOVERSION. Tidak bisa dilakukan di klinik tanpa peralatan cardioverter. Sambil pasien ditransportasikan: tetap monitor EKG, O2 tetap jalan, pantau TD tiap 5 menit.',
           required: true,
           category: 'safety',
-          role: 'doctor',
+          role: 'nurse',
         }
       ]
     },
@@ -314,7 +314,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'HANYA pada pasien < 65 tahun tanpa bruit karotid. Tekan sinus karotid kanan (setinggi kartilago tiroid) memutar selama 5-10 detik sambil monitor EKG. Jangan lakukan pada keduanya bersamaan (risiko stroke).',
           required: false,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'svt-adenosin',
@@ -338,7 +338,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Jika SVT tidak terminasi setelah 3 upaya Adenosin → Rujuk ke RS/Spesialis kardiologi/elektrofisiologi untuk evaluasi: Kardioversi elektrik, Penyebab struktural (WPW, accessory pathway), dan RF Ablasi jangka panjang.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -358,7 +358,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Hitung HR dengan menghitung interval R-R selama 60 detik (karena ireguler). Target rate control: HR < 110 x/menit saat istirahat (RACE II Trial). Jika HR > 150 + gejala berat → risiko dekompensasi.',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'af-rate-control-beta-blocker',
@@ -374,7 +374,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Hitung CHA₂DS₂-VASc: CHF(1), Hipertensi(1), Age ≥75(2), DM(1), Stroke/TIA(2), Vascular disease(1), Age 65-74(1), Sex female(1).\nAntikogualn: Warfarin (target INR 2-3) ATAU NOAC — Rivaroxaban 20mg OD, Apixaban 5mg BD, Dabigatran 150mg BD.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'af-thyroid-check',
@@ -382,7 +382,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'AF bisa dipicu hipertiroid. Tanyakan: berat badan turun padahal makan banyak, berdebar, berkeringat, tangan gemetar, diare? → Periksa TSH (jika tersedia lab). Hipertiroid → rujuk ke internis.',
           required: false,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'af-rujuk-kardio',
@@ -390,7 +390,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Semua pasien AF baru → rujuk spesialis jantung untuk evaluasi: Strategi rhythm control (kardioversi, antiaritmia), Ekokardiografi (Rujuk RS) (fungsi jantung, trombus LA), dan kemungkinan RF Ablasi pada AF simtomatik berulang.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -410,7 +410,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Pasang monitor EKG kontinyu. Pasien berbaring di tempat tidur. Jangan biarkan pasien berjalan/ke toilet sendiri. Siapkan peralatan CPR di samping pasien (ambubag, epinefrin).',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'vt-iv-line',
@@ -462,7 +462,7 @@ export const aritmiPathway: DynamicPathway = {
           description: 'Cek EKG: \n• Sinus bradikardia (P ada sebelum tiap QRS, PR normal): paling jinak.\n• Blok AV Derajat 1 (PR > 200ms): observasi.\n• Blok AV Derajat 2 Mobitz I (Wenckebach — PR memanjang lalu drop): umumnya jinak.\n• Blok AV Derajat 2 Mobitz II (PR konstan, QRS tiba-tiba drop): BERBAHAYA → rujuk.\n• Blok AV Derajat 3 / Total (P dan QRS tak menyambung): DARURAT → rujuk.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'brady-singkirkan-penyebab',

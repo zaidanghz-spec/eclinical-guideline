@@ -55,7 +55,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'Semua pasien hipertensi di klinik (terutama TD >180/120 atau ada nyeri dada/sesak) wajib distrip EKG. Cari tanda: LVH (hipertrofi jantung kiri), ST-Elevasi/Depresi, Inversi T, atau Fibrilasi Atrium.',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'ht-lab-dasar',
@@ -137,7 +137,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'Berikan Nifedipin oral 10 mg (TIDAK BOLEH sublingual karena risiko hipotensi janin akut). Ulangi 10 mg tiap 30 menit jika tensi masih ≥160/110 mmHg. Maksimal 30 mg.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'pe-dilarang',
@@ -145,7 +145,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'MUTLAK DILARANG memberi Captopril, Lisinopril, Candesartan, Valsartan pada ibu hamil karena menyebabkan kematian/cacat ginjal janin (Teratogenik Tipe D).',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         }
       ]
     },
@@ -189,7 +189,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'Pasien dikirim dengan ambulans didampingi tenaga medis. Serahkan cetakan EKG lengkap. Jangan menunda rujukan untuk sekadar menunggu reaksi obat oral.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -225,7 +225,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'Jika setelah 2 jam TD berhasil turun pelan (misal jadi 160/100), pasien BOLEH DIRAWAT JALAN tanpa harus ke IGD. Pulangkan dengan resep OAH kombinasi dan minta kontrol ulang H+3.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -245,7 +245,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'Wajib diedukasikan sebelum/bersamaan obat:\nBatasi natrium (garam) < 2 gram/hari, stop merokok, turunkan BB (BMI target 20-25), olahraga 30 mnt/hari (5x seminggu), kurangi kafein dan tinggalkan alkohol.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'poli-step1-terapi',
@@ -253,7 +253,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'Berdasarkan PERHI 2021, terapi inisial saat ini langsung disarankan KOMBINASI DUAL (kecuali lansia renta atau Derajat 1 sangat ringan).\nPilihan: ACEi/ARB + CCB (Kalsium Antagonis), CONTOH: Amlodipin 1x5mg + Candesartan 1x8mg / Lisinopril 1x5mg.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'poli-komorbid-dm-ckd',
@@ -269,7 +269,7 @@ export const hipertensiPathway: DynamicPathway = {
           description: 'DILARANG DENGAN MUTLAK menggabungkan ACEi dengan ARB secara bersamaan (Memicu gagal ginjal akut dan hiperkalemia fatal!). Contoh larangan: Captopril + Candesartan di-resepkan bebarengan.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'poli-step2-3',

@@ -60,7 +60,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'RUJUK SEGERA jika ada SATU dari:\n• Diplopia, disartria, disfagia, hemiparesis\n• Ataksia berat (tidak bisa berjalan tanpa jatuh)\n• Penurunan kesadaran\n• Nyeri kepala hebat mendadak ("thunderclap")\n• Nistagmus vertikal murni (pure downbeat/upbeat) tanpa manuver\n• Defisit nervus kranialis\n\nJika red flag → STOP → jangan manuver → stabilisasi → rujuk IGD RS.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'bppv-ttv',
@@ -76,7 +76,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Rekam EKG pada:\n• Usia > 60 tahun\n• Nadi ireguler (AF?)\n• Riwayat atau faktor risiko penyakit jantung\n• Pusing/presinkop yang lebih cocok dengan penyebab kardiak\n\nPada BPPV murni muda tanpa komorbid → EKG tidak wajib tapi dianjurkan sebagai safety-net.',
           required: false,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'bppv-pemfis-neuro',
@@ -150,7 +150,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Manuver diagnostik sering memrovokasi vertigo dan mual hebat. Siapkan suction dan kantong muntah. Jelaskan prosedur kepada pasien: "Akan terjadi pusing sesaat, tapi aman dan tidak berbahaya."',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'dm-dix-hallpike',
@@ -174,7 +174,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Catat:\n• Manuver yang positif (Dix-Hallpike kanan/kiri atau Supine Roll kanan/kiri)\n• Arah komponen cepat nistagmus\n• Ada komponen torsional atau tidak\n• Latensi (detik), durasi (detik)\n• Fatigable (ya/tidak)\n\nNistagmus SENTRAL: tidak ada latensi, tidak fatigable, direction-changing spontan → RUJUK!',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'bppv-kanal-decision'
@@ -231,7 +231,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Jika mual berat sebelum CRT: Ondansetron 4 mg sublingual ATAU Dimenhydrinate 50 mg oral (onset 15–30 menit). Suction standby. Jelaskan: "Akan terasa pusing selama manuver, itu normal dan pertanda obat bekerja."',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'post-epley-1',
@@ -239,7 +239,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Kepala rotasi 45° ke sisi terkena → baring cepat dengan kepala menggantung 20–30° → tunggu nistagmus habis + 30 detik tambahan (~1–2 menit total). Pasien akan merasakan vertigo — reassure: "Ini tanda yang bagus."',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'post-epley-2',
@@ -247,7 +247,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Pertahankan kepala menggantung → rotasi perlahan 90° ke sisi kontralateral (sisi sehat) → tunggu 30–60 detik. Nistagmus bisa muncul sebentar saat rotasi — ini normal.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'post-epley-3',
@@ -255,7 +255,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Pasien miring ke sisi sehat → kepala rotasi lebih lanjut sampai hidung menghadap lantai (45° dari horizontal) → tunggu 30–60 detik.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'post-epley-4',
@@ -308,7 +308,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Duduk → baring cepat ke sisi SEHAT → tunggu 1 menit → rotasi kepala 45° ke bawah (hidung ke lantai) → tahan 2 menit → duduk perlahan. Ulangi 2–3x jika perlu.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'hor-lempert',
@@ -316,7 +316,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Terlentang → rotasi 90° ke sisi SEHAT, tahan 30–60 detik → rotasi 90° lagi (tengkurap), tahan → rotasi 90° lagi, tahan → duduk.\nTotal rotasi 270° ke sisi sehat. Alternatif jika Gufoni gagal.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'hor-obat',
@@ -381,7 +381,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'BPPV bukan stroke, bukan tumor otak. Ini adalah masalah pada batu kecil (otokonia) di telinga dalam yang bergeser. Prognosis: Ad vitam bonam. Bisa kambuh.\nRekurensi: ~15% dalam 1 tahun, ~50% lifetime — tapi dapat diterapi lagi dengan manuver yang sama.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'edu-brandt-daroff',
@@ -389,7 +389,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'TEKNIK: Duduk tegak → baring miring ke kanan (30 detik atau sampai pusing hilang) → duduk tegak (30 detik) → baring miring ke kiri (30 detik) → duduk.\nUlangi 10–20x, 3x sehari, selama 2 minggu.\nTujuan: habituasi vestibular dan kompensasi sentral. Efektif untuk residual dizziness (AAO-HNS 2017 Level B).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'edu-vitamin-d',
@@ -405,7 +405,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Hindari mengemudi minimal 30–60 menit setelah manuver. Jika masih ada residual pusing → hindari mengemudi sampai gejala hilang. Jelaskan risiko vertigo mendadak saat berkendara.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'edu-kembali-segera',
@@ -413,7 +413,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Instruksikan kembali ke klinik jika:\n• Vertigo berulang yang tidak membaik dalam 1–2 minggu\n• Muncul gejala BARU: kelemahan anggota gerak, bicara pelo, gangguan pendengaran tiba-tiba\n• Tidak bisa berjalan tanpa jatuh (ataksia berat)\nGejala baru ini bukan BPPV — perlu evaluasi ulang.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'edu-obat-pulang',
@@ -429,7 +429,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Kontrol 1–2 minggu. Jika masih BPPV saat kontrol → ulangi manuver CRT.\nIndikasi rujuk Spesialis Neurologi:\n• Kekambuhan > 3x dalam 1 tahun\n• Refrakter setelah 3 sesi CRT\n• Kecurigaan sentral yang belum bisa disingkirkan\n• Vertigo intractable + dehidrasi → rawat inap',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ]
     },
@@ -449,7 +449,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Jelaskan: otokonia sudah direposisi (BPPV sembuh), tapi otak masih perlu waktu rekalibrasi. Rata-rata 1–4 minggu, bisa sampai 3 bulan pada lansia. Bukan tanda ada yang "salah".',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'res-rehab',
@@ -457,7 +457,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Latihan Brandt-Daroff 3x/hari. Latihan gaze stabilization: fiksasi pandangan pada target sambil gerakkan kepala horizontal/vertikal 20x. Latihan keseimbangan: berdiri satu kaki, jalan tandem.\nCochrane Review (McDonnell & Hillier 2015): VRT efektif mempercepat resolusi residual dizziness.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'res-betahistin',
@@ -502,7 +502,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Cantumkan dalam surat rujukan:\n• Hasil manuver diagnostik (sisi, arah nistagmus)\n• CRT yang sudah dilakukan (jumlah sesi + hasil)\n• Vital signs termasuk tes ortostatik\n• Hasil EKG\n\nIndikasi rujuk (PPK PERDOSSI 2023):\n• Refrakter > 3 bulan\n• Kekambuhan > 3x setahun\n• Nistagmus atipikal (tidak sesuai pola BPPV manapun)\n• Gejala sentral yang muncul',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         }
       ]
     },
@@ -530,7 +530,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Kattah et al. Stroke 2009: HINTS exam sensitivitas 100% untuk stroke, lebih baik dari MRI dalam 48 jam pertama.\n\nHead Impulse: NORMAL (tidak ada catch-up saccade) = SENTRAL\nNystagmus: direction-changing atau vertikal = SENTRAL\nTest of Skew: skew deviation = SENTRAL\n\nJika ≥ 1 komponen sentral → probabilitas stroke tinggi → rujuk IGD segera!',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'sen-iv-antiemetik',
@@ -546,7 +546,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Cantumkan: onset + durasi vertigo, temuan neurologis (defisit apa), hasil HINTS exam, TTV serial, hasil EKG, red flags yang ditemukan, obat yang diberikan.\nMinta CT/MRI kepala di RS tujuan.\n\nTransportasi: ambulans jika penurunan kesadaran/hemiparesis. Dengan pendamping jika masih sadar dan stabil.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -566,7 +566,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'RUJUK IGD SEGERA: STEMI, Blok AV total (derajat 3), VT, AF dengan RVR cepat.\nRUJUK SEMI-URGENT (poli kardiologi): AF baru, LBBB, ST depresi signifikan, QT panjang.\nOBSERVASI/POLIKLINIK: Sinus bradikardia ringan, PAC/PVC isolated.',
           required: true,
           category: 'assessment',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'kar-stabilisasi',
@@ -574,7 +574,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Bradikardia simtomatis: Atropine 0.5 mg IV → rujuk.\nSTEMI: Aspirin 160–320 mg kunyah + rujuk IGD cito.\nAF RVR: rate control jika tersedia (beta bloker oral) → rujuk.\n\nMonitor SpO₂ dan nadi kontinu selama menunggu transportasi.',
           required: true,
           category: 'action',
-          role: 'doctor',
+          role: 'nurse',
         }
       ]
     },
@@ -602,7 +602,7 @@ export const bppvPathway: DynamicPathway = {
           description: 'Instruksikan:\n• Berdiri perlahan — dari tidur ke duduk dulu, lalu berdiri\n• Duduk di sisi tempat tidur 1–2 menit sebelum berdiri\n• Hindari berdiri mendadak\n• Pastikan asupan cairan adekuat\n• Review obat antihipertensi dengan dokter',
           required: true,
           category: 'action',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'bppv-edukasi'

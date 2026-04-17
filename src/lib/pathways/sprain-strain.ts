@@ -45,7 +45,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Klinik TANPA X-Ray WAJIB merujuk jika (Ottawa Ankle/Knee Rules): \n1. Nyeri tekan BONE (tulang) di batas posterior malleolus lateral/medial (6 cm ke atas), base metacarpal ke-5, atau tulang navicular. \n2. ATAU Pasien sama sekali TIDAK BISA menahan beban (jalan 4 langkah) baik saat kejadian maupun di klinik.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'ss-neurovaskular',
@@ -103,7 +103,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Pasang spalk (bidai) atau mitela/sling. Bidai harus melingkupi satu persendian di atas dan di bawah area cedera untuk menstabilkan. Jangan dibebat terlalu kencang (cek pulsasi distal setelah pasang bidai).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'ref-analgesik',
@@ -119,7 +119,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Siapkan surat rujukan memuat detail: Mekanisme cedera, hasil pemeriksaan (red flag), jam kejadian, obat yang sudah diberikan, dan indikasi permintaan Roentgen/X-Ray.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'ref-edukasi-larangan-urut',
@@ -127,7 +127,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Beritahu pasien dan keluarga sebelum merujuk, JANGAN DIPIJAT/DIURUT ke tukang pijat tulang. Dapat menyebabkan pembengkakan jaringan memburuk, emboli, atau memperparah fraktur tertutup menjadi terbuka.',
           required: true,
           category: 'safety',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -147,7 +147,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'PROTECT: Lindungi area dari cedera lebih lanjut. REST: Istirahatkan bagian yang cedera. Kurangi tumpuan beban (weight-bearing). Jika kaki, bisa pakai tongkat kruk sementara. Jika lengan, kurangi aktivitas mengangkat.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'price-ice',
@@ -155,7 +155,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'PENTING: Gunakan kompres es (ice pack / es dibungkus handuk) selama 15-20 menit, diulang setiap 2-3 jam pada 48 jam pertama. AWAS: Jangan taruh es langsung ke kulit (bisa frostbite). JANGAN KOMPRES PANAS/HANGAT di 48 jam pertama (memperburuk bengkak)!',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'price-compression',
@@ -163,7 +163,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Balut area cedera dengan perban elastis (tensocrepe). Balut dari bagian distal (ujung) ke proksimal (atas) untuk mendorong aliran balik vena. Jangan terlalu ketat. Jika jari membiru, kesemutan, atau dingin, segera LONGGARKAN.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'price-elevation',
@@ -187,7 +187,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Hindari H.A.R.M: (Heat/Panas, Alkohol, Running/Aktivitas Berat, Massage/Pijat) pada 72 jam pertama karena akan meningkatkan aliran darah dan memperparah bengkak dan nyeri perut.',
           required: true,
           category: 'safety',
-          role: 'both',
+          role: 'nurse',
         }
       ],
       nextNodeId: 'ss-education-followup'
@@ -208,7 +208,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Minta pasien datang kembali setelah 3-5 hari untuk evaluasi ulang tingkat nyeri, bengkak, dan instabilitas. Jika tidak membaik sama sekali atau memburuk, rujuk X-Ray.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         },
         {
           id: 'ss-return-to-activity',
@@ -216,7 +216,7 @@ export const sprainStrainPathway: DynamicPathway = {
           description: 'Setelah 72 jam dan nyeri berkurang, boleh mulai kompres hangat. Mulai gerakkan sendi perlahan (ROM aktif) tanpa beban berat. Aktivitas olahraga berat baru boleh setelah sendi bebas nyeri sepenuhnya (bisa 2-6 minggu).',
           required: true,
           category: 'action',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'ss-red-flag-home',

@@ -77,7 +77,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'FA + WPW = BAHAYA MAUT! Cari: delta wave + PR pendek di EKG baseline. JIKA ADA → JANGAN berikan digoxin, verapamil, diltiazem, adenosin → dapat menyebabkan VFib! Pilih amiodaron IV atau kardioversi elektrik.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-iv-access',
@@ -85,7 +85,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Minimal 1 jalur IV perifer besar. 2 jalur IV jika unstable atau rencana kardioversi. Ambil sampel darah bersamaan: DL, elektrolit, kreatinin, TSH, enzim jantung (jika nyeri dada).',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-o2-supplementasi',
@@ -109,7 +109,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'PALING PENTING untuk keputusan kardioversi! <48 jam → kardioversi relatif aman tanpa TEE. >48 jam atau TIDAK PASTI → risiko trombus tinggi → perlu antikoagulan 3 minggu dulu ATAU TEE untuk singkirkan trombus AAK sebelum kardioversi.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'fa-hemodynamic-decision'
@@ -159,7 +159,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Hubungi kardiolog/dokter senior segera. Siapkan anestesi jika tersedia. Lebih baik 2 dokter untuk prosedur ini!',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-ev-pads-sync',
@@ -183,7 +183,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Start: 120–200 J bifasik (lebih disukai) ATAU 200 J monofasik. Jika gagal → naikkan energi, ulangi. Max 3 attempt dengan eskalasi energi. Bifasik lebih efisien, perlu energi lebih rendah dari monofasik.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-ev-deliver-shock',
@@ -191,7 +191,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Umumkan "OXYGEN OFF, SEMUA MINGGIR!". Visual check semua clear. Tekan tombol SHOCK. Note: pada SYNC mode, ada sedikit delay (menunggu QRS) — tahan tombol hingga shock delivered!',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-ev-assess-post-shock',
@@ -223,7 +223,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Pasien FA emergency → observasi HCU/ICU post-kardioversi. Monitor EKG kontinu, vital signs q15 menit. Watch for: rekurensi FA, aritmia baru, perubahan hemodinamik.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-ev-investigate-cause',
@@ -231,7 +231,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Setelah stabilisasi → cari underlying cause: Ekokardiografi (Rujuk RS), Lab lengkap (TSH, DL, elektrolit), EKG baseline, Foto toraks. Komorbid perlu diobati untuk cegah rekurensi!',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'fa-long-term-plan'
@@ -252,7 +252,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'FA Pertama Kali: baru terdiagnosis, belum jelas durasi. Paroksismal: berhenti sendiri ≤7 hari. Persisten: menetap >7 hari, butuh kardioversi. Persisten Lama: ≥1 tahun, masih rencana kendali irama. Permanen: dokter+pasien sepakat tidak upayakan irama sinus lagi.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'fa-ehra-score',
@@ -276,7 +276,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Darah Lengkap (anemia/infeksi?). Elektrolit (K⁺, Mg²⁺ — koreksi dulu!). Kreatinin + eGFR (tentukan dosis antikoagulan). TSH (hipertiroid = penyebab FA reversibel!). Enzim jantung troponin (Rujuk RS) (jika ada nyeri dada → singkirkan SKA).',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'fa-ekokardiografi (Rujuk RS)',
@@ -292,7 +292,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'FA VALVULAR: ada stenosis mitral sedang-berat OR katup prostetik mekanik → Wajib WARFARIN, AKD DILARANG! FA NON-VALVULAR: semua FA lainnya → AKD lebih diutamakan dari warfarin.',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-foto-toraks',
@@ -382,7 +382,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Aspirin TIDAK efektif mencegah stroke FA dan risiko perdarahannya SAMA dengan antikoagulan. Tidak ada dasar ilmiah untuk substitusi aspirin sebagai pengganti antikoagulan pada FA. (Antiplatelet boleh ditambahkan HANYA jika ada indikasi mandiri: SKA, PCI baru.)',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-egfr-monitor',
@@ -398,7 +398,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Onset FA <48 jam: kardioversi bisa langsung (lanjutkan antikoagulan 4 minggu sesudah). Onset ≥48 jam atau TIDAK PASTI: PILIH salah satu: (A) Antikoagulan terapi 3 minggu dulu → lalu kardioversi, atau (B) TEE untuk singkirkan trombus AAK → kardioversi. Setelah kardioversi: antikoagulan 4 minggu wajib (atrial stunning)!',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'fa-rate-rhythm-decision'
@@ -448,7 +448,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Studi RACE II membuktikan kendali laju longgar (≤110) sama baiknya dengan ketat (<80) dalam hal outcome. Mulai dari target longgar. Perketat hanya jika masih bergejala!',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-rc-beta-bloker',
@@ -488,7 +488,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Cek: HR <110×/mnt saat istirahat? Uji berjalan 6 menit: HR <110 setelah berjalan? Holter 24 jam untuk evaluasi menyeluruh dan deteksi bradikardia. Jika kendali laju farmakologis gagal → pertimbangkan ablasi NAV + pacu jantung permanen (pilihan invasif terakhir).',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'fa-monitoring-followup'
@@ -509,7 +509,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Onset <48 jam: kardioversi elektif aman. Onset ≥48 jam atau tidak pasti: (A) Antikoagulan terapi 3 minggu → kardioversi, ATAU (B) TEE untuk singkirkan trombus AAK → kardioversi segera. Melanggar rule ini = risiko stroke embolik pasca-kardioversi!',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'fa-rhy-kardioversi-listrik',
@@ -541,7 +541,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Indikasi: Simtomatis + gagal ≥1 obat antiaritmia, ATAU pasien muda paroksismal yang pilih tanpa obat seumur hidup. AFR (Ablasi Frekuensi Radio) isolasi VP: success 85% tahun pertama, 52% pada 5 tahun. Krioablasi: efikasi setara, opsi di pusat berpengalaman. Rujuk SpJP di RS tersier!',
           required: false,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'fa-rhy-antikoagulan-post-cv',
@@ -578,7 +578,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Ekokardiografi (Rujuk RS) (struktur jantung, EF, katup). TSH (hipertiroid?). Elektrolit, DL. EKG baseline (WPW?). Foto toraks. Holter 24 jam jika curiga FA paroksismal berulang.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         },
         {
           id: 'fa-lt-konsul-spjp',
@@ -586,7 +586,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Semua FA post-emergency → konsul SpJP untuk: evaluasi etiologi, rencana kendali irama jangka panjang, pertimbangan rujukan ablasi, optimasi antikoagulan.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'fa-monitoring-followup'
@@ -631,7 +631,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Penurunan BB 10–15kg pada obesitas: terbukti turunkan rekurensi FA (ARREST-AF). Batasi alkohol & kafein berlebih. Aerobik sedang teratur. Berhenti merokok. Manage stres. Tidur cukup.',
           required: true,
           category: 'action',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'fa-fu-edukasi-stroke',
@@ -639,7 +639,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'Ajarkan: FAST = Face drooping, Arm weakness, Speech difficulty, Time to call ambulance. Pasien FA risiko stroke 5× lebih tinggi! Gejala stroke = EMERGENCY — ke IGD dalam 4.5 jam (window trombolisis). Jangan tunda meski sudah minum antikoagulan.',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'fa-fu-ekg-berkala',
@@ -647,7 +647,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
           description: 'EKG minimal tiap 6–12 bulan, atau jika keluhan baru/perubahan kondisi. Holter 24–72 jam: untuk evaluasi rekurensi FA asimtomatis (terutama pada kendali irama). Monitor interval QT jika pakai obat antiaritmia (sotalol, amiodaron).',
           required: false,
           category: 'assessment',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'fa-fu-rujuk-spjp',

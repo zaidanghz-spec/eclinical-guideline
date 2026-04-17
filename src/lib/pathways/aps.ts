@@ -41,7 +41,7 @@ export const apsPathway: DynamicPathway = {
           description: 'Klinik tidak memiliki Echo/Treadmill. Pasien dengan gejala PJK Stabil murni WAJIB dirujuk ke Poli Jantung RSUD untuk menilai fungsi pompa (LVEF).',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'aps-ptp-stratification'
@@ -103,7 +103,7 @@ export const apsPathway: DynamicPathway = {
           description: 'Bekali pasien ISDN 5mg (di bawah lidah). Edukasi BILA nyeri kronis kumat. KE IGD bila tidak mempan.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'aps-beta-blocker',
@@ -111,7 +111,7 @@ export const apsPathway: DynamicPathway = {
           description: 'Jika tensi/nadi normal, resepkan beta blocker oral setiap hari.',
           required: true,
           category: 'medication',
-          role: 'doctor',
+          role: 'nurse',
         },
         {
           id: 'aps-aspirin',

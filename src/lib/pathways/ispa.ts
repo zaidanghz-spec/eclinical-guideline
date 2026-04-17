@@ -127,7 +127,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Tulis surat rujukan dengan indikasi klinis susp. Pneumonia. Cantumkan hasil TTV (terutama RR dan SpO2 ruangan), temuan stetoskop, dan tindakan prarujukan (O2).',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         },
         {
           id: 'ref-edukasi-pneumonia',
@@ -135,7 +135,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Jelaskan bahwa radang paru-paru tidak bisa didiagnosis pasti / diobati tuntas di faskes dasar tanpa X-Ray, sehingga butuh evaluasi lanjutan, agar nyawa tidak terancam.',
           required: true,
           category: 'safety',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     },
@@ -179,7 +179,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Dengarkan ulang (auskultasi). Hitung RR. \nJika wheezing hilang/berkurang drastis -> pasien aman pulang (pindah ke tatalaksana ISPA Ringan). \nJika masih mengi/sesak -> bisa ulang Nebul maksimal 3x jeda 20 menit. Masih gagal -> RUJUK IGD.',
           required: true,
           category: 'assessment',
-          role: 'nurse',
+          role: 'doctor',
         }
       ],
       nextNodeId: 'ispa-mild-management'
@@ -224,7 +224,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Antibiotik TIDAK meredakan flu/batuk virus (90% kasus bronkitis akut itu VIRUS). \nHANYA berikan Amoxicillin (500mg 3x sehari x 5-7 hari) JIKA: curiga kuat faringitis Streptococcus (demam mendadak, amandel eksudat bernanah, tanpa batuk pilek).',
           required: true,
           category: 'safety',
-          role: 'nurse',
+          role: 'both',
         },
         {
           id: 'mild-edukasi-istirahat',
@@ -232,7 +232,7 @@ export const ispaPathway: DynamicPathway = {
           description: 'Gunakan masker, cuci tangan, perbanyak minum air hangat. Istirahat 3-5 hari di rumah. Kembali kontrol jika >5 hari demam tidak turun atau timbul sesak napas akut (waspada pneumonia sekunder).',
           required: true,
           category: 'documentation',
-          role: 'both',
+          role: 'nurse',
         }
       ]
     }
