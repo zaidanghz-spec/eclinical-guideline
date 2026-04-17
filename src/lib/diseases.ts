@@ -349,6 +349,16 @@ export const diseases: Disease[] = [
 
   // ALERGI & DERMATOLOGI
   {
+      {
+    id: 'intoksikasi-kimia',
+    name: 'Intoksikasi & Keracunan Akut',
+    nameEn: 'Acute Poisoning & Chemical Injury',
+    organSystem: 'toksikologi',
+    isEmergency: true,
+    timeToIntervention: 'Segera (<15 menit resusitasi & dekontaminasi)',
+    prevalenceIndonesia: 'Penyebab 5-10% admisi IGD di RS rujukan (terutama Oplosan, Pestisida, Parasetamol)',
+    keywords: ['keracunan', 'intoksikasi', 'poisoning', 'oplosan', 'metanol', 'methanol', 'parasetamol', 'paracetamol', 'panadol', 'pufferfish', 'ikan buntal', 'baygon', 'pestisida', 'organofosfat', 'zat korosif', 'asam', 'basa', 'minyak tanah', 'bensin', 'chemical injury', 'suicide', 'bunuh diri']
+  },
     id: 'reaksi-alergi',
     name: 'Reaksi Alergi Akut & Urtikaria',
     nameEn: 'Acute Allergic Reaction & Urticaria',

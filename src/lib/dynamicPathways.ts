@@ -81,6 +81,7 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
  // ACUTE KIDNEY INJURY (AKI) - KDIGO Guidelines
  'acute-kidney-injury': acuteKidneyInjuryPathway,
   'myalgia': myalgiaPathway,
+  'intoksikasi-kimia': intoksikasiKimiaPathway,
 
  // DIABETES MELITUS TIPE 2 - PNPK 2020 & PERKENI 2021
  'diabetes-melitus': diabetesMelitusPathway,
