@@ -330,9 +330,9 @@ export default function DynamicPathwayPage() {
           ul { padding-left: 20px; }
           li { margin-bottom: 4px; }
           .checked { color: #047857; }
-          .checked::marker { content: '\2713  '; }
+          .checked::marker { content: '✓  '; }
           .pending { color: #b45309; }
-          .pending::marker { content: '\2192  '; }
+          .pending::marker { content: '→  '; }
           .doctor-section { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
           .footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
           @media print { body { margin: 16px; } }
