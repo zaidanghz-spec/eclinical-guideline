@@ -27,7 +27,8 @@ module.exports = async function handler(req, res) {
       const { sessionId, checklist, notes, currentNodeId, pathwayHistory, decisions, variations, status } = body;
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
 
-      const existing = await query('SELECT id FROM pathway_sessions WHERE id = $1 AND user_id = $2', [sessionId, payload.userId]);
+      // Collaborative: allow any user with valid token to update if session exists
+      const existing = await query('SELECT id FROM pathway_sessions WHERE id = $1', [sessionId]);
       if (existing.length === 0) return res.status(404).json({ error: 'Session not found' });
 
       const result = await query(
@@ -40,7 +41,7 @@ module.exports = async function handler(req, res) {
           variations = COALESCE($6::jsonb, variations),
           status = COALESCE($7, status),
           updated_at = NOW()
-        WHERE id = $8 AND user_id = $9
+        WHERE id = $8
         RETURNING *`,
         [
           checklist ? JSON.stringify(checklist) : null,
@@ -50,8 +51,7 @@ module.exports = async function handler(req, res) {
           decisions ? JSON.stringify(decisions) : null,
           variations ? JSON.stringify(variations) : null,
           status || null,
-          sessionId,
-          payload.userId
+          sessionId
         ]
       );
       return res.status(200).json({ session: result[0] });
@@ -62,19 +62,17 @@ module.exports = async function handler(req, res) {
       const { sessionId, nurseNote } = body;
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
 
-      const existing = await query('SELECT id FROM pathway_sessions WHERE id = $1 AND user_id = $2', [sessionId, payload.userId]);
-      if (existing.length === 0) return res.status(404).json({ error: 'Session not found' });
-
       const result = await query(
         `UPDATE pathway_sessions SET
           consultation_status = 'waiting_doctor',
           nurse_note = COALESCE($1, nurse_note),
           reported_at = NOW(),
           updated_at = NOW()
-        WHERE id = $2 AND user_id = $3
+        WHERE id = $2
         RETURNING *`,
-        [nurseNote || null, sessionId, payload.userId]
+        [nurseNote || null, sessionId]
       );
+      if (result.length === 0) return res.status(404).json({ error: 'Session not found' });
       return res.status(200).json({ session: result[0] });
     }
 
@@ -82,11 +80,6 @@ module.exports = async function handler(req, res) {
     if (req.method === 'PUT' && action === 'doctor-order') {
       const { sessionId, doctorOrders } = body;
       if (!sessionId || !doctorOrders) return res.status(400).json({ error: 'sessionId and doctorOrders are required' });
-
-      // Dokter bisa berbeda user dari perawat yg membuat session,
-      // sehingga kita tidak filter by user_id di sini tapi pastikan session ada
-      const existing = await query('SELECT id FROM pathway_sessions WHERE id = $1', [sessionId]);
-      if (existing.length === 0) return res.status(404).json({ error: 'Session not found' });
 
       const result = await query(
         `UPDATE pathway_sessions SET
@@ -98,6 +91,7 @@ module.exports = async function handler(req, res) {
         RETURNING *`,
         [JSON.stringify(doctorOrders), payload.userId, sessionId]
       );
+      if (result.length === 0) return res.status(404).json({ error: 'Session not found' });
       return res.status(200).json({ session: result[0] });
     }
 
@@ -106,10 +100,10 @@ module.exports = async function handler(req, res) {
       const { sessionId } = body;
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
       const result = await query(
-        'DELETE FROM pathway_sessions WHERE id = $1 AND user_id = $2 RETURNING id',
-        [sessionId, payload.userId]
+        'DELETE FROM pathway_sessions WHERE id = $1 RETURNING id',
+        [sessionId]
       );
-      if (result.length === 0) return res.status(404).json({ error: 'Session not found or not authorized' });
+      if (result.length === 0) return res.status(404).json({ error: 'Session not found' });
       return res.status(200).json({ deleted: true, id: sessionId });
     }
 
@@ -119,6 +113,19 @@ module.exports = async function handler(req, res) {
     if (action === 'create') {
       const { diseaseId, diseaseName, patientCode } = body;
       if (!diseaseId || !diseaseName) return res.status(400).json({ error: 'diseaseId and diseaseName are required' });
+      
+      // Collaborative Resuming: if a session with this code exists and is in_progress, JOIN it
+      if (patientCode && patientCode.trim()) {
+        const trimmedCode = patientCode.trim();
+        const existing = await query(
+          'SELECT * FROM pathway_sessions WHERE disease_id = $1 AND patient_code = $2 AND status = \'in_progress\' LIMIT 1',
+          [diseaseId, trimmedCode]
+        );
+        if (existing.length > 0) {
+          return res.status(200).json({ session: existing[0], resumed: true });
+        }
+      }
+
       const result = await query(
         'INSERT INTO pathway_sessions (user_id, disease_id, disease_name, patient_code) VALUES ($1, $2, $3, $4) RETURNING *',
         [payload.userId, diseaseId, diseaseName, patientCode || '']
@@ -132,8 +139,8 @@ module.exports = async function handler(req, res) {
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
       const result = await query(
         `UPDATE pathway_sessions SET status = 'completed', completed_at = NOW(), updated_at = NOW()
-         WHERE id = $1 AND user_id = $2 RETURNING *`,
-        [sessionId, payload.userId]
+         WHERE id = $1 RETURNING *`,
+        [sessionId]
       );
       if (result.length === 0) return res.status(404).json({ error: 'Session not found' });
       return res.status(200).json({ session: result[0] });

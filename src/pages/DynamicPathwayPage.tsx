@@ -150,8 +150,22 @@ export default function DynamicPathwayPage() {
       if (session) {
         setSessionId(session.id);
         setSessionStartedAt(session.startedAt || now);
+        
+        // Sync states if it's a resumed session
+        if (session.checklist) setCheckedSteps(session.checklist);
+        if (session.notes) setStepNotes(session.notes);
+        if (session.pathway_history) setPathwayHistory(session.pathway_history);
+        if (session.current_node_id || session.currentNodeId) {
+          setCurrentNodeId(session.current_node_id || session.currentNodeId || pathway.startNodeId);
+        }
+        if (session.consultation_status) setConsultationStatus(session.consultation_status);
+        if (session.doctor_orders) setDoctorOrders(session.doctor_orders);
+
         setShowPatientCodeModal(false);
-        toast.success('Sesi dimulai', { description: `Pasien: ${patientCode.trim()}` });
+        const isResume = (session as any).resumed || (session.checklist && Object.keys(session.checklist).length > 0);
+        toast.success(isResume ? 'Melanjutkan Sesi Pasien' : 'Sesi Baru Dimulai', { 
+          description: `Pasien: ${patientCode.trim()}` 
+        });
       }
     } else {
       setShowPatientCodeModal(false);
