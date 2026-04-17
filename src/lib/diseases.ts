@@ -40,16 +40,6 @@ export const diseases: Disease[] = [
     keywords: ['blood pressure', 'tekanan darah tinggi', 'headache', 'sakit kepala', 'dizziness', 'pusing', 'high blood pressure', 'darah tinggi', 'krisis hipertensi', 'emergency', 'tengkuk kaku', 'leher kaku']
   },
   {
-    id: 'svt',
-    name: 'Aritmia — SVT, AF, VT, Bradikardi (Komprehensif)',
-    nameEn: 'Cardiac Arrhythmias (Comprehensive)',
-    organSystem: 'kardiovaskular',
-    isEmergency: true,
-    timeToIntervention: 'VF/pVT (Arrest): CPR segera. VT/SVT instabil: cardioversi < 30 menit. SVT stabil: Adenosin < 1 jam',
-    prevalenceIndonesia: 'AF prevalensi 0.5-1% Indonesia. SVT 2.25/1000 populasi. VF penyebab kematian mendadak terbanyak.',
-    keywords: ['palpitasi', 'palpitations', 'jantung berdebar', 'aritmia', 'arrhythmia', 'SVT', 'supraventrikuler', 'atrial fibrillation', 'fibrilasi atrium', 'AF', 'VT', 'ventricular tachycardia', 'bradikardi', 'blok AV', 'cardiac arrest', 'henti jantung', 'RVR', 'AVNRT', 'AVRT', 'WPW', 'torsades', 'valsalva', 'adenosin', 'kardioversi']
-  },
-  {
     id: 'arrhythmias',
     name: 'Aritmia Komprehensif (PERKI/InaHRS)',
     nameEn: 'Comprehensive Cardiac Arrhythmias',
