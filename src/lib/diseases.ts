@@ -389,6 +389,19 @@ export const diseases: Disease[] = [
 
   // MUSKULOSKELETAL & TRAUMA
   {
+      {
+    id: 'myalgia',
+    name: 'Myalgia / Nyeri Otot Non-Spesifik',
+    englishName: 'Myalgia / Non-Specific Muscle Pain',
+    description: 'Diagnosis dan tatalaksana nyeri otot, singkirkan red-flags.',
+    conditionType: 'Otot & Sendi',
+    urgencyLevel: 'URGENT',
+    urgencyLabel: 'Eksklusi komplikasi (1-3 hari)',
+    steps: 12,
+    prevalenceIndonesia: 'Termasuk dalam 10 penyakit terbanyak di Puskesmas dan Poli Umum klinik primer.',
+    keywords: ['myalgia', 'nyeri otot', 'kaku otot', 'pegal', 'otot tegang', 'rhabdomyolysis', 'sams', 'statin', 'm79.1', 'pegal linu', 'kram']
+  },
+  {
     id: 'fraktur',
     name: 'Fraktur (Terbuka & Tertutup)',
     nameEn: 'Fracture (Open & Closed)',
@@ -425,17 +438,7 @@ export const diseases: Disease[] = [
     prevalenceIndonesia: 'Prevalensi 0.3-1% populasi global. F:M = 3:1. Peak onset 40-60 tahun. Early treatment (window of opportunity <3-6 bulan) prevents joint destruction',
     keywords: ['rheumatoid', 'RA', 'arthritis', 'joint pain', 'swelling', 'morning stiffness', 'synovitis', 'RF', 'anti-CCP', 'MTX', 'methotrexate', 'DMARD', 'biologics', 'autoimmune', 'rematik', 'sendi bengkak']
   },
-  {
-    id: 'intoksikasi-kimia',
-    name: 'Intoksikasi & Keracunan Akut (IS 1.19 & 1.20)',
-    nameEn: 'Acute Poisoning & Chemical Injury',
-    organSystem: 'emergency-toxicology',
-    isEmergency: true,
-    timeToIntervention: 'Segera (<15 menit resusitasi & dekontaminasi)',
-    prevalenceIndonesia: 'Penyebab 5-10% admisi IGD di RS rujukan (terutama Oplosan, Pestisida, Parasetamol)',
-    keywords: ['keracunan', 'intoksikasi', 'poisoning', 'oplosan', 'metanol', 'methanol', 'parasetamol', 'paracetamol', 'panadol', 'pufferfish', 'ikan buntal', 'baygon', 'pestisida', 'organofosfat', 'zat korosif', 'asam', 'basa', 'minyak tanah', 'bensin', 'chemical injury', 'suicide', 'bunuh diri']
-  },
-  {
+    {
     id: 'acute-kidney-injury',
     name: 'Gangguan Ginjal Akut (GGA)',
     nameEn: 'Acute Kidney Injury (AKI)',
