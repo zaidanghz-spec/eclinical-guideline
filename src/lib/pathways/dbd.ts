@@ -32,7 +32,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Anamnesis Karakteristik Demam',
           description: 'Demam mendadak tinggi 2-7 hari (bifasik/pelana kuda), nyeri kepala hebat, nyeri retro-orbital (belakang mata), nyeri otot/sendi (break-bone fever).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -40,7 +40,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Periksa TTV Kritis & Perifer (AWAS SYOK!)',
           description: 'Cek Tekanan Darah (Pulse pressure sempik < 20 mmHg? misal 100/90).\nCek Nadi (Takikardi hebat >100x/mnt? Lemah/halus?).\nCek Akral (Raba tangan dan kaki: dingin? basah? lembap?).\nCek CRT (Capillary Refill Time > 2 detik?).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -48,7 +48,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Cari Gejala "Warning Signs" (Tanda Waspada)',
           description: 'Tanyakan dan observasi:\n- Sakit perut / nyeri tekan perut terus-menerus?\n- Muntah persisten (> 3x dalam 24 jam)?\n- Lemah, letargi, atau gelisah?\n- Perdarahan mukosa (mimisan, gusi berdarah, BAB hitam/melena)?',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -56,7 +56,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Uji Tourniquet (Rumple Leede Test)',
           description: 'Pompa tensimeter di pertengahan sistolik & diastolik, tahan 5 menit. Positif bila > 10 petekie di area 1 inchi persegi volar lengan bawah. (Positif = kapiler rapuh, curiga Dengue).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         }
       ],
@@ -114,7 +114,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Akses IV Cepat (Besar)',
           description: 'Pasang IV line jarum besar (18G atau 20G) secepatnya. Jika ketersediaan ada 2 jalur, pasang dua-duanya.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -122,7 +122,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Loading Cairan Kristaloid SUPER CEPAT',
           description: 'Ringer Laktat (RL) atau Asering: Berikan 10-20 mL/kgBB bolus bebas / guyur habis dalam 15-30 menit pertama.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -130,7 +130,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Siapkan Oksigenasi',
           description: 'Pasang oksigen nasal kanul/NRM untuk optimalisasi jaringan di tengah penurunan perfusi (Syok).',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -138,7 +138,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Rujuk CITO dengan Ambulan & Perawat',
           description: 'Hubungi RS dengan fasilitas ruang HCU/ICU dan ketersediaan bank darah (bila perlu transfusi). Dampingi dengan perawat karena cairan harus tetap diguyur selama di ambulans sesuai respons tensi.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
@@ -158,7 +158,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Pasang Infus Maintenance / Bolus Ringan',
           description: 'Pasang infus Ringer Laktat (RL) 5-7 ml/kgBB/jam sambil menunggu proses rujukan RS selesai.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'doctor',
         },
         {
@@ -166,7 +166,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Puasakan Sementara (Bila Muntah Persisten)',
           description: 'Cegah aspirasi lambung jika pasien terus muntah; ganti hidrasi sepenuhnya via infus.',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -174,7 +174,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Rujuk Rawat Inap Biasa',
           description: 'Buat surat rujukan menjelaskan adanya keluhan Alarm/Warning Signs. RS nantinya akan periksa Hematokrit & Trombosit.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
@@ -194,7 +194,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Edukasi: Terapi Cairan Oral',
           description: 'Pasien wajib minum cairan elektrolit/jus/susu (bukan sekedar air putih biasa) minimal 2-3 liter per hari. Susu, isotonik komersial, kaldu, atau oralit disarankan untuk cegah kebocoran plasma.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'both',
         },
         {
@@ -202,7 +202,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Obat Penurun Demam: WAJIB Parasetamol Saja',
           description: 'Beri Parasetamol 3-4 x 500mg. \n❌ MUTLAK DILARANG: Aspirin, Ibuprofen, Asam Mefenamat, Natrium Diklofenak. NSAID memperparah perdarahan lambung (GI Bleeding) dan menurunkan jumlah trombosit.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -210,7 +210,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Anjuran Cek Darah Rutin Rutin',
           description: 'Jika demam sudah hari ke-3, wajib cek tes darah rutin (Trombosit dan Hematokrit) untuk memantau apakah trombosit mulai merosot. (Boleh tes IgM/IgG jika tersedia).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -218,7 +218,7 @@ export const dbdPathway: DynamicPathway = {
           title: 'Edukasi Kapan Harus Kembali ke Klinik (Emergency)',
           description: 'Jelaskan Fase Kritis terjadi saat demam TURUN (hari 3-5). Ajarkan keluarga waspada jika: \nPasien tidak mau minum, BAK tidak ada lebih dari 6 jam, nyeri perut sangat sakit, atau tiba-tiba lemas dingin. Jika hal ini terjadi: Segera ke IGD.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]

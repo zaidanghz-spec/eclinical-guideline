@@ -32,7 +32,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'PRIMARY SURVEY — ABCDE STAT',
           description: 'Airway: bersih? gurgling? stridor? Breathing: RR, SpO₂, pergerakan dada simetris? Circulation: HR, BP, CRT, akral? Disability: GCS (Eyes, Verbal, Motor), pupil (miosis/midriasis?), tonus. Exposure: lepas semua pakaian untuk cari luka, rute paparan (kulit, mulut, inhalasi, suntikan?).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -40,7 +40,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Vital Signs STAT + Continuous Monitor',
           description: 'HR, BP, RR, SpO₂, Suhu, GCS. Pasang monitor EKG kontinu (banyak racun menyebabkan aritmia!). Pasang oksimetri nadi dan kapnografi jika tersedia. Ukur GDS: hipoglikemia → D40% IV dulu sebelum semua tindakan lain!',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -48,7 +48,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'O₂ Tinggi + Amankan Airway',
           description: 'Berikan O₂ masker 10–15 LPM SEMUA pasien keracunan dengan penurunan kesadaran. Jika GCS ≤8 atau napas tidak adekuat → intubasi segera (RSI). Hindari intubasi nasotrakeal jika ada risiko perdarahan (misalnya keracunan antikoagulan).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -56,7 +56,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'IV Access Large Bore (18G) + Ambil Darah',
           description: '2 jalur IV perifer besar. Ambil darah BERSAMAAN: DL, elektrolit, BUN/Kreatinin, GDS, SGOT/SGPT, AGD (Analisis Gas Darah), Laktat, Paracetamol level (jika dicurigai), Toksinologi urin & serum jika tersedia. Simpan juga 50 mL isi lambung untuk analisis forensik!',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -64,7 +64,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Dekontaminasi Kulit / Mata — SEGERA',
           description: 'Paparan kulit: Lepas SEMUA pakaian (termasuk perhiasan) → bilas kulit 15–20 menit dengan air mengalir + sabun. Petugas pakai APD (sarung tangan, masker)! Paparan mata: Irigasi mata dengan NaCl 0.9% atau air bersih minimal 15–20 menit, arahkan dari nasal ke lateral. Jangan delay untuk anamnesis dulu!',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -72,7 +72,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Anamnesis Cepat — 4 Pertanyaan Kunci',
           description: '(1) ZAT APA? — nama produk, konsentrasi, formulasi. (2) BERAPA BANYAK? — dosis, jumlah, kemasan habis? (3) KAPAN? — waktu paparan, sudah berapa jam? (4) BAGAIMANA? — diminum, dihirup, kulit, suntikan, difus? Tanya keluarga/saksi jika pasien tidak sadar. Cari di sekitar pasien: botol, blister obat, karung pestisida.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -80,7 +80,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Hubungi SIKER Nasional untuk Konsultasi Racun!',
           description: 'SIKER (Sentra Informasi Keracunan) Nasional — BPOM: Telp 1500-533 (24 jam). Berikan info: jenis racun, jumlah, berat badan pasien, kondisi saat ini. SIKER akan berikan panduan antidotum dan tata laksana spesifik berdasarkan data toksikologi Indonesia.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -88,7 +88,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'EKG 12 Sadapan — Banyak Racun Sebabkan Aritmia!',
           description: 'Wajib pada: keracunan obat jantung (digoksin, beta-bloker, CCB, antiaritmia), antidepresan trisiklik (TCA), antihistamin, organofosfat, CO. Cari: QTc memanjang (risiko Torsade!), QRS lebar (TCA!), bradiaritmia, heart block.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         }
       ],
@@ -146,7 +146,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'INTUBASI RSI — GCS ≤8 atau Napas Tidak Adekuat',
           description: 'Rapid Sequence Intubation (RSI): Preoksigenasi 3 mnt → Ketamine 1–2 mg/kgBB IV + Succinylcholine 1.5 mg/kgBB IV → intubasi + konfirmasi kapnografi. Jika curiga organofosfat: suksinilkolin dapat memperpanjang kelumpuhan → gunakan Rocuronium 1.2 mg/kgBB sebagai alternatif.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -154,7 +154,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Antidotum EMPIRIS — Berikan Sesuai Toksidrom yang Diduga',
           description: 'Opioid (miosis, bradipnea, tidak sadar) → Nalokson 0.4–2 mg IV/IM, ulangi tiap 2–3 mnt (max 10 mg). Benzodiazepine (depresi SSP) → Flumazenil 0.2 mg IV, ulangi tiap 1 mnt (max 1 mg). Organofosfat (SLUDGE, bradikardi, miosis) → Atropin 2–4 mg IV STAT segera! Antidepresan trisiklik (QRS >120 ms, hipotensi) → NaHCO₃ 1–2 mEq/kgBB IV STAT!',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -162,7 +162,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Resusitasi Cairan Syok (Bila Ada Hipotensi)',
           description: 'Kristaloid NaCl 0.9% atau RL 10–20 mL/kgBB IV bolus cepat. Ulangi hingga MAP >65 mmHg. Jika tidak respons → vasopressor: Norepinefrin 0.1–0.3 mcg/kgBB/mnt IV (pilihan utama syok vasodilatatif akibat racun). Hindari Dopamin pada keracunan simpatomimetik.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -170,7 +170,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Tata Laksana Kejang Akibat Racun',
           description: 'Lini 1: Diazepam 0.1–0.3 mg/kgBB IV pelan (max 10 mg) atau Lorazepam 0.1 mg/kgBB IV. Lini 2: Phenobarbital 15–20 mg/kgBB IV pelan. JANGAN gunakan Fenitoin (tidak efektif untuk kejang akibat racun). Kejang refrakter → Propofol 1–2 mg/kgBB + intubasi + ICU.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -178,7 +178,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Tata Laksana Aritmia Akibat Racun',
           description: 'QRS lebar (Antidepresan Trisiklik/TCA) → NaHCO₃ 1–2 mEq/kgBB IV, target pH 7.45–7.55. QTc memanjang (>500 ms, Torsade) → MgSO₄ 2 g (8 mmol) IV dalam 10 mnt, perbaiki K⁺ dan Mg²⁺. Bradikardi persisten (Beta-Bloker/CCB) → Kalsium Klorida 10% 10 mL IV + Glukagon 5–10 mcg/kgBB IV. Hindari amiodaron pada keracunan TCA (memperparah QTc).',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -186,7 +186,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Rawat ICU — Monitoring Ketat',
           description: 'Semua pasien kritis keracunan → ICU. Monitor: EKG kontinu, AGD serial, elektrolit serial, fungsi ginjal-hati 6-12 jam. Konsul Toksikologi Klinik / Penyakit Dalam jika tersedia.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         }
       ],
@@ -269,7 +269,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'DEKONTAMINASI SEGERA — Jangan Tunda untuk Antidotum!',
           description: 'Semua petugas wajib APD (sarung tangan, apron, masker). Lepas semua pakaian dan sepatu pasien → bagging. Bilas kulit dengan sabun + air mengalir 15–20 menit. Bilas mata jika ada paparan. Pasien yang tidak didekontaminasi dapat meracuni petugas IGD!',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -277,7 +277,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'ATROPIN IV — SEGERA, Titrasi Sampai "Paru Kering"',
           description: 'Dosis AWAL: Dewasa 2–4 mg IV bolus. Anak 0.05 mg/kgBB IV. ULANGI setiap 5–10 menit, GANDAKAN dosis jika tidak respons. Target BUKAN denyut jantung atau midriasis, tapi: PARU KERING (tidak ada ronki/sekret, RR normal, SpO₂ ≥94%, tidak ada wheezing). Dosis total bisa 10–50 mg dalam kasus berat. Jangan takut dosis tinggi jika masih ada sekret paru!',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -285,7 +285,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Target Atropinisasi — BUKAN Flushing/Midriasis/Takikardia',
           description: 'Atropinisasi BERHASIL jika: Sekret paru bersih (auskultasi bersih), SpO₂ normal, RR normal, tidak ada hipersalivasi. BUKAN target: midriasis (boleh tetap miosis), flushing, HR >100 (sudah over-atropinisasi jika HR >120 tanpa hypers ekret). Jangan hentikan atropin sampai sekret paru benar-benar hilang!',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -293,7 +293,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: '2-PAM (Pralidoksin) — Reaktivator AChE, Berikan Segera!',
           description: 'Dosis: 1–2 g IV dalam 100 mL NaCl 0.9% selama 15–30 mnt. Kemudian infus 200–500 mg/jam. HARUS diberikan DALAM 24–48 JAM pertama (sebelum "aging"/ikatan permanen terjadi). Setelah 48 jam: tidak efektif. Di Indonesia: tidak selalu tersedia → prioritaskan atropin. Jika tidak ada 2-PAM: maksimalkan atropinisasi.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -301,7 +301,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Bilas Lambung — Jika Ingesti Oral <1–2 Jam',
           description: 'Pasang NGT (25–28 Fr) dan pastikan airway aman (intubasi jika GCS rendah). Bilas dengan NaCl 0.9% atau air bersih 200–300 mL per siklus hingga jernih. Kontraindikasi bilas lambung: tanda korosif (bukan organofosfat murni), tidak bisa proteksi airway.',
           required: false,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -309,7 +309,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'HINDARI: Morfin, Suksinilkolin, Fenotiazin!',
           description: 'DILARANG: Morfin/opioid (depresi napas). Suksinilkolin untuk intubasi (organofosfat inhibisi asetilkolinesterase → lumpuh berkepanjangan, gunakan Rocuronium 1.2 mg/kg). Fenotiazin (antiemetik berbasis klorpromazin → menurunkan ambang kejang). Furosemid (bukan edema, tapi sekret bronkus).',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -317,7 +317,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'ICU Monitoring + Evaluasi Intermediate Syndrome',
           description: 'Rawat ICU minimal 24–72 jam. Awasi "Intermediate Syndrome" (hari ke-1 sampai 4): kelemahan otot proksimal, paralisis otot napas, meski sudah teratropinisasi baik. Cek aktivitas kolinesterase plasma (ChE): nilai <25% normal = intoksikasi berat. Evaluasi serial setiap 6–12 jam.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         }
       ],
@@ -339,7 +339,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Tata Laksana Suportif — Prioritas Utama',
           description: 'Ruangan sejuk & gelap (photophobia!). Sedasi benzodiazepine jika agitasi berat (Diazepam 5–10 mg IV pelan). Monitor suhu (hipertermia sampai 41°C → kompres, cooling blanket). Kateter urin (retensi urin). Cairan IV (hidrasi).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -347,7 +347,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Fisostigmin — Antidotum Antikolinergik (Hanya Jika Tepat Indikasi)',
           description: 'Fisostigmin 1–2 mg IV pelan (>5 mnt). HANYA jika: delirium parah yang tidak respons benzodiazepin, hipertermia berat, atau takikardia >150 bpm mengancam. JANGAN jika: QRS >100 ms (risiko asistol!), curiga TCA (antidepresan trisiklik). Tidak tersedia umum di Indonesia — konsul spesialis.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -355,7 +355,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Monitor EKG Ketat — Waspadai QRS Lebar (TCA!)',
           description: 'Antikolinergik murni (antihistamin) → QRS sempit. Jika QRS >100 ms → curiga TCA! Berikan NaHCO₃ 1–2 mEq/kgBB IV jika QRS lebar. Jangan berikan fisostigmin pada TCA → dapat sebabkan asistol.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         }
       ],
@@ -377,7 +377,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'NALOKSON — Antidotum Opioid STAT!',
           description: 'Dosis dewasa: 0.4–2 mg IV/IM/IN (intranasal). Onset IV: 2 mnt. Onset IM/IN: 5 mnt. ULANGI tiap 2–3 mnt jika tidak respons (max 10 mg). Jika tidak ada IV → IM di deltoid atau SC bersamaan beberapa titik untuk absorpsi cepat. Half-life NALOKSON (30–60 mnt) JAUH LEBIH PENDEK dari opioid → awasi re-narkosis! Infus nalokson: ⅔ dosis respons awal per jam.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -385,7 +385,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Observasi Minimal 4–6 Jam untuk Re-Narkosis',
           description: 'Nalokson habis efek → opioid masih ada → pasien bisa tidak sadar lagi (re-narkosis). Opioid long-acting (metadon, slow-release morfin) → perlu observasi 12–24 jam atau infus nalokson kontinu. Jangan pulangkan pasien dalam 6 jam pertama!',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -393,7 +393,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Jika Benzodiazepine (BZD) — Flumazenil HATI-HATI!',
           description: 'Flumazenil 0.2 mg IV pelan, ulangi 0.1 mg tiap 1 mnt (max 1 mg). KONTRAINDIKASI flumazenil: Pasien epilepsi rutin (dapat memicu kejang), ketergantungan BZD kronik (withdrawal seizure!), overdosis campuran BZD+TCA. Jika ada keraguan → prioritaskan supportif dan airway, bukan flumazenil.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         }
       ],
@@ -415,7 +415,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'AIRWAY — Prioritas Absolut! (Sering Edema Laring Cepat!)',
           description: 'Stridor atau perubahan suara = edema laring sedang berkembang → intubasi segera sebelum airway tertutup total! Jika sudah tersumbat → krikotirotomi atau trakeostomi darurat. Jangan tunggu sampai stridor parah!',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -423,7 +423,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'NPO KETAT — Dilarang Apapun Per Oral!',
           description: 'DILARANG: Susu (MITOS!), air, makanan, apapun per oral. Bisa memperluas luka dan menyebabkan aspirasi. Pasang NGT drainase hanya setelah endoskopi (Rujuk RS) konfirmasi tidak ada perforasi.',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -431,7 +431,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'DILARANG: Bilas Lambung + Arang Aktif + Induktor Muntah!',
           description: 'MUTLAK DILARANG! Bilas lambung: re-ekspos esofagus, risiko perforasi. Arang aktif: tidak efektif untuk korosif, menghalangi endoskopi (Rujuk RS). Induktor muntah (syrup ipecac): muntah paksa dapat perforasi esofagus yang sudah cedera. 3 larangan ini BEDA dengan keracunan obat lainnya!',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -439,7 +439,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Endoskopi (Rujuk RS) (EGD) dalam 12–24 Jam — Grading Zargar',
           description: 'Endoskopi (Rujuk RS) fleksibel dalam 12–24 jam untuk: Grading kerusakan (Zargar 0–IIIb), prediksi striktur esofagus, tentukan kebutuhan operasi. Jangan endoskopi (Rujuk RS) jika >48 jam (risiko perforasi meningkat) atau perforasi sudah dicurigai (foto toraks: pneumomediastinum?).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'doctor',
         },
         {
@@ -447,7 +447,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'PPI IV + Sucralfat + Antibiotik Profilaksis',
           description: 'Omeprazol 40 mg IV tiap 12 jam (proteksi mukosa). Sucralfat suspensi 1 g 4× sehari jika bisa menelan. Antibiotik profilaksis (amoksisilin-klavulanat atau sefazolin IV) jika grade ≥IIb (luka dalam). Steroid TIDAK terbukti efektif (kontroversi) — tidak direkomendasikan rutin.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         }
       ],
@@ -469,7 +469,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'AGD + Anion Gap — Kunci Diagnosis Metanol!',
           description: 'Anion Gap = Na - (Cl + HCO₃). Normal <12 mEq/L. Metanol: Anion Gap tinggi (>20) + asidosis metabolik berat. Hitung juga Osmol Gap = Osmolalitas terukur - Osmolalitas teritung. Osmol Gap >10 → curiga alkohol toksik. Lab jika tersedia: kadar metanol serum (>25 mEq → terapi, >50 mEq → dialisis).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'doctor',
         },
         {
@@ -477,7 +477,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'ANTIDOTUM: Etanol atau Fomepizol — Blokir Metabolisme Metanol',
           description: 'Etanol ORAL (tersedia di Indonesia, lebih terjangkau): Dosis loading 0.8 g/kgBB oral (whisky/vodka 40% = 2 mL/kgBB). Target etanol serum 100–150 mg/dL. Rumatan 0.1 g/kgBB/jam. Etanol IV (etanol 10% dalam D5W): 7.6 mL/kgBB loading, rumatan 1–2 mL/kgBB/jam. Fomepizol IV (4-MP, jika tersedia): 15 mg/kgBB IV loading → 10 mg/kgBB tiap 12 jam. Pilihan superior tapi sangat mahal. Berikan antidotum SEBELUM menunggu konfirmasi kadar metanol serum!',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -485,7 +485,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Folinat (Asam Folat / Leucovorin) — Percepat Eliminasi Format',
           description: 'Asam folat 50 mg IV tiap 6 jam atau Leucovorin 1 mg/kgBB IV tiap 4–6 jam. Membantu metabolisme asam format (formiat) → CO₂ + H₂O. Diteruskan hingga metanol serum tidak terdeteksi.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -493,7 +493,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Koreksi Bikarbonat — Jika pH <7.30',
           description: 'NaHCO₃ 1–2 mEq/kgBB IV jika pH <7.30 atau HCO₃⁻ <10 mEq/L. Target pH ≥7.35. Koreksi asidosis meningkatkan eliminasi formiat. Monitor elektrolit serial.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -501,7 +501,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'HEMODIALISIS — Indikasi Mutlak dan Segera!',
           description: 'Indikasi HD: pH <7.25–7.30, gangguan penglihatan apapun (buta sebagian/total), kadar metanol >50 mg/dL (>15.6 mmol/L), atau gagal terapi konservatif. HD: bersihkan metanol dan formiat secara efisien. Lanjutkan etanol SELAMA HD (HD membersihkan etanol juga). Hubungi pusat HD terdekat SEGERA jika ada indikasi!',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         }
       ],
@@ -524,7 +524,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Konfirmasi Waktu Ingesti — Kunci Keputusan!',
           description: 'Tanya dengan pasti: jam berapa minum obat? Berapa banyak? (hitung total mg atau jumlah butir). Ingesti <8 jam: peluang NAC maksimal. 8–24 jam: NAC masih efektif. >24 jam: NAC tetap berikan, fungsi hati mungkin sudah terdampak. Waktu tidak diketahui → anggap terburuk, mulai NAC.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -532,7 +532,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Kadar Parasetamol Serum (4 Jam Post-Ingesti) + Nomogram Rumack-Matthew',
           description: 'Periksa kadar parasetamol serum minimal 4 jam setelah ingesti. Plot di Nomogram Rumack-Matthew: Zona "Treatment" (di atas garis) → NAC wajib. Zona "No Treatment" (di bawah garis) → observasi. Jika lab tidak tersedia dalam 4 jam → mulai NAC empiris jika dosis ingesti >150 mg/kgBB atau >7.5 g dewasa.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -540,7 +540,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'N-ACETYLCYSTEINE (NAC) — Antidotum Spesifik, Efektif <8 Jam',
           description: 'NAC IV (lebih disukai): Dosis 3 kantong — (1) 150 mg/kgBB dalam D5W 200 mL, infus 1 jam; (2) 50 mg/kgBB dalam D5W 500 mL, infus 4 jam; (3) 100 mg/kgBB dalam D5W 1000 mL, infus 16 jam. Total 21 jam. NAC ORAL (jika IV tidak tersedia): 140 mg/kgBB loading → 70 mg/kgBB tiap 4 jam (17 dosis). Diminum diencerkan, sering menyebabkan mual → antiemetik dulu.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -548,7 +548,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Arang Aktif (Activated Charcoal) — Jika Ingesti <1–2 Jam',
           description: 'Dosis: 50–100 g dewasa, 1 g/kgBB anak. Efektif hanya jika <1 jam (idealnya) atau <2 jam dari ingesti. Jangan berikan jika: GCS turun (risiko aspirasi), pasien muntah hebat, setelah N-acetylcysteine oral (mengurangi absorpsi NAC).',
           required: false,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -556,7 +556,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Monitor Fungsi Hati Serial — ALT/AST Tiap 12–24 Jam',
           description: 'Baseline SGPT/SGOT saat masuk. Ulangi 24 jam, 48 jam, 72 jam. ALT/SGPT >1000 IU/L: hepatotoksisitas signifikan → pertimbangkan transplantasi hati. Tanda gagal hati berat: INR >6.5, kreatinin >300 µmol/L (Kriteria Kings College → transplantasi!). Konsul Gastro-Hepatologi segera.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -564,7 +564,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Konsul Psikiatri — WAJIB pada Kasus Usaha Bunuh Diri',
           description: 'Semua kasus overdosis disengaja (OD bunuh diri) → WAJIB konsul psikiatri setelah kondisi medis stabil. Jangan discharge tanpa evaluasi psikiatri. Libatkan keluarga. Pastikan keamanan pasien.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ],
@@ -585,7 +585,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Kriteria ICU / HCU',
           description: 'Rawat ICU jika: butuh intubasi/ventilator, kejang berulang, GCS <12 persisten, asidosis metabolik berat (pH <7.2), aritmia mengancam, hipotensi refrakter, atau keracunan dengan potensi memburuk cepat (organofosfat, metanol, TCA). HCU jika monitoring ketat diperlukan tapi belum/belum perlu ventilator.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -593,7 +593,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Lab Serial Wajib per 6–12 Jam',
           description: 'AGD, elektrolit (K⁺, Na⁺, Mg²⁺), BUN/Kreatinin (fungsi ginjal), SGOT/SGPT (fungsi hati), DL, GDS. Frekuensi bergantung derajat keracunan dan antidotum yang diberikan. Monitor koagulopati pada keracunan hepatotoksik.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -601,7 +601,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Simpan Spesimen Forensik — Penting untuk Hukum!',
           description: 'Simpan: Urin 100 mL (pertama kali kateter), Darah 10 mL (tube merah, tanpa preservatif), Isi lambung 50 mL (jika bilas lambung dilakukan), Botol/kemasan racun yang ditemukan di sekitar pasien. Labeli dengan nama+tanggal+jam. Serahkan ke laboratorium toksikologi/forensik dengan berita acara. Penting untuk kasus hukum/kekerasan!',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         },
         {
@@ -609,7 +609,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Evaluasi Psikiatri + Asesmen Sosial — Jika Intensional',
           description: 'Konsul psikiatri wajib pada semua kasus overdosis intensional (bunuh diri). Libatkan pekerja sosial untuk asesmen situasi keluarga. Jangan discharge sebelum psikiatri memberikan clearance. Crisis plan dan support network keluarga.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         },
         {
@@ -617,7 +617,7 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
           title: 'Kriteria Discharge / Rawat Jalan',
           description: 'Safe to discharge jika: GCS normal 15, tanda vital stabil 12 jam terakhir, tidak ada keluhan baru, lab dalam batas aman, tidak ada risiko rekurensi keracunan, dan evaluasi psikiatri sudah dilakukan (jika kasus intentional). Edukasi keluarga tentang pencegahan paparan ulang.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]

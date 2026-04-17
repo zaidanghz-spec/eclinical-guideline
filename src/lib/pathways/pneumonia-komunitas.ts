@@ -32,7 +32,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Anamnesis Gejala Paru Akut',
           description: 'Keluhan utama: Batuk berdahak (purulen/kuning/hijau), demam tinggi, menggigil, sering disertai sesak napas atau nyeri dada pleuritik (nyeri saat menarik napas dalam).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -40,7 +40,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'TTV & Pulse Oksimetri',
           description: 'Suhu >38°C?, Laju napas cepat (Takipnea >20x/mnt)?, Tekanan Darah turun?, SpO₂ turun (<95% ruangan)?',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -48,7 +48,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Auskultasi Paru',
           description: 'Dengarkan adanya: Ronki basah halus/kasar (crackles), suara napas bronkial, atau redup pada perkusi (tanda konsolidasi paru).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -56,7 +56,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Cek Patensi Jalan Napas (Tanda Bahaya)',
           description: 'Bila pasien tampak sangat sesak, ngorok (gurgling) karena banyak dahak kental yang tidak bisa dibatukkan, siapkan SUCTION segera!',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         }
       ],
@@ -114,7 +114,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Resepkan Antibiotik Lini Pertama',
           description: 'Golongan Beta-laktam: Amoksisilin oral 1 gram tiap 8 jam (Dosis tinggi sangat dianjurkan untuk atasi S. pneumoniae). \nATAU Makrolida: Azitromisin 500 mg/hari selama 3 hari, ATAU Klaritromisin 500 mg tiap 12 jam (jika dicurigai kuman atipikal/alergi penisilin).',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -122,7 +122,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Terapi Suportif & Simtomatis',
           description: 'Obat Penurun Panas: Parasetamol 3 x 500 mg (jika demam).\nMukolitik / Ekspektoran: Asetilsistein 3 x 200 mg atau Gliseril Guaiakolat (GG) untuk mengencerkan dahak.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -130,7 +130,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Edukasi Red Flags & Kontrol',
           description: 'Pasien wajib kembali ke klinik jika dalam 48-72 jam demam tidak turun, sesak napas bertambah berat, atau tidak bisa makan/minum. Jika membaik, teruskan antibiotik minimal 5-7 hari.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
@@ -150,7 +150,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Terapi Suportif Prakonfirmasi',
           description: 'Berikan Oksigen nasal kanul 2-4 L/mnt jika pasien merasa sesak tetapi SpO₂ masih >90%.\nMinumkan Parasetamol jika demam tinggi mengurangi ketidaknyamanan saat perjalanan.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -158,7 +158,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Buat Surat Rujukan',
           description: 'Tulis diagnosis Suspek Pneumonia Komunitas dengan rincian TTV dan Skor CRB-65. Cantumkan indikasi rujukan: "Membutuhkan foto polos dada (Chest X-Ray) dan evaluasi rawat inap".',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
@@ -178,7 +178,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Oksigenasi Aliran Tinggi / NRM',
           description: 'Berikan Oksigen sungkup muka Non-Rebreathing Mask (NRM) 10-15 L/menit. Targetkan SpO₂ naik minimal > 90% (88-92% jika pasien suspek PPOK).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -186,7 +186,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Tindakan Suction & Nebulizer (Bila Indikasi)',
           description: 'Bila terdengar produksi dahak kental berlebih di saluran napas atas (ngorok): lakukan SUCTION.\nBila terdengar mengi (wheezing) jelas bersamaan paru kotor, berikan NEBULIZER Salbutamol untuk melebarkan jalan napas darurat.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -194,7 +194,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Pasang Jalur IV (Infus)',
           description: 'Pasang IV line jarum besar (18G/20G). Jika tensi hipotensi (sistolik <90 mmHg), loading resusitasi cairan NaCl 0.9% 500 cc cepat sambil dinilai respon vitalnya.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -202,7 +202,7 @@ export const pneumoniaPathway: DynamicPathway = {
           title: 'Rujuk CITO dengan Ambulan & Didampingi Perawat',
           description: 'Hubungi RS rujukan untuk kamar HCU/ICU dan isolasi infeksi penyerta. Pakaikan pasien masker jika tidak terpasang NRM. Perawat harus mendampingi dengan tas emergency (suction portabel/oksigen).',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]

@@ -29,7 +29,7 @@ export const aritmiPathway: DynamicPathway = {
           title: 'CEK NADI + KESADARAN (< 10 DETIK)',
           description: 'Panggil nama pasien, tepuk bahu. Raba nadi karotis atau radialis. \n✅ ADA NADI + SADAR → Lanjut assessment.\n🚨 TIDAK ADA NADI / TIDAK SADAR → MULAI CPR SEKARANG, panggil bantuan, RUJUK CITO!',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -37,7 +37,7 @@ export const aritmiPathway: DynamicPathway = {
           title: 'VITAL SIGNS CEPAT (Bersamaan dengan EKG)',
           description: 'Tekanan darah (sistolik < 90 = INSTABIL!), Nadi (cepat/lambat/tidak teratur?), SpO2 (< 94% = pasang O2), RR, Suhu. \nHiti nadi selama 60 detik penuh untuk irama ireguler (AF).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         },
         {
@@ -45,7 +45,7 @@ export const aritmiPathway: DynamicPathway = {
           title: 'EKG 12-Lead STAT (Rekam < 5 Menit dari Datang!)',
           description: 'Sambil pasang EKG, tanyakan: keluhan apa (palpitasi, pingsan, sesak, nyeri dada, lemas)? Sudah berapa lama? Riwayat aritmia sebelumnya? Riwayat jantung, DM, hipertensi? Sedang minum obat apa?\nPasang monitor EKG lead II atau sadapan lengkap 12 lead jika memungkinkan.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         },
         {
@@ -53,7 +53,7 @@ export const aritmiPathway: DynamicPathway = {
           title: 'Cek Tanda Hemodinamik TIDAK STABIL',
           description: 'Tandai jika ada SALAH SATU: \n🔴 TD Sistolik < 90 mmHg (atau turun mendadak > 30 mmHg dari baseline)\n🔴 Penurunan kesadaran / sinkop / pre-sinkop\n🔴 Nyeri dada akut (iskemik) yang muncul bersamaan\n🔴 Edema paru akut / sesak napas berat\nJika ada → PASIEN TIDAK STABIL → Jalur merah!',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         }
       ],
@@ -111,7 +111,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '1. MULAI CPR SEGERA — 30:2 (30 kompresi : 2 napas)',
           description: 'Posisi: keempat jari di atas prosesus xiphoideus. Tekan keras (5-6 cm) dan cepat (100-120x/menit). Biarkan dada mengembang penuh (full recoil). JANGAN ADA INTERUPSI > 10 detik. Ganti penolong tiap 2 menit untuk hindari kelelahan.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -119,7 +119,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '2. Airway — Buka & Bebaskan Jalan Napas',
           description: 'Head-tilt chin-lift. Jika curiga trauma servikal: jaw thrust. Keluarkan benda asing jika terlihat. Pasang OROPHARYNGEAL AIRWAY (OPA) jika tersedia.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -127,7 +127,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '3. SUCTION Jika Ada Muntah/Sekret (Cegah Aspirasi)',
           description: 'Gunakan mesin suction klinik jika ada muntahan atau sekret berlebih di orofaring SEBELUM memberikan ventilasi. Suction maksimal 10 detik, tidak boleh menghentikan CPR lebih dari itu.',
           required: false,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -135,7 +135,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '4. Oksigen High-Flow',
           description: 'Pasang O2 via BVM (Bag-Valve-Mask) 10-15 L/menit jika tersedia. Satu napas diberikan selama 1 detik. Jika tidak ada BVM, berikan mouth-to-mouth atau mouth-to-mask rescue breathing.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -143,7 +143,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '5. Akses IV + Epinefrin 1 mg IV/IO setiap 3-5 Menit',
           description: 'Epinefrin 1 mg (1 mL dari larutan 1:1000) IV bolus, diikuti flush 20mL NaCl 0.9%. Ulangi setiap 3-5 menit selama CPR. JANGAN hentikan kompresi untuk pasang IV.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -151,7 +151,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '6. Cek Ritme di EKG setiap 2 Menit (Saat Ganti Penolong)',
           description: 'Pasang lead EKG selama CPR. Setiap 2 menit hentikan kompresi < 10 detik untuk cek ritme: \n• VF / pVT (Shockable): → BUTUH DEFIBRILASI → di klinik tanpa AED: LANJUT CPR + RUJUK CITO!\n• Asistol / PEA (Non-shockable): → CPR + Epinefrin + Cari penyebab reversible (5H5T).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         },
         {
@@ -159,7 +159,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '7. Cari & Koreksi Penyebab Reversible (5H 5T)',
           description: '5H: Hypovolemia, Hypoxia, Hydrogen ion (Asidosis), Hypo/Hyperkalemia, Hypothermia.\n5T: Tension pneumothorax, Tamponade jantung, Toxin (keracunan), Thrombosis koroner (STEMI), Thrombosis paru (PE).\nTangani penyebab yang bisa dikoreksi di klinik sambil CPR.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -167,7 +167,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '8. RUJUK CITO ke IGD RS dengan Kemampuan Defibrilasi & Resusitasi',
           description: 'SAMBIL TERUS CPR di ambulan (jangan hentikan saat transportasi). Hubungi RS tujuan terlebih dahulu. Sertakan surat rujukan dengan: waktu arrest, ritme EKG, tindakan yang sudah dilakukan, dan obat yang sudah diberikan.',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'doctor',
         }
       ]
@@ -187,7 +187,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '1. Oksigen High-Flow Segera',
           description: 'NRM (Non-Rebreathing Mask) 10-15 L/menit atau nasal kanul 4-6 L/menit. Target SpO2 > 94%. Pasang monitor EKG terus-menerus.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -195,7 +195,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '2. IV Line + Cairan Jika TD Rendah',
           description: 'Pasang IV line 2 jalur jika memungkinkan. Jika TD < 90 dan tanda syok: bolus RL/NaCl 0.9% 250-500 mL. HATI-HATI pada pasien edema paru (jangan overload cairan).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -203,7 +203,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '3. Rekam EKG & Identifikasi Ritme',
           description: 'Rekam EKG 12-lead. Apakah ritme: Tachyarrhythmia sempit (SVT/AF cepat)? Tachyarrhythmia lebar (VT)? Atau bradiaritmia ekstrem?\nCatat dan simpan strip EKG untuk dokter RS.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         },
         {
@@ -211,7 +211,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '4. Amiodarone IV JIKA Dugaan VT + Masih Ada Nadi',
           description: 'HANYA jika ritme WIDE COMPLEX (QRS > 120ms) + ada nadi:\nAmiodarone 150 mg IV dalam 10 menit → dilanjutkan 1 mg/menit per jam. \nJANGAN berikan jika ritme sempit (SVT/AF) atau tidak tahu jenis aritmia.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -219,7 +219,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '5. RUJUK CITO — Pasien Butuh Cardioversi di RS',
           description: 'Aritmia instabil dengan nadi = indikasi SYNCHRONIZED CARDIOVERSION. Tidak bisa dilakukan di klinik tanpa peralatan cardioverter. Sambil pasien ditransportasikan: tetap monitor EKG, O2 tetap jalan, pantau TD tiap 5 menit.',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'doctor',
         }
       ]
@@ -305,7 +305,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '1. Valsalva Maneuver (Modifikasi — Efektivitas 43-65%)',
           description: 'Minta pasien: Ambil napas dalam, tiup mouthpiece/jarum suntik 10 mL sekuat mungkin selama 15 detik, LANGSUNG baringkan dengan kaki ditinggikan 45° selama 15 detik, lalu dudukkan kembali. \n(Modifikasi Postural = lebih efektif dari Valsalva standar. Eur Heart J 2015).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -313,7 +313,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '2. Karotid Sinus Massage (Jika Valsalva Gagal)',
           description: 'HANYA pada pasien < 65 tahun tanpa bruit karotid. Tekan sinus karotid kanan (setinggi kartilago tiroid) memutar selama 5-10 detik sambil monitor EKG. Jangan lakukan pada keduanya bersamaan (risiko stroke).',
           required: false,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -321,7 +321,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '3. Adenosin 6 mg IV Bolus Cepat (Jika Vagal Gagal)',
           description: 'Adenosin 6 mg IV push CEPAT (< 2 detik) di vena antecubital + segera flush 20 mL NaCl 0.9% cepat. \nJika tidak respons dalam 1-2 menit → Adenosin 12 mg IV, dapat ulang 1x lagi dengan 12 mg. \nEFEK SAMPING NORMAL: rasa terbakar di dada, sesak 10-30 detik (aminkan pasien ini normal!).\nKONTRAINDIKASI: Asma berat, blok AV derajat 2-3, sindrom WPW dengan AF.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -329,7 +329,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '4. Verapamil 5 mg IV ATAU Diltiazem IV (Alternatif Adenosin)',
           description: 'Jika Adenosin tidak tersedia: Verapamil 5-10 mg IV perlahan 2-3 menit. Bisa ulang 5-10 mg setelah 30 menit. \nKONTRAINDIKASI: Gagal jantung sistolik, WPW, beta-blocker baru diterima (risiko blok).',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -337,7 +337,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '5. RUJUK jika Medikasi Gagal atau Rekuren',
           description: 'Jika SVT tidak terminasi setelah 3 upaya Adenosin → Rujuk ke RS/Spesialis kardiologi/elektrofisiologi untuk evaluasi: Kardioversi elektrik, Penyebab struktural (WPW, accessory pathway), dan RF Ablasi jangka panjang.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
@@ -357,7 +357,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '1. Hitung Ventricular Rate (HR di EKG)',
           description: 'Hitung HR dengan menghitung interval R-R selama 60 detik (karena ireguler). Target rate control: HR < 110 x/menit saat istirahat (RACE II Trial). Jika HR > 150 + gejala berat → risiko dekompensasi.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         },
         {
@@ -365,7 +365,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '2. Rate Control: Beta-Blocker (Lini Pertama)',
           description: 'Bisoprolol 2.5-10 mg oral ATAU Metoprolol 25-100 mg oral. \nKONTRAINDIKASI: Asma berat, PPOK berat (relatif), Gagal jantung akut dekompensasi, Blok AV ≥ derajat 2. \nAlternatif jika gagal jantung: Digoxin 0.125-0.25 mg oral.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -373,7 +373,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '3. ANTIKOAGULAN — Wajib jika CHA₂DS₂-VASc ≥ 2 (Laki) / ≥ 3 (Perempuan)',
           description: 'Hitung CHA₂DS₂-VASc: CHF(1), Hipertensi(1), Age ≥75(2), DM(1), Stroke/TIA(2), Vascular disease(1), Age 65-74(1), Sex female(1).\nAntikogualn: Warfarin (target INR 2-3) ATAU NOAC — Rivaroxaban 20mg OD, Apixaban 5mg BD, Dabigatran 150mg BD.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -381,7 +381,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '4. Singkirkan Penyebab Reversible: TSH (Hipertiroid)',
           description: 'AF bisa dipicu hipertiroid. Tanyakan: berat badan turun padahal makan banyak, berdebar, berkeringat, tangan gemetar, diare? → Periksa TSH (jika tersedia lab). Hipertiroid → rujuk ke internis.',
           required: false,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -389,7 +389,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '5. RUJUK Kardiologi untuk Evaluasi Rhythm Control & Ablasi',
           description: 'Semua pasien AF baru → rujuk spesialis jantung untuk evaluasi: Strategi rhythm control (kardioversi, antiaritmia), Ekokardiografi (Rujuk RS) (fungsi jantung, trombus LA), dan kemungkinan RF Ablasi pada AF simtomatik berulang.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
@@ -409,7 +409,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '1. MONITOR TERUS MENERUS + Siapkan CPR',
           description: 'Pasang monitor EKG kontinyu. Pasien berbaring di tempat tidur. Jangan biarkan pasien berjalan/ke toilet sendiri. Siapkan peralatan CPR di samping pasien (ambubag, epinefrin).',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -417,7 +417,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '2. Pasang IV Line Segera',
           description: 'Akses vena antecubital besar. Mulai infus NaCl 0.9% pelan (KVO/keep vein open). Untuk jalur medikasi cepat bila pasien deteriorasi.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -425,7 +425,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '3. Amiodarone 150 mg IV (Lini Pertama VT Stabil)',
           description: 'Amiodarone 150 mg dilarutkan dalam D5W 100 mL, infus selama 10 menit. \nJika respons (+) → lanjutkan 1 mg/menit selama 6 jam, kemudian 0.5 mg/menit selama 18 jam. \nJika gagal → RUJUK SEGERA untuk kardioversi atau overdrive pacing.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -433,7 +433,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '4. Koreksi Hipokalemia / Hipomagnesemia (Jika Ada)',
           description: 'VT polimorfik (Torsades de Pointes): Berikan MgSO4 2 gram IV dalam 15 menit. \nHipokalemia: Koreksi KCl secara perlahan (hati-hati pemberian IV cepat). \nPenyebab reversible VT paling sering: kelainan elektrolit dan iskemia.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -441,7 +441,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '5. RUJUK CITO RS dengan Kemampuan Kardiologi / ICU',
           description: 'Semua VT harus dirujuk karena: butuh kardioversi jika gagal medikasi, butuh ekokardiografi (Rujuk RS) (fungsi ventrikel), butuh evaluasi penyebab struktural (IHD, kardiomiopati), dan kemungkinan ICD (Implantable Cardioverter-Defibrillator).',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'doctor',
         }
       ]
@@ -461,7 +461,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '1. Konfirmasi di EKG: Jenis Bradiaritmia?',
           description: 'Cek EKG: \n• Sinus bradikardia (P ada sebelum tiap QRS, PR normal): paling jinak.\n• Blok AV Derajat 1 (PR > 200ms): observasi.\n• Blok AV Derajat 2 Mobitz I (Wenckebach — PR memanjang lalu drop): umumnya jinak.\n• Blok AV Derajat 2 Mobitz II (PR konstan, QRS tiba-tiba drop): BERBAHAYA → rujuk.\n• Blok AV Derajat 3 / Total (P dan QRS tak menyambung): DARURAT → rujuk.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -469,7 +469,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '2. Cari Penyebab Reversible',
           description: 'Obat: Beta-blocker, Digoxin, CCB, Antiaritmia. \nMetabolik: Hipotiroid (tiroid besar, kulit kering, suara serak), Hiperkalemia. \nInferior MI/STEMI: ST elevasi di lead II, III, aVF (AV node disuplai dari RCA). \nVagal (refleks): Bersamaan nyeri, muntah, BAB. → Koreksi penyebab jika memungkinkan.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -477,7 +477,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '3. Atropin 0.5 mg IV (Lini Pertama Bradikardi Bergejala)',
           description: 'Atropin 0.5 mg IV bolus. Dapat diulang setiap 3-5 menit. Dosis total maksimal 3 mg. \nEFEK: Memblok vagal → HR meningkat dalam 1-2 menit. \nKURAN EFEKTIF pada: Blok AV Mobitz II, Blok derajat 3 (blok infranodal) → Pada kasus ini RUJUK lebih prioritas.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -485,7 +485,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '4. O2 + IV Line + Posisi Trendelenburg (Jika TD Rendah)',
           description: 'O2 nasal kanul 2-4 L/menit. Pasang IV line. Jika TD < 90: posisi Trendelenburg (kaki lebih tinggi dari kepala) + bolus cairan 250 mL RL.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -493,7 +493,7 @@ export const aritmiPathway: DynamicPathway = {
           title: '5. RUJUK ke RS untuk Temporary Pacing (Pacemaker Sementara)',
           description: 'Indikasi rujuk segera (Transvenous/Transcutaneous Pacing): \n• Blok AV derajat 2 Mobitz II atau Derajat 3\n• Sinus arrest berulang + sinkop\n• Bradikardi refrakter (tidak respons Atropin 3 mg)\n• Inferior STEMI + blok AV (RCA occlusion).',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'doctor',
         }
       ]

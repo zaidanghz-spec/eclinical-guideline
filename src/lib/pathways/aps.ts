@@ -24,7 +24,7 @@ export const apsPathway: DynamicPathway = {
           title: 'Tentukan Klasifikasi CCS (Kemampuan Aktivitas)',
           description: 'CCS I: Nyeri hanya saat aktivitas berat. CCS II: Jalan 2 blok/naik tangga 1 lantai terhambat. CCS III: Aktivitas ringan terhambat. Catat ini ke rekam medis.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -32,7 +32,7 @@ export const apsPathway: DynamicPathway = {
           title: 'Cek Faktor Risiko Penyerta',
           description: 'Riwayat Hipertensi, DM, Kolesterol, atau Merokok aktif yang perlu dikendalikan melalui pengobatan rawat jalan.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -40,7 +40,7 @@ export const apsPathway: DynamicPathway = {
           title: 'KETERBATASAN ALAT: Siapkan Lembar Rujukan Ekokardiografi (Rujuk RS)',
           description: 'Klinik tidak memiliki Echo/Treadmill. Pasien dengan gejala PJK Stabil murni WAJIB dirujuk ke Poli Jantung RSUD untuk menilai fungsi pompa (LVEF).',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ],
@@ -85,7 +85,7 @@ export const apsPathway: DynamicPathway = {
           title: 'Gunakan Obat Alternatif',
           description: 'Beri Anti-asam lambung atau Parasetamol/NSAID ringan. Observasi respon lewat kontrol klinik.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         }
       ]
@@ -102,7 +102,7 @@ export const apsPathway: DynamicPathway = {
           title: 'ISDN Sublingual',
           description: 'Bekali pasien ISDN 5mg (di bawah lidah). Edukasi BILA nyeri kronis kumat. KE IGD bila tidak mempan.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -110,7 +110,7 @@ export const apsPathway: DynamicPathway = {
           title: 'Resep Beta Blocker (Bisoprolol / Atenolol)',
           description: 'Jika tensi/nadi normal, resepkan beta blocker oral setiap hari.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -118,7 +118,7 @@ export const apsPathway: DynamicPathway = {
           title: 'Resep Aspirin Dosis Rendah',
           description: 'Pencegahan pendarahan (Aspirin 80mg per hari).',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         }
       ]

@@ -20,7 +20,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Anamnesis Cepat: Onset & Pencetus',
           description: 'Kapan mulai? Muncul mendadak setelah apa? (Makanan, Obat, Sengatan, Kontak kulit). Ini episode pertama atau berulang? Ada riwayat alergi berat sebelumnya?',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -28,7 +28,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'VITAL SIGNS CEPAT — Prioritas Tensi & Nadi!',
           description: 'Tekanan darah, Nadi, SpO2, Suhu, RR. \nTanda ANAFILAKSIS: TD Sistolik <90 mmHg (atau drop >30%) ATAU Nadi >120 cepat & lemah. SpO2 <92%. Ini GAWAT DARURAT!',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -36,7 +36,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Inspeksi Kulit & Selaput Lendir',
           description: 'Adakah: Urtikaria (bentol-bentol merah gatal)? Angioedema (bengkak bibir, lidah, kelopak mata, wajah, leher)? Kemerahan difus (flushing)? Lesi bernanah/melepuh? Distribusinya lokal atau seluruh tubuh?',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -44,7 +44,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Cek Gejala Sistem Lain (Selain Kulit)',
           description: 'Sistem Napas: Sesak, mengi (wheezing), serak/stridor, nyeri menelan (angioedema laring)? \nSistem Cerna: Mual, muntah, kram perut, diare? \nSistem Saraf: Pusing, rasa mau pingsan/pingsan?',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
           role: 'nurse',
         },
         {
@@ -52,7 +52,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'SKRINING ANAFILAKSIS (World Allergy Organization Criteria)',
           description: 'Diagnosis KLINIS Anafilaksis jika ≥1 dari kriteria ini: \n1) Gejala kulit/mukosa (urtikaria, angioedema) PLUS gangguan napas ATAU TD drop/sinkop.\n2) ≥2 organ terkena cepat setelah paparan alergen.\n3) TD drop terisolasi setelah paparan alergen yang diketahui (terutama obat/sengatan).',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         }
       ],
@@ -110,7 +110,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '1. EPINEFRIN (ADRENALIN) — INJEKSI SEGERA! (Lini Pertama)',
           description: 'Epinefrin 1:1000 (1 mg/mL), Dosis: 0.3-0.5 mg (dewasa) / 0.01 mg/kgBB (anak, max 0.5 mg). \nROUTE: Injeksi IM ke PAHA LUAR (vastus lateralis) — BUKAN subkutan, BUKAN lengan. \nBisa diulang setiap 5-15 menit jika tidak respons. Catat waktu injeksi!',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -118,7 +118,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '2. Posisi Pasien',
           description: 'JIKA TD drop/sinkop: Baringkan, angkat kedua kaki (posisi Trendelenburg). \nJIKA sesak berat: Duduk tegak / setengah duduk agar nyaman bernapas. \nJANGAN biarkan pasien berdiri tiba-tiba (risiko sudden cardiac arrest).',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -126,7 +126,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '3. Oksigen High-Flow',
           description: 'Berikan O2 via sungkup muka simple mask 8-10 L/menit atau sungkup NRM (Non-Rebreathing Mask) jika tersedia. Target SpO2 >94%.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -134,7 +134,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '4. Akses IV & Cairan Resusitasi',
           description: 'Pasang IV line perifer, berikan bolus RL/NaCl 0.9% 500-1000 mL cepat (IV push) jika ada tanda syok/hipotensi. Pantau TD setiap 5 menit.',
           required: true,
-          category: 'action'
+          category: 'action',
           role: 'nurse',
         },
         {
@@ -142,7 +142,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '5. Nebulisasi Salbutamol (JIKA Ada Bronkospasme/Wheezing)',
           description: 'TERAPI TAMBAHAN (bukan pengganti Epinefrin). Jika masih ada wheezing setelah Epinefrin, tambahkan Salbutamol nebul 2.5 mg. Ini membantu bronkospasme yang persisten.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -150,7 +150,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '6. Kortikosteroid IV (Cegah Reaksi Bifasik)',
           description: 'Dexamethasone 5-10 mg IV ATAU Metilprednisolon 1-2 mg/kgBB IV. Tidak cepat bekerja (efek 4-6 jam kemudian), tetapi penting cegah reaksi anafilaksis fase kedua yang bisa memburuk 4-12 jam kemudian.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -158,7 +158,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '7. Antihistamin IV (Terapi ADJUVANT - Bukan Utama!)',
           description: 'Difenhidramin (CTM) 10-20 mg IV / Chlorphenamine ATAU Dimenhidrinat IV. INGAT: antihistamin hanya untuk gejala kulit (gatal, urtikaria), BUKAN untuk mengatasi anafilaksis.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -166,7 +166,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '8. Pasang EKG Monitor (Jika Tersedia)',
           description: 'EKG untuk mendeteksi aritmia (takikardia, SVT, ataupun perubahan ST yang mungkin terjadi pada anafilaksis berat pada pasien dengan faktor risiko jantung). Monitor nadi terus-menerus.',
           required: false,
-          category: 'assessment'
+          category: 'assessment',
           role: 'both',
         },
         {
@@ -174,7 +174,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: '9. RUJUK IGD RS SEGERA (Setelah Stabilisasi Awal)',
           description: 'Semua anafilaksis HARUS dirujuk ke IGD RS untuk observasi minimal 6-24 jam (risiko reaksi bifasik). Pastikan pasien stabil sebelum dipindahkan. Dampingi selama transfer.',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'doctor',
         }
       ]
@@ -194,7 +194,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Pantau Tanda Obstruksi Napas Setiap 10-15 Menit!',
           description: 'DARURAT JIKA muncul: Suara serak baru (disfonia), Stridor (napas berbunyi kasar dari leher), Kesulitan menelan (disfagia), atau bengkak semakin progresif ke area leher. → Segera injeksi Epinefrin & Rujuk!',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -202,7 +202,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Kortikosteroid Sistemik (Oral atau Injeksi)',
           description: 'Dexamethasone 0.15-0.6 mg/kgBB oral/IM ATAU Prednisone 0.5-1 mg/kgBB oral. Untuk menekan respons inflamasi dan mengurangi bengkak.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -210,7 +210,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Antihistamin Oral/IM',
           description: 'Cetirizine 10 mg oral ATAU Loratadine 10 mg oral. Untuk mengurangi gatal dan reaksi histamin. Pada anak: sesuaikan dosis per kgBB.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -218,7 +218,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Siapkan Epinefrin Siap Suntik (Jika Progresif)',
           description: 'Persiapkan spuit Epinefrin 0.3-0.5 mg siap pakai di dekat pasien. JIKA angioedema bertambah ke area laring/leher atau muncul sesak → injeksi segera tanpa menunggu konfirmasi lebih lanjut.',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -226,7 +226,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Rujuk ke RS untuk Observasi',
           description: 'Angioedema yang alergi (bukan herediter) dengan area wajah/bibir: observasi minimal 4-6 jam di faskes atau rujuk RS. Angioedema yang tidak jelas penyebabnya → rujuk untuk evaluasi C1-inhibitor (Hereditary Angioedema).',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
@@ -246,7 +246,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Antihistamin Non-Sedatif (Lini Pertama)',
           description: 'Cetirizine 10 mg 1x sehari ATAU Loratadine 10 mg 1x sehari ATAU Fexofenadine 120-180 mg 1x sehari. Minum rutin selama 5-7 hari, bukan hanya saat gatal. \nEFEK: 1-2 jam. Aman pada kelelahan & mengemudi.',
           required: true,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -254,7 +254,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Kortikosteroid Oral Singkat (Jika Urtikaria Berat/Luas)',
           description: 'Prednisone / Methylprednisolone 0.5 mg/kgBB/hari (max 40 mg/hari) selama 3-5 hari (tapering singkat). JANGAN pakai jangka panjang untuk urtikaria kronik.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -262,7 +262,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Topikal (Jika Lesi Lokal Terbatas)',
           description: 'Krim Calamine lotion atau Hidrokortison 1% (OTC) untuk area gatal yang terbatas. JANGAN pakai kortikosteroid topikal di wajah jangka panjang.',
           required: false,
-          category: 'medication'
+          category: 'medication',
           role: 'doctor',
         },
         {
@@ -270,7 +270,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Identifikasi & Eliminasi Pencetus (KUNCI!)',
           description: 'Tanyakan & catat: \n• MAKANAN: Seafood, kacang, telur, susu, buah-buahan (strawberry, kiwi)?\n• OBAT: Aspirin, NSAID, antibiotik penisilin/sulfa?\n• FISIK: Dingin, tekanan, panas, olahraga?\n• LINGKUNGAN: Debu, bulu binatang, latex, parfum?\n• Infeksi: Viral (common cold sebelumnya)?',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         },
         {
@@ -278,7 +278,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Edukasi Pasien: Yang Harus Dihindari Selama Gejala',
           description: 'Hindari air panas (mandi air panas/sauna memperburuk urtikaria). \nHindari pakaian ketat/menggesek. \nHindari alkohol. \nHindari aspirin/NSAID (bisa memperburuk urtikaria histamin). \nHindari pencetus yang teridentifikasi.',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'both',
         },
         {
@@ -286,7 +286,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Return Precautions — Kapan Harus Kembali Segera',
           description: 'Edukasi pasien: Langsung ke IGD atau hubungi klinik jika muncul: \n• Sesak napas mendadak \n• Bengkak bibir/lidah/leher \n• Pingsan atau hampir pingsan \n• Gejala bertambah berat meski sudah minum obat',
           required: true,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         }
       ],
@@ -307,7 +307,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Kontrol dalam 5-7 Hari',
           description: 'Evaluasi respons terapi. Apakah bentol/bengkak membaik? Adakah pencetus yang teridentifikasi selama seminggu ini? Lanjutkan atau hentikan antihistamin?',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         },
         {
@@ -315,7 +315,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Pertimbangkan Rujuk Alergi-Imunologi (Jika Kronik/Berulang)',
           description: 'Jika alergi berulang/kronik (> 6 minggu = urtikaria kronik) atau penyebab tidak jelas, rujuk ke Spesialis Alergi-Imunologi untuk: Skin Prick Test, IgE spesifik, atau Uji Provocasi.',
           required: false,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         },
         {
@@ -323,7 +323,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Pertimbangkan Epinefrin Auto-Injector (EpiPen) untuk Pasien Risiko Tinggi',
           description: 'Berikan resep Epinefrin auto-injector (jika tersedia) untuk pasien dengan: Riwayat anafilaksis sebelumnya, Alergi makanan berat (kacang, seafood), atau Asma berat + alergi. Ajari pasien cara penggunaan.',
           required: false,
-          category: 'safety'
+          category: 'safety',
           role: 'nurse',
         },
         {
@@ -331,7 +331,7 @@ export const reaksiAlergiPathway: DynamicPathway = {
           title: 'Buatkan "Kartu Alergi" Pasien',
           description: 'Dokumentasikan di rekam medis dan anjurkan pasien menyimpan catatan: Alergen yang sudah terkonfirmasi, Riwayat reaksi terparah, Obat yang sudah terbukti aman untuk pasien ini. Berguna saat pasien berobat ke tempat lain.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
           role: 'both',
         }
       ]
