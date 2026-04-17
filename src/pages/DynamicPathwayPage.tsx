@@ -26,7 +26,8 @@ import {
   ClipboardList,
   Phone,
   CheckCheck,
-  Lock
+  Lock,
+  Download
 } from 'lucide-react';
 import { diseases } from '../lib/diseases';
 import { dynamicPathways, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
@@ -550,14 +551,19 @@ export default function DynamicPathwayPage() {
             }`}>
               {effectiveMode === 'nurse-only' ? (
                 <><Users className="w-4 h-4 flex-shrink-0" />
-                <span>Mode <strong>Perawat</strong> — Item 🩺 Dokter akan ditandai untuk dilaporkan</span>
-                <button onClick={handlePrintReport} className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-sky-600 text-white rounded-lg text-xs font-bold hover:bg-sky-700 transition-colors">
-                  <Printer className="w-3 h-3" /> Cetak Laporan PDF
-                </button></>
+                <span>Mode <strong>Perawat</strong> — Item 🩺 Dokter akan ditandai untuk dilaporkan</span></>
               ) : (
                 <><Stethoscope className="w-4 h-4 flex-shrink-0" />
                 <span>Mode <strong>{userRole === 'doctor' ? 'Dokter' : 'Perawat + Dokter'}</strong> — Akses penuh ke semua langkah</span></>
               )}
+              <button 
+                onClick={handlePrintReport} 
+                className={`ml-auto flex items-center gap-1.5 px-3 py-1 text-white rounded-lg text-xs font-bold transition-colors ${
+                  effectiveMode === 'nurse-only' ? 'bg-sky-600 hover:bg-sky-700' : 'bg-teal-600 hover:bg-teal-700'
+                }`}
+              >
+                <Download className="w-3 h-3" /> Unduh / Cetak PDF
+              </button>
             </div>
           </motion.div>
         )}
