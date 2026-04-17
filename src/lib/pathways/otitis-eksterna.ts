@@ -11,7 +11,7 @@
 // ============================================================
 // CATATAN KAPASITAS KLINIK:
 // Alat: TTV, EKG, Suction, Nebulizer
-// Tidak tersedia: Otoskop detail, spesimen kultur, CT scan
+// Tidak tersedia: Otoskop detail, spesimen kultur, CT scan (Rujuk RS)
 // → Diagnosis klinis + rujuk bila indikasi
 // ============================================================
 
@@ -141,7 +141,7 @@ export const otitisEksternaPathway: DynamicPathway = {
         },
         {
           id: 'mal-rujuk-spetht',
-          title: 'RUJUK CITO ke SpTHT + CT Scan Temporal!',
+          title: 'RUJUK CITO ke SpTHT + CT Scan (Rujuk RS) Temporal!',
           description: 'Surat rujukan wajib berisi: riwayat DM/imunokompromais, temuan klinis (granulasi MAE, nyeri hebat, discharge berbau), obat yang sudah diberikan. Tujuan RS: harus ada SpTHT + CT Temporal (untuk evaluasi ekstensi infeksi ke tulang). Tidak bisa CT di klinik → langsung kirim ke RS dengan fasilitas CT.',
           required: true,
           category: 'action'

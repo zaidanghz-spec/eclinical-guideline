@@ -8,7 +8,7 @@
 // - Malfertheiner P, et al. (EURO-Hp V). Management of H. pylori. Gut. 2017;66(1):6–30.
 // Setting: Klinik / FKTP
 // Alat: TTV (Tensi, Termometer, Oksimetri), EKG, Suction
-// TIDAK ADA: Endoskopi, UBT, Rapid H. pylori test, USG abdomen
+// TIDAK ADA: Endoskopi (Rujuk RS), UBT, Rapid H. pylori test, USG (Rujuk RS) abdomen
 // Prinsip: EKG dulu untuk singkirkan SKA, lalu skrining alarm features
 // ============================================================
 
@@ -27,7 +27,7 @@ export const dispepsiaPathway: DynamicPathway = {
       id: 'disp-initial-assessment',
       type: 'checklist',
       title: 'Node 1: Initial Assessment — Anamnesis, TTV & Pemeriksaan Fisik',
-      description: 'Dispepsia = nyeri/rasa tidak nyaman di epigastrium. Di klinik tanpa endoskopi dan UBT, pendekatan adalah "Uninvestigated Dyspepsia" berdasarkan klinis. PERHATIAN: Nyeri epigastrium bisa menjadi presentasi infark miokard inferior — EKG wajib dilakukan!',
+      description: 'Dispepsia = nyeri/rasa tidak nyaman di epigastrium. Di klinik tanpa endoskopi (Rujuk RS) dan UBT, pendekatan adalah "Uninvestigated Dyspepsia" berdasarkan klinis. PERHATIAN: Nyeri epigastrium bisa menjadi presentasi infark miokard inferior — EKG wajib dilakukan!',
       items: [
         {
           id: 'disp-anamnesis-keluhan',
@@ -45,8 +45,8 @@ export const dispepsiaPathway: DynamicPathway = {
         },
         {
           id: 'disp-alarm-features',
-          title: '⚠️ Skrining ALARM FEATURES — Perlu Endoskopi SEGERA',
-          description: 'Tanda bahaya yang mengharuskan rujuk endoskopi (bukan terapi empiris):\n• Disfagia progresif (sulit menelan makin lama makin berat)\n• Penurunan berat badan drastis tanpa sebab jelas\n• Muntah persisten dan berulang\n• Perdarahan GI: hematemesis (muntah darah) atau melena (BAB hitam)\n• Anemia yang tidak jelas penyebabnya\n• Teraba massa di abdomen\n• Onset baru pada usia ≥ 45 tahun\n• Riwayat keluarga kanker lambung atau kolorektal',
+          title: '⚠️ Skrining ALARM FEATURES — Perlu Endoskopi (Rujuk RS) SEGERA',
+          description: 'Tanda bahaya yang mengharuskan rujuk endoskopi (Rujuk RS) (bukan terapi empiris):\n• Disfagia progresif (sulit menelan makin lama makin berat)\n• Penurunan berat badan drastis tanpa sebab jelas\n• Muntah persisten dan berulang\n• Perdarahan GI: hematemesis (muntah darah) atau melena (BAB hitam)\n• Anemia yang tidak jelas penyebabnya\n• Teraba massa di abdomen\n• Onset baru pada usia ≥ 45 tahun\n• Riwayat keluarga kanker lambung atau kolorektal',
           required: true,
           category: 'safety'
         },
@@ -96,9 +96,9 @@ export const dispepsiaPathway: DynamicPathway = {
         {
           id: 'disp-alarm-rujuk',
           title: '🟠 RUJUK — Alarm Features (+) / Usia ≥ 45 Tahun',
-          description: 'Ada disfagia, penurunan BB, muntah persisten, anemia, atau usia ≥ 45 tahun onset baru. Butuh endoskopi untuk menyingkirkan keganasan — TIDAK bisa terapi empiris saja.',
+          description: 'Ada disfagia, penurunan BB, muntah persisten, anemia, atau usia ≥ 45 tahun onset baru. Butuh endoskopi (Rujuk RS) untuk menyingkirkan keganasan — TIDAK bisa terapi empiris saja.',
           color: 'orange',
-          nextNodeId: 'disp-rujuk-endoskopi',
+          nextNodeId: 'disp-rujuk-endoskopi (Rujuk RS)',
           riskLevel: 'high'
         },
         {
@@ -160,7 +160,7 @@ export const dispepsiaPathway: DynamicPathway = {
         {
           id: 'dd-rujuk',
           title: '5. RUJUK IGD RS — Ambulans + Surat Rujukan Lengkap',
-          description: 'Cantumkan: TTV serial, estimasi volume perdarahan, EKG, obat yang diberikan, waktu onset.\nUntuk perdarahan GI: RS dengan fasilitas endoskopi dan transfusi. Untuk STEMI: RS dengan Cath Lab.',
+          description: 'Cantumkan: TTV serial, estimasi volume perdarahan, EKG, obat yang diberikan, waktu onset.\nUntuk perdarahan GI: RS dengan fasilitas endoskopi (Rujuk RS) dan transfusi. Untuk STEMI: RS dengan Cath Lab.',
           required: true,
           category: 'documentation'
         }
@@ -168,18 +168,18 @@ export const dispepsiaPathway: DynamicPathway = {
     },
 
     // ============================================================
-    // NODE 3B: RUJUK ENDOSKOPI (Alarm Features)
+    // NODE 3B: RUJUK ENDOSKOPI (Rujuk RS) (Alarm Features)
     // ============================================================
-    'disp-rujuk-endoskopi': {
-      id: 'disp-rujuk-endoskopi',
+    'disp-rujuk-endoskopi (Rujuk RS)': {
+      id: 'disp-rujuk-endoskopi (Rujuk RS)',
       type: 'checklist',
-      title: 'Node 3B: Alarm Features (+) — Siapkan Rujukan Endoskopi',
+      title: 'Node 3B: Alarm Features (+) — Siapkan Rujukan Endoskopi (Rujuk RS)',
       description: 'PGI 2021: Alarm features adalah indikasi mutlak esofagogastroduodenoskopi (EGD) untuk menyingkirkan keganasan lambung atau esofagus.',
       items: [
         {
           id: 'ae-ppi-sementara',
-          title: '1. PPI Sambil Menunggu Jadwal Endoskopi',
-          description: 'Omeprazole 2 × 20 mg atau Lansoprazole 1 × 30 mg untuk kontrol gejala sambil menunggu jadwal rujukan. PPI tidak menyembunyikan keganasan pada endoskopi jika diberikan ≤ 8 minggu.',
+          title: '1. PPI Sambil Menunggu Jadwal Endoskopi (Rujuk RS)',
+          description: 'Omeprazole 2 × 20 mg atau Lansoprazole 1 × 30 mg untuk kontrol gejala sambil menunggu jadwal rujukan. PPI tidak menyembunyikan keganasan pada endoskopi (Rujuk RS) jika diberikan ≤ 8 minggu.',
           required: true,
           category: 'medication'
         },
@@ -193,7 +193,7 @@ export const dispepsiaPathway: DynamicPathway = {
         {
           id: 'ae-surat-rujukan',
           title: '3. Surat Rujukan ke SpPenyakit Dalam / Gastroenterologi',
-          description: 'Cantumkan: usia pasien, onset keluhan, alarm features yang ditemukan, riwayat konsumsi NSAID/aspirin, TTV, dan temuan pemfis.\nTujuan: Endoskopi diagnostik (EGD) dan/atau tes H. pylori (UBT/RUT/histologi).',
+          description: 'Cantumkan: usia pasien, onset keluhan, alarm features yang ditemukan, riwayat konsumsi NSAID/aspirin, TTV, dan temuan pemfis.\nTujuan: Endoskopi (Rujuk RS) diagnostik (EGD) dan/atau tes H. pylori (UBT/RUT/histologi).',
           required: true,
           category: 'documentation'
         }
@@ -247,7 +247,7 @@ export const dispepsiaPathway: DynamicPathway = {
         {
           id: 'emp-jadwal-kontrol',
           title: '6. Kontrol Ulang 2–4 Minggu — Evaluasi Respons',
-          description: 'Jadwalkan kontrol wajib dalam 2–4 minggu.\n• Gejala MEMBAIK → penjelasan on-demand therapy (PPI hanya saat gejala kumat)\n• Gejala TIDAK MEMBAIK dalam 4 minggu → RUJUK untuk endoskopi dan tes H. pylori\n\nJangan berikan PPI > 8 minggu tanpa evaluasi ulang!',
+          description: 'Jadwalkan kontrol wajib dalam 2–4 minggu.\n• Gejala MEMBAIK → penjelasan on-demand therapy (PPI hanya saat gejala kumat)\n• Gejala TIDAK MEMBAIK dalam 4 minggu → RUJUK untuk endoskopi (Rujuk RS) dan tes H. pylori\n\nJangan berikan PPI > 8 minggu tanpa evaluasi ulang!',
           required: true,
           category: 'documentation'
         }
@@ -321,8 +321,8 @@ export const dispepsiaPathway: DynamicPathway = {
         },
         {
           id: 'ev-respons-gagal',
-          title: '2. Respons Buruk — Rujuk Endoskopi',
-          description: 'Gejala TIDAK membaik setelah 4 minggu PPI empiris → RUJUK untuk endoskopi (EGD) dan tes H. pylori.\nJangan terus berikan PPI empiris tanpa evaluasi. Gejala menetap bisa menandakan: H. pylori, ulkus peptikum, GERD erosif, keganasan, atau functional dyspepsia.',
+          title: '2. Respons Buruk — Rujuk Endoskopi (Rujuk RS)',
+          description: 'Gejala TIDAK membaik setelah 4 minggu PPI empiris → RUJUK untuk endoskopi (Rujuk RS) (EGD) dan tes H. pylori.\nJangan terus berikan PPI empiris tanpa evaluasi. Gejala menetap bisa menandakan: H. pylori, ulkus peptikum, GERD erosif, keganasan, atau functional dyspepsia.',
           required: true,
           category: 'action'
         },

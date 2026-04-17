@@ -35,7 +35,7 @@ export const apsPathway: DynamicPathway = {
         },
         {
           id: 'aps-echo-lab-rujuk',
-          title: 'KETERBATASAN ALAT: Siapkan Lembar Rujukan Ekokardiografi',
+          title: 'KETERBATASAN ALAT: Siapkan Lembar Rujukan Ekokardiografi (Rujuk RS)',
           description: 'Klinik tidak memiliki Echo/Treadmill. Pasien dengan gejala PJK Stabil murni WAJIB dirujuk ke Poli Jantung RSUD untuk menilai fungsi pompa (LVEF).',
           required: true,
           category: 'documentation'

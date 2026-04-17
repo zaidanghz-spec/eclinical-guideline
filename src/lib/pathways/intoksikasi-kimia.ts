@@ -393,21 +393,21 @@ export const intoksikasiKimiaPathway: DynamicPathway = {
         {
           id: 'cor-npo-strict',
           title: 'NPO KETAT — Dilarang Apapun Per Oral!',
-          description: 'DILARANG: Susu (MITOS!), air, makanan, apapun per oral. Bisa memperluas luka dan menyebabkan aspirasi. Pasang NGT drainase hanya setelah endoskopi konfirmasi tidak ada perforasi.',
+          description: 'DILARANG: Susu (MITOS!), air, makanan, apapun per oral. Bisa memperluas luka dan menyebabkan aspirasi. Pasang NGT drainase hanya setelah endoskopi (Rujuk RS) konfirmasi tidak ada perforasi.',
           required: true,
           category: 'safety'
         },
         {
           id: 'cor-no-lavage-charcoal',
           title: 'DILARANG: Bilas Lambung + Arang Aktif + Induktor Muntah!',
-          description: 'MUTLAK DILARANG! Bilas lambung: re-ekspos esofagus, risiko perforasi. Arang aktif: tidak efektif untuk korosif, menghalangi endoskopi. Induktor muntah (syrup ipecac): muntah paksa dapat perforasi esofagus yang sudah cedera. 3 larangan ini BEDA dengan keracunan obat lainnya!',
+          description: 'MUTLAK DILARANG! Bilas lambung: re-ekspos esofagus, risiko perforasi. Arang aktif: tidak efektif untuk korosif, menghalangi endoskopi (Rujuk RS). Induktor muntah (syrup ipecac): muntah paksa dapat perforasi esofagus yang sudah cedera. 3 larangan ini BEDA dengan keracunan obat lainnya!',
           required: true,
           category: 'safety'
         },
         {
-          id: 'cor-endoskopi',
-          title: 'Endoskopi (EGD) dalam 12–24 Jam — Grading Zargar',
-          description: 'Endoskopi fleksibel dalam 12–24 jam untuk: Grading kerusakan (Zargar 0–IIIb), prediksi striktur esofagus, tentukan kebutuhan operasi. Jangan endoskopi jika >48 jam (risiko perforasi meningkat) atau perforasi sudah dicurigai (foto toraks: pneumomediastinum?).',
+          id: 'cor-endoskopi (Rujuk RS)',
+          title: 'Endoskopi (Rujuk RS) (EGD) dalam 12–24 Jam — Grading Zargar',
+          description: 'Endoskopi (Rujuk RS) fleksibel dalam 12–24 jam untuk: Grading kerusakan (Zargar 0–IIIb), prediksi striktur esofagus, tentukan kebutuhan operasi. Jangan endoskopi (Rujuk RS) jika >48 jam (risiko perforasi meningkat) atau perforasi sudah dicurigai (foto toraks: pneumomediastinum?).',
           required: true,
           category: 'action'
         },

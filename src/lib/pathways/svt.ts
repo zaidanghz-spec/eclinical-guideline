@@ -689,9 +689,9 @@ export const svtPathway: DynamicPathway = {
  category:'assessment'
  },
  {
- id:'post-labs-troponin-electrolytes',
- title:' Labs: Troponin, Electrolytes, Thyroid',
- description:'Troponin (jika ada chest pain → r/o MI). Electrolytes (K+, Mg2+ - low level → arrhythmogenic). TSH (hyperthyroidism → SVT trigger).',
+ id:'post-labs-troponin (Rujuk RS)-electrolytes',
+ title:' Labs: Troponin (Rujuk RS), Electrolytes, Thyroid',
+ description:'Troponin (Rujuk RS) (jika ada chest pain → r/o MI). Electrolytes (K+, Mg2+ - low level → arrhythmogenic). TSH (hyperthyroidism → SVT trigger).',
  required: true,
  category:'assessment'
  },

@@ -8,7 +8,7 @@
 // - Bellomo R, et al. Acute Renal Failure — Definition, Outcome Measures (ADQI). Crit Care. 2004
 // Setting: Klinik / FKTP
 // Alat: TTV (Tensi, Termometer, Oksimetri), EKG
-// TIDAK ADA: Lab kreatinin on-site, USG, dialisis, ICU
+// TIDAK ADA: Lab kreatinin on-site, USG (Rujuk RS), dialisis, ICU
 // Prinsip: DETEKSI DINI → ATASI PENYEBAB REVERSIBLE → KELOLA KOMPLIKASI → RUJUK TEPAT WAKTU
 // GGA di klinik = TEMUKAN dan STABILKAN sebelum rujuk — jangan tunda!
 // ============================================================
@@ -242,7 +242,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
         {
           id: 'pos-penyebab-lain',
           title: '2. Jika Obstruksi Di Atas Kandung Kemih (Ureter/Ginjal)',
-          description: 'Batu ureter atau tumor yang obstruksi di atas level kandung kemih → kateter Foley TIDAK membantu!\nTanda: pasien tidak bisa kencing tapi kandung kemih kosong saat palpasi/perkusi.\n→ Perlu USG untuk konfirmasi hidronefrosis\n→ Perlu ureteral stent atau nefrostomi perkutan di RS\n→ RUJUK ke SpUrologi / SpBedah segera!',
+          description: 'Batu ureter atau tumor yang obstruksi di atas level kandung kemih → kateter Foley TIDAK membantu!\nTanda: pasien tidak bisa kencing tapi kandung kemih kosong saat palpasi/perkusi.\n→ Perlu USG (Rujuk RS) untuk konfirmasi hidronefrosis\n→ Perlu ureteral stent atau nefrostomi perkutan di RS\n→ RUJUK ke SpUrologi / SpBedah segera!',
           required: true,
           category: 'assessment'
         },
@@ -256,7 +256,7 @@ export const acuteKidneyInjuryPathway: DynamicPathway = {
         {
           id: 'pos-monitor-pos-kateter',
           title: '4. Monitor Output Urin Pasca Pembebasan Obstruksi',
-          description: 'Setelah kateter terpasang dan urin mengalir:\n• Pantau output urin tiap jam\n• Waspada "post-obstructive diuresis": poliuria masif (> 200–300 mL/jam) bisa terjadi → infus cairan untuk kompensasi\n• Pantau elektrolit (K⁺, Na⁺) secara klinis — retensi urin lama akumulasi waste products\n\nJika urin masih tidak keluar setelah kateter terpasang benar → RUJUK untuk USG dan evaluasi bedah.',
+          description: 'Setelah kateter terpasang dan urin mengalir:\n• Pantau output urin tiap jam\n• Waspada "post-obstructive diuresis": poliuria masif (> 200–300 mL/jam) bisa terjadi → infus cairan untuk kompensasi\n• Pantau elektrolit (K⁺, Na⁺) secara klinis — retensi urin lama akumulasi waste products\n\nJika urin masih tidak keluar setelah kateter terpasang benar → RUJUK untuk USG (Rujuk RS) dan evaluasi bedah.',
           required: true,
           category: 'assessment'
         }

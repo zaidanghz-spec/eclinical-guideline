@@ -361,7 +361,7 @@ export const aritmiPathway: DynamicPathway = {
         {
           id: 'af-rujuk-kardio',
           title: '5. RUJUK Kardiologi untuk Evaluasi Rhythm Control & Ablasi',
-          description: 'Semua pasien AF baru → rujuk spesialis jantung untuk evaluasi: Strategi rhythm control (kardioversi, antiaritmia), Ekokardiografi (fungsi jantung, trombus LA), dan kemungkinan RF Ablasi pada AF simtomatik berulang.',
+          description: 'Semua pasien AF baru → rujuk spesialis jantung untuk evaluasi: Strategi rhythm control (kardioversi, antiaritmia), Ekokardiografi (Rujuk RS) (fungsi jantung, trombus LA), dan kemungkinan RF Ablasi pada AF simtomatik berulang.',
           required: true,
           category: 'documentation'
         }
@@ -408,7 +408,7 @@ export const aritmiPathway: DynamicPathway = {
         {
           id: 'vt-rujuk-cito',
           title: '5. RUJUK CITO RS dengan Kemampuan Kardiologi / ICU',
-          description: 'Semua VT harus dirujuk karena: butuh kardioversi jika gagal medikasi, butuh ekokardiografi (fungsi ventrikel), butuh evaluasi penyebab struktural (IHD, kardiomiopati), dan kemungkinan ICD (Implantable Cardioverter-Defibrillator).',
+          description: 'Semua VT harus dirujuk karena: butuh kardioversi jika gagal medikasi, butuh ekokardiografi (Rujuk RS) (fungsi ventrikel), butuh evaluasi penyebab struktural (IHD, kardiomiopati), dan kemungkinan ICD (Implantable Cardioverter-Defibrillator).',
           required: true,
           category: 'safety'
         }

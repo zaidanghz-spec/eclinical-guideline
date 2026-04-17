@@ -9,7 +9,7 @@
 // - AHA ACLS Guidelines 2020
 // Setting: Klinik / FKTP
 // Alat: TTV (Tensi, Termometer, Oksimetri), EKG, Suction
-// TIDAK ADA: Troponin/hs-cTn, Cath Lab, Fibrinolisis, IVUS, Echo
+// TIDAK ADA: Troponin (Rujuk RS)/hs-cTn, Cath Lab, Fibrinolisis, IVUS, Echo
 // Prinsip: DIAGNOSIS CEPAT → STABILISASI → RUJUK SECEPATNYA
 // "TIME IS MUSCLE" — setiap 30 menit delay PCI = 7.5 kematian per 1000 pasien
 // ============================================================
@@ -69,7 +69,7 @@ export const skaPathway: DynamicPathway = {
         {
           id: 'ska-ekg-stat',
           title: '⚡ EKG 12-Lead STAT — WAJIB < 10 Menit dari Pasien Tiba!',
-          description: 'EKG adalah SATU-SATUNYA alat diagnostik definitif SKA di klinik tanpa lab troponin.\nREKAM SEKARANG — sambil anamnesis dan pemeriksaan fisik berlangsung.\n\nPerhatikan:\n• ST Elevasi ≥ 1 mm di ≥ 2 lead bersebelahan → STEMI\n• LBBB baru atau didapat baru → Setara STEMI (Sgarbossa criteria)\n• ST Depresi / T Inversi → NSTEMI/UAP\n• EKG Normal bukan menyingkirkan SKA — 6% STEMI EKG awal normal!\nJika awal normal tapi nyeri tipikal → ULANG EKG tiap 15–30 menit!',
+          description: 'EKG adalah SATU-SATUNYA alat diagnostik definitif SKA di klinik tanpa lab troponin (Rujuk RS).\nREKAM SEKARANG — sambil anamnesis dan pemeriksaan fisik berlangsung.\n\nPerhatikan:\n• ST Elevasi ≥ 1 mm di ≥ 2 lead bersebelahan → STEMI\n• LBBB baru atau didapat baru → Setara STEMI (Sgarbossa criteria)\n• ST Depresi / T Inversi → NSTEMI/UAP\n• EKG Normal bukan menyingkirkan SKA — 6% STEMI EKG awal normal!\nJika awal normal tapi nyeri tipikal → ULANG EKG tiap 15–30 menit!',
           required: true,
           category: 'assessment'
         },
@@ -98,7 +98,7 @@ export const skaPathway: DynamicPathway = {
       id: 'ska-ekg-decision',
       type: 'decision',
       title: 'Node 2: Interpretasi EKG — Tentukan Jenis SKA',
-      description: 'EKG adalah penentu arah utama. Di klinik tanpa troponin, EKG adalah satu-satunya pembeza STEMI dari NSTEMI/UAP.',
+      description: 'EKG adalah penentu arah utama. Di klinik tanpa troponin (Rujuk RS), EKG adalah satu-satunya pembeza STEMI dari NSTEMI/UAP.',
       warningLevel: 'critical',
       branches: [
         {
@@ -112,7 +112,7 @@ export const skaPathway: DynamicPathway = {
         {
           id: 'ska-branch-nstemi-uap',
           title: '🟠 NSTEMI / UAP — ST Depresi, T Inversi, atau Normal',
-          description: 'ST Depresi ≥ 0.5 mm, T Inversi baru, atau EKG normal TAPI klinis tipikal SKA. Tanpa troponin, tidak bisa dibedakan NSTEMI vs UAP — keduanya harus dirujuk.',
+          description: 'ST Depresi ≥ 0.5 mm, T Inversi baru, atau EKG normal TAPI klinis tipikal SKA. Tanpa troponin (Rujuk RS), tidak bisa dibedakan NSTEMI vs UAP — keduanya harus dirujuk.',
           color: 'orange',
           nextNodeId: 'ska-nstemi-uap-management',
           riskLevel: 'high'
@@ -203,7 +203,7 @@ export const skaPathway: DynamicPathway = {
       id: 'ska-nstemi-uap-management',
       type: 'checklist',
       title: 'Node 3B: NSTEMI / UAP — Stabilisasi & Rujuk IGD RS',
-      description: 'NSTEMI/UAP tanpa troponin tidak bisa disingkirkan di klinik primer. Semua kasus dengan klinis tipikal ACS + EKG non-STEMI harus dirujuk ke RS untuk hs-Troponin, risk stratifikasi (GRACE score), dan kemungkinan angiografi.',
+      description: 'NSTEMI/UAP tanpa troponin (Rujuk RS) tidak bisa disingkirkan di klinik primer. Semua kasus dengan klinis tipikal ACS + EKG non-STEMI harus dirujuk ke RS untuk hs-Troponin (Rujuk RS), risk stratifikasi (GRACE score), dan kemungkinan angiografi.',
       items: [
         {
           id: 'nest-aspirin',
@@ -229,7 +229,7 @@ export const skaPathway: DynamicPathway = {
         {
           id: 'nest-stratifikasi-risiko',
           title: '4. Nilai Tanda Risiko Tinggi (Perlu Rujuk Segera)',
-          description: 'Risiko SANGAT TINGGI (rujuk dalam < 2 jam):\n• Hemodinamik instabil / syok kardiogenik\n• Nyeri dada refrakter meski sudah nitrogliserin\n• Gagal jantung akut / edema paru\n• Aritmia ventrikel yang mengancam jiwa (VT/VF)\n• Perubahan dinamis ST-T di EKG serial\n\nRisiko TINGGI (rujuk dalam < 24 jam):\n• ST Depresi luas ≥ 0.5 mm\n• T Inversi dalam di lead prekordial\n• Troponin positif (jika tersedia)\n• TIMI Score ≥ 3 / GRACE Score > 140',
+          description: 'Risiko SANGAT TINGGI (rujuk dalam < 2 jam):\n• Hemodinamik instabil / syok kardiogenik\n• Nyeri dada refrakter meski sudah nitrogliserin\n• Gagal jantung akut / edema paru\n• Aritmia ventrikel yang mengancam jiwa (VT/VF)\n• Perubahan dinamis ST-T di EKG serial\n\nRisiko TINGGI (rujuk dalam < 24 jam):\n• ST Depresi luas ≥ 0.5 mm\n• T Inversi dalam di lead prekordial\n• Troponin (Rujuk RS) positif (jika tersedia)\n• TIMI Score ≥ 3 / GRACE Score > 140',
           required: true,
           category: 'assessment'
         },
@@ -276,7 +276,7 @@ export const skaPathway: DynamicPathway = {
         {
           id: 'eval-tindak-lanjut',
           title: '3. Tindak Lanjut Sesuai Penilaian Klinis',
-          description: 'Jika TIDAK BISA MENYINGKIRKAN SKA dengan pasti → RUJUK ke RS untuk troponin serial.\nJika sangat yakin diagnosis non-kardiak dan pasien stabil → rawat jalan dengan instruksi jelas:\n• Edukasi kapan harus segera ke IGD (nyeri dada tipikal, sesak, sinkop)\n• Kontrol ulang dalam 24–48 jam\n• Aspirin empiris boleh dipertimbangkan jika ada faktor risiko KV multipel',
+          description: 'Jika TIDAK BISA MENYINGKIRKAN SKA dengan pasti → RUJUK ke RS untuk troponin (Rujuk RS) serial.\nJika sangat yakin diagnosis non-kardiak dan pasien stabil → rawat jalan dengan instruksi jelas:\n• Edukasi kapan harus segera ke IGD (nyeri dada tipikal, sesak, sinkop)\n• Kontrol ulang dalam 24–48 jam\n• Aspirin empiris boleh dipertimbangkan jika ada faktor risiko KV multipel',
           required: true,
           category: 'action'
         }
@@ -338,7 +338,7 @@ export const skaPathway: DynamicPathway = {
         {
           id: 'post-rujuk-kardio',
           title: '7. Indikasi Rujuk Ulang ke Spesialis Jantung',
-          description: 'Rujuk kembali ke SpJantung jika:\n• Pasca ACS: evaluasi ekokardiografi (LVEF), stress test, atau angiografi lanjutan perlu\n• Gejala angina berulang meski sudah terapi optimal\n• Efek samping obat mayor yang perlu penyesuaian\n• LVEF ≤ 35% setelah 3 bulan terapi → evaluasi ICD',
+          description: 'Rujuk kembali ke SpJantung jika:\n• Pasca ACS: evaluasi ekokardiografi (Rujuk RS) (LVEF), stress test, atau angiografi lanjutan perlu\n• Gejala angina berulang meski sudah terapi optimal\n• Efek samping obat mayor yang perlu penyesuaian\n• LVEF ≤ 35% setelah 3 bulan terapi → evaluasi ICD',
           required: true,
           category: 'action'
         }

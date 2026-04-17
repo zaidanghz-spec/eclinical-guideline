@@ -208,7 +208,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
         {
           id: 'fa-ev-investigate-cause',
           title: 'Investigasi Penyebab FA Setelah Stabil',
-          description: 'Setelah stabilisasi → cari underlying cause: Ekokardiografi, Lab lengkap (TSH, DL, elektrolit), EKG baseline, Foto toraks. Komorbid perlu diobati untuk cegah rekurensi!',
+          description: 'Setelah stabilisasi → cari underlying cause: Ekokardiografi (Rujuk RS), Lab lengkap (TSH, DL, elektrolit), EKG baseline, Foto toraks. Komorbid perlu diobati untuk cegah rekurensi!',
           required: true,
           category: 'assessment'
         }
@@ -249,13 +249,13 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
         {
           id: 'fa-labs-mandatory',
           title: 'Labs Wajib — Ambil Bersamaan Saat Pasang IV',
-          description: 'Darah Lengkap (anemia/infeksi?). Elektrolit (K⁺, Mg²⁺ — koreksi dulu!). Kreatinin + eGFR (tentukan dosis antikoagulan). TSH (hipertiroid = penyebab FA reversibel!). Enzim jantung troponin (jika ada nyeri dada → singkirkan SKA).',
+          description: 'Darah Lengkap (anemia/infeksi?). Elektrolit (K⁺, Mg²⁺ — koreksi dulu!). Kreatinin + eGFR (tentukan dosis antikoagulan). TSH (hipertiroid = penyebab FA reversibel!). Enzim jantung troponin (Rujuk RS) (jika ada nyeri dada → singkirkan SKA).',
           required: true,
           category: 'assessment'
         },
         {
-          id: 'fa-ekokardiografi',
-          title: 'Ekokardiografi Transtorakal (ETT)',
+          id: 'fa-ekokardiografi (Rujuk RS)',
+          title: 'Ekokardiografi (Rujuk RS) Transtorakal (ETT)',
           description: 'Dikerjakan semua pasien FA baru/tidak jelas etiologi. Nilai: ukuran atrium kiri (besar = FA lebih persisten), EF ventrikel (FA + EF turun = tidak boleh CCB!), kelainan katup (FA valvular? → warfarin!), tekanan paru. Jika rencana kardioversi + onset >48 jam → TEE untuk cek trombus AAK!',
           required: true,
           category: 'assessment'
@@ -528,7 +528,7 @@ export const fibrilasiAtriumPathway: DynamicPathway = {
         {
           id: 'fa-lt-etiologi',
           title: 'Investigasi Etiologi & Komorbid',
-          description: 'Ekokardiografi (struktur jantung, EF, katup). TSH (hipertiroid?). Elektrolit, DL. EKG baseline (WPW?). Foto toraks. Holter 24 jam jika curiga FA paroksismal berulang.',
+          description: 'Ekokardiografi (Rujuk RS) (struktur jantung, EF, katup). TSH (hipertiroid?). Elektrolit, DL. EKG baseline (WPW?). Foto toraks. Holter 24 jam jika curiga FA paroksismal berulang.',
           required: true,
           category: 'assessment'
         },

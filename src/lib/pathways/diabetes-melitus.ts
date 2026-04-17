@@ -9,7 +9,7 @@
 // - Konsensus Tatalaksana Hipoglikemia — PERKENI 2021
 // Setting: Klinik / FKTP
 // Alat: TTV (Tensi, Termometer, Oksimetri), EKG, GDS Stik
-// TIDAK ADA: HbA1c on-site (rujuk lab), USG, funduskopi
+// TIDAK ADA: HbA1c on-site (rujuk lab), USG (Rujuk RS), funduskopi
 // Prinsip: SKRINING KEGAWATAN dulu → Diagnosis & Klasifikasi →
 //          Terapi berbasis HbA1c → Kontrol Komorbid → Monitoring komplikasi
 // ============================================================
