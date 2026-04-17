@@ -129,16 +129,6 @@ export const diseases: Disease[] = [
 
   // NEUROLOGI (5 penyakit)
   {
-    id: 'stroke-iskemik',
-    name: 'Stroke Iskemik',
-    nameEn: 'Ischemic Stroke',
-    organSystem: 'neurologi',
-    isEmergency: true,
-    timeToIntervention: '4.5 jam IV tPA (24h thrombectomy if LVO)',
-    prevalenceIndonesia: '#1 cause disability & death worldwide. "Time is Brain" - 1.9 million neurons lost/minute. NNT=3-5 for thrombectomy (best intervention in medicine!). Indonesia: high burden, limited tPA access',
-    keywords: ['stroke', 'CVA', 'FAST', 'hemiparesis', 'hemiplegia', 'weakness', 'kelemahan satu sisi', 'facial droop', 'wajah tidak simetris', 'slurred speech', 'bicara pelo', 'aphasia', 'tPA', 'thrombolysis', 'thrombectomy', 'NIHSS', 'LVO', 'paralysis']
-  },
-  {
     id: 'tia',
     name: 'Transient Ischemic Attack (TIA)',
     nameEn: 'Transient Ischemic Attack',
@@ -425,24 +415,6 @@ export const diseases: Disease[] = [
     isEmergency: false,
     prevalenceIndonesia: 'Kasus cedera tersering di FKTP / IGD (Olahraga, aktivitas harian, KLL ringan)',
     keywords: ['keseleo', 'terkilir', 'sprain', 'strain', 'otot robek', 'ligamen robek', 'ankle sprain', 'bengkak sendi', 'cedera', 'trauma', 'PRICE', 'POLICE', 'ottawa', 'nyeri sendi']
-  },
-  {
-    id: 'polymyalgia-rheumatica',
-    name: 'Polymyalgia Rheumatica (PMR)',
-    nameEn: 'Polymyalgia Rheumatica',
-    organSystem: 'muskuloskeletal',
-    isEmergency: false,
-    prevalenceIndonesia: 'Elderly-onset inflammatory disorder. Peak incidence 70-80 tahun. Prevalensi 0.5-0.7% populasi >50 tahun. 15-20% overlap dengan Giant Cell Arteritis (GCA)',
-    keywords: ['polymyalgia', 'PMR', 'shoulder pain', 'hip pain', 'morning stiffness', 'elderly', 'ESR', 'CRP', 'steroid', 'giant cell arteritis', 'GCA', 'lansia', 'kaku pagi']
-  },
-  {
-    id: 'rheumatoid-arthritis',
-    name: 'Rheumatoid Arthritis (RA)',
-    nameEn: 'Rheumatoid Arthritis',
-    organSystem: 'muskuloskeletal',
-    isEmergency: false,
-    prevalenceIndonesia: 'Prevalensi 0.3-1% populasi global. F:M = 3:1. Peak onset 40-60 tahun. Early treatment (window of opportunity <3-6 bulan) prevents joint destruction',
-    keywords: ['rheumatoid', 'RA', 'arthritis', 'joint pain', 'swelling', 'morning stiffness', 'synovitis', 'RF', 'anti-CCP', 'MTX', 'methotrexate', 'DMARD', 'biologics', 'autoimmune', 'rematik', 'sendi bengkak']
   },
     {
     id: 'acute-kidney-injury',
