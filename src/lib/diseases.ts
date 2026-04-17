@@ -41,24 +41,25 @@ export const diseases: Disease[] = [
   },
   {
     id: 'svt',
-    name: 'Supraventricular Tachycardia (SVT)',
-    nameEn: 'Supraventricular Tachycardia',
+    name: 'Aritmia — SVT, AF, VT, Bradikardi (Komprehensif)',
+    nameEn: 'Cardiac Arrhythmias (Comprehensive)',
     organSystem: 'kardiovaskular',
     isEmergency: true,
-    timeToIntervention: '30 menit (jika unstable: immediate)',
-    prevalenceIndonesia: 'Prevalensi SVT ~2.25 per 1000 populasi',
-    keywords: ['palpitasi', 'palpitations', 'jantung berdebar', 'heart racing', 'takikardia', 'tachycardia', 'chest discomfort', 'dizziness', 'syncope', 'wpw', 'avnrt', 'avrt']
+    timeToIntervention: 'VF/pVT (Arrest): CPR segera. VT/SVT instabil: cardioversi < 30 menit. SVT stabil: Adenosin < 1 jam',
+    prevalenceIndonesia: 'AF prevalensi 0.5-1% Indonesia. SVT 2.25/1000 populasi. VF penyebab kematian mendadak terbanyak.',
+    keywords: ['palpitasi', 'palpitations', 'jantung berdebar', 'aritmia', 'arrhythmia', 'SVT', 'supraventrikuler', 'atrial fibrillation', 'fibrilasi atrium', 'AF', 'VT', 'ventricular tachycardia', 'bradikardi', 'blok AV', 'cardiac arrest', 'henti jantung', 'RVR', 'AVNRT', 'AVRT', 'WPW', 'torsades', 'valsalva', 'adenosin', 'kardioversi']
   },
   {
     id: 'arrhythmias',
-    name: 'Aritmia (Atrial Fibrilasi)',
-    nameEn: 'Cardiac Arrhythmias',
+    name: 'Aritmia Komprehensif (PERKI/InaHRS)',
+    nameEn: 'Comprehensive Cardiac Arrhythmias',
     organSystem: 'kardiovaskular',
     isEmergency: true,
-    timeToIntervention: 'AF dengan RVR / instabil: cardioversi < 1 jam. Rate control: < 24 jam',
-    prevalenceIndonesia: 'AF prevalensi 0.5-1% di Indonesia. Risiko stroke 5x lebih tinggi tanpa antikoagulan. AF dengan instabilitas hemodinamik = DARURAT',
-    keywords: ['palpitasi', 'jantung berdebar', 'irregular heartbeat', 'atrial fibrillation', 'fibrilasi atrium', 'AF', 'aritmia', 'arrhythmia', 'rapid ventricular response', 'RVR', 'cardioversi', 'rate control']
+    timeToIntervention: 'Cardiac arrest: CPR segera. Instabil dengan nadi: cardioversi < 30 menit. Rate control AF: < 24 jam',
+    prevalenceIndonesia: 'AF 0.5-1% Indonesia, risiko stroke 5x. VT/VF penyebab SCD terbanyak. SVT 2.25/1000 prevalensi',
+    keywords: ['aritmia', 'AF', 'atrial fibrillation', 'fibrilasi atrium', 'SVT', 'tachycardia', 'VT', 'bradikardi', 'cardiac arrest', 'henti jantung', 'EKG', 'palpitasi', 'sinkop', 'jantung berdebar', 'rate control', 'adenosin', 'amiodarone', 'atropin', 'defibrilasi', 'cardioversi', 'blok AV']
   },
+
   {
     id: 'dvt',
     name: 'Deep Vein Thrombosis (DVT)',

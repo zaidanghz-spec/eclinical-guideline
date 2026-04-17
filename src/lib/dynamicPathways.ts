@@ -20,6 +20,7 @@ import { otitisEksternaPathway } from './pathways/otitis-eksterna';
 import { konjungtivitisPathway } from './pathways/konjungtivitis';
 import { ispaPathway } from './pathways/ispa';
 import { reaksiAlergiPathway } from './pathways/reaksi-alergi';
+import { aritmiPathway } from './pathways/aritmia';
 import { sprainStrainPathway } from './pathways/sprain-strain';
 export interface PathwayChecklistItem {
  id: string;
@@ -92,12 +93,12 @@ export const dynamicPathways: Record<string, DynamicPathway> = {
  // DIARE AKUT & KRONIK - PGI 2024
  'acute-gastroenteritis': diareDewasaPathway,
 
- // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - PERKI + Perhimpunan Aritmia Indonesia
- // Imported from separate file for better organization (14 nodes, 92 items)
-'svt': svtPathway,
+ // SUPRAVENTRICULAR TACHYCARDIA (TaSuV) - merged ke pathway aritmia komprehensif
+ // Tetap gunakan key 'svt' agar backward compatible
+ 'svt': aritmiPathway,
 
- // FIBRILASI ATRIUM NON-VALVULAR - PERKI 2019 / InaHRS
- 'arrhythmias': fibrilasiAtriumPathway,
+ // FIBRILASI ATRIUM NON-VALVULAR - PERKI/InaHRS → merged ke pathway aritmia komprehensif
+ 'arrhythmias': aritmiPathway,
 
  // OTITIS EKSTERNA - KMK 1186/2022 + PERHATI-KL + AAO-HNSF 2014
  'otitis-eksterna': otitisEksternaPathway,
