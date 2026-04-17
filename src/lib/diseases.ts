@@ -357,13 +357,14 @@ export const diseases: Disease[] = [
 
   // ALERGI & DERMATOLOGI
   {
-    id: 'alergi-dermatitis',
-    name: 'Alery & Dermatitis',
-    nameEn: 'Allergy & Dermatitis',
+    id: 'reaksi-alergi',
+    name: 'Reaksi Alergi Akut & Urtikaria',
+    nameEn: 'Acute Allergic Reaction & Urticaria',
     organSystem: 'kulit-alergi',
-    isEmergency: false,
-    prevalenceIndonesia: 'Dermatitis atopik prevalensi 10-20% anak Indonesia. Anaphylaxis 1-3% populasi lifetime risk',
-    keywords: ['alergi', 'gatal', 'ruam', 'urtikaria', 'eksim', 'dermatitis', 'atopic', 'eczema', 'contact dermatitis', 'seborrheic', 'anaphylaxis', 'allergy']
+    isEmergency: true,
+    timeToIntervention: 'Anafilaksis: Epinefrin dalam <5 menit. Angioedema laring: <10 menit',
+    prevalenceIndonesia: 'Urtikaria akut: 15-25% populasi seumur hidup. Anafilaksis: meningkat 1-3% di Indonesia. Penyebab tersering: obat, makanan, sengatan serangga.',
+    keywords: ['alergi', 'gatal', 'ruam', 'urtikaria', 'biduran', 'bentol', 'angioedema', 'bengkak bibir', 'bengkak wajah', 'anafilaksis', 'anaphylaxis', 'epinefrin', 'syok alergi', 'reaksi obat', 'alergi makanan', 'hives', 'allergy']
   },
   {
     id: 'insect-bite-reaction',
