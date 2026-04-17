@@ -54,9 +54,10 @@ export const diseases: Disease[] = [
     name: 'Aritmia (Atrial Fibrilasi)',
     nameEn: 'Cardiac Arrhythmias',
     organSystem: 'kardiovaskular',
-    isEmergency: false,
-    prevalenceIndonesia: 'AF prevalensi 0.5% di Indonesia',
-    keywords: ['palpitasi', 'jantung berdebar', 'irregular heartbeat', 'atrial fibrillation']
+    isEmergency: true,
+    timeToIntervention: 'AF dengan RVR / instabil: cardioversi < 1 jam. Rate control: < 24 jam',
+    prevalenceIndonesia: 'AF prevalensi 0.5-1% di Indonesia. Risiko stroke 5x lebih tinggi tanpa antikoagulan. AF dengan instabilitas hemodinamik = DARURAT',
+    keywords: ['palpitasi', 'jantung berdebar', 'irregular heartbeat', 'atrial fibrillation', 'fibrilasi atrium', 'AF', 'aritmia', 'arrhythmia', 'rapid ventricular response', 'RVR', 'cardioversi', 'rate control']
   },
   {
     id: 'dvt',
