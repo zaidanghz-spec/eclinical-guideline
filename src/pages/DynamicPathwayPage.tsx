@@ -22,10 +22,11 @@ import {
   Stethoscope,
   UserCheck,
   Users,
-  MessageSquare,
+  Printer,
   ClipboardList,
   Phone,
-  CheckCheck
+  CheckCheck,
+  Lock
 } from 'lucide-react';
 import { diseases } from '../lib/diseases';
 import { dynamicPathways, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
@@ -55,17 +56,27 @@ export default function DynamicPathwayPage() {
   const [sessionStartedAt, setSessionStartedAt] = useState<string | null>(null);
   const [savingDraft, setSavingDraft] = useState(false);
 
-  // Patient code modal state
+  // Patient code + Role selection modal state
   const [showPatientCodeModal, setShowPatientCodeModal] = useState(true);
+  const [modalStep, setModalStep] = useState<'code' | 'role' | 'doctor-presence'>('code');
   const [patientCode, setPatientCode] = useState('');
   const [patientCodeError, setPatientCodeError] = useState('');
+  const [userRole, setUserRole] = useState<'nurse' | 'doctor' | null>(null);
+  const [doctorPresent, setDoctorPresent] = useState<boolean | null>(null);
   const [decisions, setDecisions] = useState<any[]>([]);
   const [variations, setVariations] = useState<any[]>([]);
 
-  // Nurse-Doctor Collaboration state
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [nurseNote, setNurseNote] = useState('');
-  const [reporting, setReporting] = useState(false);
+  // Effective mode: full (semua item) atau nurse-only (item dokter dilock)
+  const effectiveMode = useMemo(() => {
+    if (userRole === 'doctor') return 'full';
+    if (userRole === 'nurse' && doctorPresent === true) return 'full';
+    if (userRole === 'nurse' && doctorPresent === false) return 'nurse-only';
+    return 'full'; // default sebelum dipilih
+  }, [userRole, doctorPresent]);
+
+  // Consultation state (nurse-only mode)
+  const [consultationStatus, setConsultationStatus] = useState<'none' | 'waiting_doctor' | 'doctor_responded'>('none');
+  const [doctorOrders, setDoctorOrders] = useState<DoctorOrder | null>(null);
   const [showDoctorOrderModal, setShowDoctorOrderModal] = useState(false);
   const [doctorOrderForm, setDoctorOrderForm] = useState<Omit<DoctorOrder, 'orderedAt' | 'doctorName'>>({
     diagnosis: '',
@@ -76,9 +87,6 @@ export default function DynamicPathwayPage() {
     referralNote: '',
   });
   const [submittingOrder, setSubmittingOrder] = useState(false);
-  // Local mirror of session consultation state (updated after API calls)
-  const [consultationStatus, setConsultationStatus] = useState<'none' | 'waiting_doctor' | 'doctor_responded'>('none');
-  const [doctorOrders, setDoctorOrders] = useState<DoctorOrder | null>(null);
   
   const nodeRef = useRef<HTMLDivElement>(null);
 
@@ -109,16 +117,32 @@ export default function DynamicPathwayPage() {
   }, [currentSession]);
 
   const handlePatientCodeSubmit = async () => {
-    if (!patientCode.trim()) {
-      setPatientCodeError('Kode pasien wajib diisi');
-      return;
-    }
-    if (patientCode.trim().length < 3) {
-      setPatientCodeError('Kode pasien minimal 3 karakter');
-      return;
-    }
+    if (!patientCode.trim()) { setPatientCodeError('Kode pasien wajib diisi'); return; }
+    if (patientCode.trim().length < 3) { setPatientCodeError('Kode pasien minimal 3 karakter'); return; }
     setPatientCodeError('');
-    
+    // Move to role selection step
+    setModalStep('role');
+  };
+
+  const handleRoleSelect = (role: 'nurse' | 'doctor') => {
+    setUserRole(role);
+    if (role === 'doctor') {
+      // Doctor → full mode, create session immediately
+      setDoctorPresent(true);
+      setModalStep('code'); // reset for next time
+      startSession();
+    } else {
+      // Nurse → ask about doctor presence
+      setModalStep('doctor-presence');
+    }
+  };
+
+  const handleDoctorPresenceSelect = async (present: boolean) => {
+    setDoctorPresent(present);
+    await startSession();
+  };
+
+  const startSession = async () => {
     if (disease && pathway && user) {
       const now = new Date().toISOString();
       const session = await createSession(diseaseId || '', disease.name, patientCode.trim());
@@ -126,8 +150,10 @@ export default function DynamicPathwayPage() {
         setSessionId(session.id);
         setSessionStartedAt(session.startedAt || now);
         setShowPatientCodeModal(false);
-        toast.success('Session started', { description: `Patient: ${patientCode.trim()}` });
+        toast.success('Sesi dimulai', { description: `Pasien: ${patientCode.trim()}` });
       }
+    } else {
+      setShowPatientCodeModal(false);
     }
   };
 
@@ -254,41 +280,6 @@ export default function DynamicPathwayPage() {
     setSavingDraft(false);
   };
 
-  // ── Nurse: Lapor Dokter ──
-  const handleReportToDoctor = async () => {
-    if (!sessionId) return;
-    setReporting(true);
-    const ok = await reportToDoctor(sessionId, nurseNote);
-    if (ok) {
-      setConsultationStatus('waiting_doctor');
-      setShowReportModal(false);
-      // Also save draft first so doctor sees latest data
-      await handleSaveDraft();
-      // Build WA message
-      const waMsg = generateWAMessage();
-      window.open(`https://wa.me/?text=${encodeURIComponent(waMsg)}`, '_blank');
-    }
-    setReporting(false);
-  };
-
-  // ── Generate WA Laporan ──
-  const generateWAMessage = (): string => {
-    const now = new Date().toLocaleString('id-ID');
-    const checkedCount = Object.values(checkedSteps).filter(Boolean).length;
-    const totalCount = Object.values(pathway?.nodes || {}).reduce((acc, node) => 
-      node.type === 'checklist' ? acc + node.items.length : acc, 0);
-    
-    return [
-      `🏥 *LAPORAN KLINIS — ${disease?.name?.toUpperCase()}*`,
-      `📅 Waktu: ${now}`,
-      `👤 Pasien: ${patientCode}`,
-      `📍 Node Aktif: ${currentNode?.title || '-'}`,
-      `✅ Progress: ${checkedCount}/${totalCount} langkah selesai`,
-      nurseNote ? `\n📝 *Catatan Perawat:*\n${nurseNote}` : '',
-      `\n🔗 Silakan buka sistem untuk melihat detail lengkap dan mengisi instruksi.`,
-    ].filter(Boolean).join('\n');
-  };
-
   // ── Doctor: Submit Order ──
   const handleSubmitDoctorOrder = async () => {
     if (!sessionId) return;
@@ -300,6 +291,90 @@ export default function DynamicPathwayPage() {
       setShowDoctorOrderModal(false);
     }
     setSubmittingOrder(false);
+  };
+
+  // ── Generate PDF Report for nurse ──
+  const handlePrintReport = () => {
+    const allNodes = pathway?.nodes || {};
+    const checkedItems: string[] = [];
+    const pendingDoctorItems: string[] = [];
+
+    Object.values(allNodes).forEach(node => {
+      if (node.type !== 'checklist') return;
+      (node as ChecklistNode).items.forEach(item => {
+        if (checkedSteps[item.id]) {
+          checkedItems.push(item.title);
+        } else if ((item as any).role === 'doctor') {
+          pendingDoctorItems.push(item.title);
+        }
+      });
+    });
+
+    const now = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="id">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Laporan Klinis — ${disease?.name}</title>
+        <style>
+          body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 32px; color: #1e293b; font-size: 13px; }
+          h1 { font-size: 20px; color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 8px; }
+          h2 { font-size: 14px; margin-top: 24px; color: #334155; border-left: 4px solid #0f766e; padding-left: 8px; }
+          .meta { background: #f1f5f9; border-radius: 8px; padding: 12px 16px; margin: 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+          .meta div { font-size: 12px; }
+          .meta span { font-weight: 700; }
+          ul { padding-left: 20px; }
+          li { margin-bottom: 4px; }
+          .checked { color: #047857; }
+          .checked::marker { content: '\2713  '; }
+          .pending { color: #b45309; }
+          .pending::marker { content: '\2192  '; }
+          .doctor-section { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
+          .footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+          @media print { body { margin: 16px; } }
+        </style>
+      </head>
+      <body>
+        <h1>Laporan Klinis</h1>
+        <div class="meta">
+          <div><span>Penyakit:</span> ${disease?.name}</div>
+          <div><span>Kode Pasien:</span> ${patientCode}</div>
+          <div><span>Tanggal/Waktu:</span> ${now}</div>
+          <div><span>Dibuat oleh:</span> ${userRole === 'nurse' ? 'Perawat' : 'Dokter'}</div>
+        </div>
+
+        <h2>Langkah Yang Sudah Dikerjakan</h2>
+        <ul>
+          ${checkedItems.length > 0 
+            ? checkedItems.map(t => `<li class="checked">${t}</li>`).join('')
+            : '<li><em>Belum ada langkah yang diselesaikan.</em></li>'}
+        </ul>
+
+        ${pendingDoctorItems.length > 0 ? `
+        <div class="doctor-section">
+          <h2 style="border:none;padding:0;margin:0 0 8px">Memerlukan Tindakan Dokter</h2>
+          <p style="font-size:12px;color:#92400e;margin:0 0 8px">Item berikut tidak bisa diselesaikan oleh perawat dan membutuhkan instruksi dokter:</p>
+          <ul>
+            ${pendingDoctorItems.map(t => `<li class="pending">${t}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${Object.entries(stepNotes).filter(([,v]) => v).length > 0 ? `
+        <h2>Catatan Klinis</h2>
+        <ul>${Object.entries(stepNotes).filter(([,v]) => v).map(([,v]) => `<li>${v}</li>`).join('')}</ul>
+        ` : ''}
+
+        <div class="footer">Dokumen ini dicetak dari sistem eclinical-guideline &bull; Hanya untuk penggunaan internal klinik</div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
   };
 
   // Get next node for automatic progression
@@ -442,72 +517,30 @@ export default function DynamicPathwayPage() {
               <Calendar className="w-5 h-5 flex-shrink-0" />
               <div>
                 <div className="font-bold text-lg">Pathway — Hari ke-{currentDay}</div>
-                <div className="text-blue-100 text-xs">
-                  Dimulai: {sessionStartedAt ? new Date(sessionStartedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : ''} · Hari ini: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </div>
+                <div className="text-blue-100 text-xs">Dimulai: {sessionStartedAt ? new Date(sessionStartedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : ''} · Hari ini: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* Consultation Status Banner */}
-        {consultationStatus === 'waiting_doctor' && (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
-            <div className="flex items-center gap-3 bg-amber-50 border-2 border-amber-300 text-amber-800 px-5 py-3 rounded-2xl">
-              <Phone className="w-5 h-5 text-amber-600 flex-shrink-0 animate-pulse" />
-              <div className="flex-1">
-                <div className="font-bold text-sm">Menunggu Instruksi Dokter</div>
-                <div className="text-xs text-amber-700">Laporan sudah dikirim. Dokter akan segera mengisi instruksi.</div>
-              </div>
-              <button
-                onClick={() => setShowDoctorOrderModal(true)}
-                className="px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition-colors"
-              >
-                Isi Instruksi (Dokter)
-              </button>
-            </div>
-          </motion.div>
-        )}
-        {consultationStatus === 'doctor_responded' && doctorOrders && (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
-            <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <CheckCheck className="w-5 h-5 text-green-600" />
-                <span className="font-bold text-green-800 text-sm">Instruksi Dokter Sudah Masuk</span>
-                <span className="text-xs text-green-600 ml-auto">{new Date(doctorOrders.orderedAt).toLocaleString('id-ID')}</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {doctorOrders.diagnosis && (
-                  <div className="bg-white rounded-xl p-3 border border-green-200">
-                    <div className="text-[10px] font-bold text-green-600 uppercase mb-1">Diagnosis</div>
-                    <div className="text-sm font-semibold text-slate-800">{doctorOrders.diagnosis}</div>
-                  </div>
-                )}
-                {doctorOrders.prescription && (
-                  <div className="bg-white rounded-xl p-3 border border-green-200">
-                    <div className="text-[10px] font-bold text-purple-600 uppercase mb-1">💊 Resep/Terapi</div>
-                    <div className="text-sm text-slate-700 whitespace-pre-line">{doctorOrders.prescription}</div>
-                  </div>
-                )}
-                {doctorOrders.instructions && (
-                  <div className="bg-white rounded-xl p-3 border border-green-200">
-                    <div className="text-[10px] font-bold text-teal-600 uppercase mb-1">📋 Instruksi Tindakan</div>
-                    <div className="text-sm text-slate-700 whitespace-pre-line">{doctorOrders.instructions}</div>
-                  </div>
-                )}
-                {doctorOrders.followupPlan && (
-                  <div className="bg-white rounded-xl p-3 border border-green-200">
-                    <div className="text-[10px] font-bold text-blue-600 uppercase mb-1">🔄 Rencana Tindak Lanjut</div>
-                    <div className="text-sm text-slate-700">{doctorOrders.followupPlan}</div>
-                  </div>
-                )}
-                {doctorOrders.referral && (
-                  <div className="col-span-full bg-red-50 rounded-xl p-3 border border-red-200">
-                    <div className="text-[10px] font-bold text-red-600 uppercase mb-1">🚑 RUJUK</div>
-                    <div className="text-sm text-slate-700">{doctorOrders.referralNote}</div>
-                  </div>
-                )}
-              </div>
+        {/* Role + Doctor Status Banner */}
+        {!showPatientCodeModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4">
+            <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm ${
+              effectiveMode === 'nurse-only'
+                ? 'bg-sky-50 border-sky-200 text-sky-800'
+                : 'bg-teal-50 border-teal-200 text-teal-800'
+            }`}>
+              {effectiveMode === 'nurse-only' ? (
+                <><Users className="w-4 h-4 flex-shrink-0" />
+                <span>Mode <strong>Perawat</strong> — Item 🩺 Dokter akan ditandai untuk dilaporkan</span>
+                <button onClick={handlePrintReport} className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-sky-600 text-white rounded-lg text-xs font-bold hover:bg-sky-700 transition-colors">
+                  <Printer className="w-3 h-3" /> Cetak Laporan PDF
+                </button></>
+              ) : (
+                <><Stethoscope className="w-4 h-4 flex-shrink-0" />
+                <span>Mode <strong>{userRole === 'doctor' ? 'Dokter' : 'Perawat + Dokter'}</strong> — Akses penuh ke semua langkah</span></>
+              )}
             </div>
           </motion.div>
         )}
@@ -532,6 +565,7 @@ export default function DynamicPathwayPage() {
                   onNotesChange={(id, notes) => setStepNotes(prev => ({ ...prev, [id]: notes }))}
                   onToggleNotes={(id) => setShowNotesFor(showNotesFor === id ? null : id)}
                   isComplete={isCurrentNodeComplete}
+                  effectiveMode={effectiveMode}
                 />
               )}
 
@@ -611,30 +645,9 @@ export default function DynamicPathwayPage() {
         )}
 
         {/* Lapor Dokter / Dokter Ada di Tempat — selalu tampil di semua checklist node */}
-        {currentNode?.type === 'checklist' && consultationStatus === 'none' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3"
-          >
-            {/* Kirim ke Dokter (jarak jauh) */}
-            <button
-              onClick={() => setShowReportModal(true)}
-              className="py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-md transition-all"
-            >
-              <Phone className="w-4 h-4" />
-              <span className="text-sm">Lapor ke Dokter (Jarak Jauh)</span>
-            </button>
-            {/* Dokter Ada di Tempat — bypass WA, langsung isi instruksi */}
-            <button
-              onClick={() => setShowDoctorOrderModal(true)}
-              className="py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-md transition-all"
-            >
-              <Stethoscope className="w-4 h-4" />
-              <span className="text-sm">Dokter Ada di Tempat</span>
-            </button>
-          </motion.div>
+        {currentNode?.type === 'checklist' && consultationStatus === 'none' && false && (
+          /* hidden — replaced by in-card badges in nurse-only mode */
+          <div />
         )}
 
         {/* Submit Button (shown at terminal nodes ONLY when no next step exists) */}
@@ -774,72 +787,130 @@ export default function DynamicPathwayPage() {
         )}
       </AnimatePresence>
 
-      {/* Patient Code Modal */}
+      {/* ───── PATIENT CODE + ROLE SELECTION MODAL (multi-step) ───── */}
       <AnimatePresence>
         {showPatientCodeModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowPatientCodeModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            >
-              <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900">Masukkan Kode Pasien</h3>
-                    <p className="text-sm text-slate-600">Kode pasien diperlukan untuk melanjutkan sesi</p>
-                  </div>
-                </div>
-                <button onClick={() => setShowPatientCodeModal(false)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                  <X className="w-5 h-5 text-slate-400" />
-                </button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+
+              {/* Step indicator */}
+              <div className="flex">
+                {['Kode Pasien','Role','Dokter?'].map((label, i) => {
+                  const step = i === 0 ? 'code' : i === 1 ? 'role' : 'doctor-presence';
+                  const active = modalStep === step;
+                  const done = (i === 0 && modalStep !== 'code') || (i === 1 && modalStep === 'doctor-presence');
+                  return (
+                    <div key={label} className={`flex-1 py-2 text-center text-[10px] font-bold uppercase tracking-wide border-b-2 transition-colors ${
+                      active ? 'border-teal-500 text-teal-700 bg-teal-50' :
+                      done  ? 'border-green-400 text-green-600 bg-green-50' :
+                               'border-slate-200 text-slate-400'
+                    }`}>{done ? '✓ ' : ''}{label}</div>
+                  );
+                })}
               </div>
-              <div className="p-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-                  <div className="flex items-start gap-3">
-                    <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800">Kode pasien diperlukan untuk melacak progres dan audit klinis.</div>
+
+              {/* Step 1: Kode Pasien */}
+              {modalStep === 'code' && (
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <FileText className="w-5 h-5 text-teal-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">Kode Pasien</h3>
+                      <p className="text-xs text-slate-500">Untuk rekam medis & audit klinis</p>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Kode Pasien: <span className="text-red-600">*</span></label>
                   <input
                     value={patientCode}
-                    onChange={(e) => setPatientCode(e.target.value)}
+                    onChange={e => setPatientCode(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handlePatientCodeSubmit()}
                     placeholder="Contoh: P00123"
-                    className="w-full p-4 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    autoFocus
+                    className="w-full p-3.5 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
                   />
-                  {patientCodeError && <div className="mt-2 text-xs text-red-600">{patientCodeError}</div>}
+                  {patientCodeError && <p className="mt-2 text-xs text-red-600">{patientCodeError}</p>}
+                  <button onClick={handlePatientCodeSubmit}
+                    className="w-full mt-4 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 transition-all">
+                    Lanjut →
+                  </button>
                 </div>
-                <button
-                  onClick={handlePatientCodeSubmit}
-                  disabled={patientCodeError.length > 0}
-                  className={`w-full mt-6 py-4 rounded-xl font-semibold text-white transition-all ${
-                    patientCodeError.length === 0
-                      ? 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-lg'
-                      : 'bg-slate-300 cursor-not-allowed'
-                  }`}
-                >
-                  Mulai Sesi
-                </button>
-              </div>
+              )}
+
+              {/* Step 2: Role Selection */}
+              {modalStep === 'role' && (
+                <div className="p-6">
+                  <div className="mb-5">
+                    <h3 className="text-lg font-bold text-slate-900">Anda menjalankan pathway ini sebagai?</h3>
+                    <p className="text-xs text-slate-500 mt-1">Ini menentukan item mana yang tersedia</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button onClick={() => handleRoleSelect('nurse')}
+                      className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 border-sky-200 bg-sky-50 hover:bg-sky-100 hover:border-sky-400 transition-all">
+                      <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center">
+                        <Users className="w-6 h-6 text-sky-600" />
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-sky-800">Perawat</div>
+                        <div className="text-[10px] text-sky-600">Item dokter akan ditandai</div>
+                      </div>
+                    </button>
+                    <button onClick={() => handleRoleSelect('doctor')}
+                      className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 border-violet-200 bg-violet-50 hover:bg-violet-100 hover:border-violet-400 transition-all">
+                      <div className="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center">
+                        <Stethoscope className="w-6 h-6 text-violet-600" />
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-violet-800">Dokter</div>
+                        <div className="text-[10px] text-violet-600">Akses penuh semua item</div>
+                      </div>
+                    </button>
+                  </div>
+                  <button onClick={() => setModalStep('code')} className="w-full mt-4 py-2 text-sm text-slate-400 hover:text-slate-600 transition-colors">← Kembali</button>
+                </div>
+              )}
+
+              {/* Step 3: Doctor Presence (nurse only) */}
+              {modalStep === 'doctor-presence' && (
+                <div className="p-6">
+                  <div className="mb-5">
+                    <h3 className="text-lg font-bold text-slate-900">Apakah Dokter ada di klinik saat ini?</h3>
+                    <p className="text-xs text-slate-500 mt-1">Ini menentukan apakah item dokter bisa langsung dikerjakan</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button onClick={() => handleDoctorPresenceSelect(true)}
+                      className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 border-green-200 bg-green-50 hover:bg-green-100 hover:border-green-400 transition-all">
+                      <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <CheckCheck className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-green-800">Ya, Ada</div>
+                        <div className="text-[10px] text-green-600">Akses penuh bersama</div>
+                      </div>
+                    </button>
+                    <button onClick={() => handleDoctorPresenceSelect(false)}
+                      className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 border-amber-200 bg-amber-50 hover:bg-amber-100 hover:border-amber-400 transition-all">
+                      <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                        <Lock className="w-6 h-6 text-amber-600" />
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold text-amber-800">Tidak Ada</div>
+                        <div className="text-[10px] text-amber-600">Item dokter akan ditandai</div>
+                      </div>
+                    </button>
+                  </div>
+                  <button onClick={() => setModalStep('role')} className="w-full mt-4 py-2 text-sm text-slate-400 hover:text-slate-600 transition-colors">← Kembali</button>
+                </div>
+              )}
+
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ───── LAPOR DOKTER Modal ───── */}
+      {/* ───── LAPOR DOKTER (WA) Modal ───── */}
       <AnimatePresence>
         {showReportModal && (
           <motion.div
@@ -906,6 +977,7 @@ export default function DynamicPathwayPage() {
         )}
       </AnimatePresence>
 
+      {/* Hidden — WA report replaced by PDF */}
       {/* ───── INSTRUKSI DOKTER Modal ───── */}
       <AnimatePresence>
         {showDoctorOrderModal && (
@@ -1028,6 +1100,7 @@ function ChecklistNodeComponent({
   onNotesChange: (id: string, notes: string) => void;
   onToggleNotes: (id: string) => void;
   isComplete: boolean;
+  effectiveMode?: 'full' | 'nurse-only';
 }) {
   const completedCount = node.items.filter(item => checkedSteps[item.id]).length;
   const percentage = Math.round((completedCount / node.items.length) * 100);
@@ -1155,6 +1228,9 @@ function ChecklistNodeComponent({
               const isMedication = item.category === 'medication';
               const accentColor = categoryAccents[item.category] || 'border-slate-300';
               
+              // Nurse-only mode: lock items that require a doctor
+              const isLocked = effectiveMode === 'nurse-only' && (item as any).role === 'doctor';
+              
               // Progress state
               const progressState = isChecked ? 'completed' : hasNotes ? 'in-progress' : 'not-started';
               
@@ -1171,21 +1247,27 @@ function ChecklistNodeComponent({
                 >
                   <div className={`
                     relative bg-white rounded-lg border-l-[3px] transition-all duration-200
-                    ${isChecked ? `${accentColor} bg-slate-50/50` : 'border-slate-200 hover:border-slate-300'}
-                    ${isMedication ? 'border-l-[4px]' : ''}
+                    ${isLocked 
+                      ? 'border-l-violet-300 bg-slate-50 border border-dashed border-violet-200 opacity-75'
+                      : isChecked ? `${accentColor} bg-slate-50/50` : 'border-slate-200 hover:border-slate-300'
+                    }
+                    ${isMedication && !isLocked ? 'border-l-[4px]' : ''}
                   `}>
                     <div className="px-4 py-3">
                       <div className="flex items-start gap-3">
                         {/* Status Icon */}
                         <button
-                          onClick={() => onToggle(item.id)}
-                          className="flex-shrink-0 mt-0.5"
+                          onClick={() => !isLocked && onToggle(item.id)}
+                          disabled={isLocked}
+                          className={`flex-shrink-0 mt-0.5 ${isLocked ? 'cursor-not-allowed' : ''}`}
                         >
                           <motion.div
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ scale: isLocked ? 1 : 1.1 }}
+                            whileTap={{ scale: isLocked ? 1 : 0.95 }}
                           >
-                            {progressState === 'completed' ? (
+                            {isLocked ? (
+                              <Lock className="w-5 h-5 text-violet-400" />
+                            ) : progressState === 'completed' ? (
                               <CheckCircle2 className="w-5 h-5 text-teal-600" />
                             ) : progressState === 'in-progress' ? (
                               <div className="w-5 h-5 rounded-full border-2 border-blue-500 bg-blue-100 flex items-center justify-center">
@@ -1199,6 +1281,13 @@ function ChecklistNodeComponent({
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
+                          {/* Locked: Lapor Dokter banner */}
+                          {isLocked && (
+                            <div className="mb-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-100 border border-violet-200">
+                              <Stethoscope className="w-3 h-3 text-violet-600" />
+                              <span className="text-[9px] font-bold text-violet-700 uppercase tracking-wide">Lapor Dokter</span>
+                            </div>
+                          )}
                           {/* Header Row */}
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <div className="flex-1">
