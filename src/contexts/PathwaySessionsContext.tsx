@@ -52,6 +52,7 @@ interface PathwaySessionsContextType {
     variations: any[]
   ) => Promise<boolean>;
   completeSession: (sessionId: string) => Promise<boolean>;
+  deleteSession: (sessionId: string) => Promise<boolean>;
 }
 
 const PathwaySessionsContext = createContext<PathwaySessionsContextType | undefined>(undefined);
@@ -219,10 +220,34 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const deleteSession = async (sessionId: string) => {
+    if (!user || !accessToken) return false;
+    try {
+      const res = await fetch('/api/pathway', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ sessionId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.deleted) {
+        setSessions(prev => prev.filter(s => s.id !== sessionId));
+        toast.success('Sesi berhasil dihapus');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      return false;
+    }
+  };
+
   return (
     <PathwaySessionsContext.Provider value={{ 
       sessions, loading, refreshSessions: fetchSessions, 
-      createSession, updateSession, saveDraft, completeSession 
+      createSession, updateSession, saveDraft, completeSession, deleteSession
     }}>
       {children}
     </PathwaySessionsContext.Provider>

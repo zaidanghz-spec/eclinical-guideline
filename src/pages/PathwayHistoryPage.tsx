@@ -12,7 +12,8 @@ import {
   TrendingUp,
   History,
   Filter,
-  Search
+  Search,
+  Trash2
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions, PathwaySession } from '../hooks/usePathwaySessions';
@@ -21,7 +22,7 @@ import Navbar from '../components/Navbar';
 export default function PathwayHistoryPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { sessions, loading, loadSession, getSessionsByPatientCode } = usePathwaySessions();
+  const { sessions, loading, loadSession, getSessionsByPatientCode, deleteSession } = usePathwaySessions();
   const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [patientCodeSearch, setPatientCodeSearch] = useState('');
@@ -56,6 +57,13 @@ export default function PathwayHistoryPage() {
     navigate(`/pathway-dynamic/${session.diseaseId}`, { 
       state: { sessionId: session.id, resume: true } 
     });
+  };
+
+  const handleDelete = async (sessionId: string) => {
+    await deleteSession(sessionId);
+    if (patientSessions !== null) {
+      setPatientSessions(prev => prev ? prev.filter(s => s.id !== sessionId) : null);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -324,6 +332,7 @@ export default function PathwayHistoryPage() {
                   index={index}
                   onResume={handleResumeSession}
                   onViewReport={(id) => navigate(`/pathway-report/${id}`)}
+                  onDelete={handleDelete}
                   formatDate={formatDate}
                   calculateDuration={calculateDuration}
                   getCompletionPercentage={getCompletionPercentage}
@@ -343,6 +352,7 @@ function SessionCard({
   index,
   onResume,
   onViewReport,
+  onDelete,
   formatDate,
   calculateDuration,
   getCompletionPercentage
@@ -351,12 +361,14 @@ function SessionCard({
   index: number;
   onResume: (session: PathwaySession) => void;
   onViewReport: (id: string) => void;
+  onDelete: (id: string) => void;
   formatDate: (date: string) => string;
   calculateDuration: (start: string, end: string | null) => string;
   getCompletionPercentage: (session: PathwaySession) => number;
 }) {
   const percentage = getCompletionPercentage(session);
   const isCompleted = session.status === 'completed';
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const statusColors = {
     in_progress: {
@@ -463,13 +475,32 @@ function SessionCard({
             <span>View Full Report</span>
           </button>
 
-          {/* TODO: Export PDF button
-          <button
-            className="px-4 py-3 bg-blue-100 text-blue-700 rounded-xl font-semibold hover:bg-blue-200 transition-all flex items-center justify-center gap-2"
-          >
-            <Download className="w-5 h-5" />
-          </button>
-          */}
+          {/* Delete button - 2-step confirm */}
+          {confirmDelete ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onDelete(session.id)}
+                className="px-4 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-all flex items-center gap-1.5 text-sm"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Ya, Hapus</span>
+              </button>
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="px-3 py-3 bg-slate-200 text-slate-600 rounded-xl hover:bg-slate-300 transition-all text-sm font-medium"
+              >
+                Batal
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all"
+              title="Hapus sesi ini"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
     </motion.div>
