@@ -22,6 +22,7 @@ import { reaksiAlergiPathway } from './pathways/reaksi-alergi';
 import { aritmiPathway } from './pathways/aritmia';
 import { sprainStrainPathway } from './pathways/sprain-strain';
 import { myalgiaPathway } from './pathways/myalgia';
+import { intoksikasiKimiaPathway } from './pathways/intoksikasi-kimia';
 export interface PathwayChecklistItem {
  id: string;
  title: string;
