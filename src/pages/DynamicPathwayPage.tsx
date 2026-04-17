@@ -610,15 +610,29 @@ export default function DynamicPathwayPage() {
           </motion.div>
         )}
 
-        {/* Lapor Dokter Button — shown when there are nurse tasks completed but doctor tasks remain */}
-        {currentNode?.type === 'checklist' && sessionId && consultationStatus === 'none' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-4">
+        {/* Lapor Dokter / Dokter Ada di Tempat — selalu tampil di semua checklist node */}
+        {currentNode?.type === 'checklist' && consultationStatus === 'none' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3"
+          >
+            {/* Kirim ke Dokter (jarak jauh) */}
             <button
               onClick={() => setShowReportModal(true)}
-              className="w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-md transition-all"
+              className="py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-md transition-all"
             >
-              <Phone className="w-5 h-5" />
-              <span>Lapor ke Dokter & Kirim via WhatsApp</span>
+              <Phone className="w-4 h-4" />
+              <span className="text-sm">Lapor ke Dokter (Jarak Jauh)</span>
+            </button>
+            {/* Dokter Ada di Tempat — bypass WA, langsung isi instruksi */}
+            <button
+              onClick={() => setShowDoctorOrderModal(true)}
+              className="py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-md transition-all"
+            >
+              <Stethoscope className="w-4 h-4" />
+              <span className="text-sm">Dokter Ada di Tempat</span>
             </button>
           </motion.div>
         )}

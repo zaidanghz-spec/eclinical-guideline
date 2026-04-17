@@ -33,35 +33,40 @@ export const tuberkulosisPathway: DynamicPathway = {
           title: '⚡ PROTEKSI SEGERA! (Pencegahan & Pengendalian Infeksi)',
           description: 'Jika pasien datang batuk: pakaikan masker bedah pada pasien SEGERA. Petugas wajib memakai masker N95 / KN95 jika berhadapan dengan suspek TB aktif. Lakukan anamnesis di ruang terpisah berventilasi baik.',
           required: true,
-          category: 'safety'
+          category: 'safety',
+          role: 'nurse'
         },
         {
           id: 'tb-kegawatan',
           title: 'Cek Kegawatan: Batuk Darah Masif / Sesak Berat?',
           description: 'Batuk darah masif (> 200–600 mL/24 jam atau > 2–3 gelas aqua) ATAU sesak berat (SpO₂ < 90%) adalah ancaman asfiksia akut. Berpotensi menutup jalan napas. TANGANI SEGERA sbg DARURAT.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
+          role: 'nurse'
         },
         {
           id: 'tb-anamnesis-gejala',
           title: 'Anamnesis — Trias Klasik TB',
           description: 'Gejala utama: Batuk produktif ≥ 2 minggu (bisa berdarah).\nGejala penyerta (B-Gejala): Demam meriang / subfebris (terutama sore/malam), keringat malam meski tanpa aktivitas, penurunan berat badan drastis tanpa sebab, lemas/malaise.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
+          role: 'nurse'
         },
         {
           id: 'tb-anamnesis-riwayat',
           title: 'Anamnesis — Faktor Risiko & Riwayat',
           description: '• Apakah ada kontak erat / serumah dengan penderita TB?\n• Apakah punya DM, HIV, atau kondisi gangguan imun (malnutrisi, usia lanjut)?\n• Apakah PERNAH minum obat flek paru (OAT) 6 bulan di masa lalu (putus obat / kambuh)?',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
+          role: 'nurse'
         },
         {
           id: 'tb-ttv-pemfis',
           title: 'TTV + Pemeriksaan Fisik Paru',
           description: 'Suhu: Biasanya subfebris (37.5 - 38°C).\nNadi & SpO₂: Takikardi? Desaturasi? BB: Timbang BB wajib (untuk hitung dosis OAT nanti).\nPemfis dada: Suara napas bronkial, amforik (kavitas), redup saat perkusi, ronki basah kasar di apeks (paru atas).',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
+          role: 'both'
         }
       ],
       nextNodeId: 'tb-triage-decision'
@@ -118,28 +123,32 @@ export const tuberkulosisPathway: DynamicPathway = {
           title: 'Airway & Posisi — Siapkan Suction!',
           description: 'Posisikan pasien miring / dekubitus lateral ke sisi paru yang SAKIT (jika tahu mana yang sakit) agar darah tidak masuk tumpah ke paru sehat.\nSiapkan mesin SUCTION (penyedot) secara aktif jika darah menumpuk di mulut.',
           required: true,
-          category: 'action'
+          category: 'action',
+          role: 'nurse'
         },
         {
           id: 'dar-oksigenasi',
           title: 'Oksigenasi',
           description: 'Berikan O₂ via NRM (Non-Rebreathing Mask) 10-15 L/menit untuk mengatasi hipoksia sekunder akibat perdarahan jalan napas.',
           required: true,
-          category: 'medication'
+          category: 'medication',
+          role: 'nurse'
         },
         {
           id: 'dar-iv-line',
           title: 'Akses IV & Kristaloid',
           description: 'Pasang IV line 2 jalur jika perdarahan masif (potensi syok hemoragik). Berikan bolus NaCl 0.9% atau RL 250-500 cc.',
           required: true,
-          category: 'action'
+          category: 'action',
+          role: 'both'
         },
         {
           id: 'dar-rujuk',
           title: 'Rujuk CITO ke RS',
           description: 'Jalan langsung ke IGD RS. Dokter umum di klinik jangan attempt tindakan hemostatik paru tanpa fasilitas ICU. Edukasi keluarga: perdarahan masif paru fatal tanpa penanganan.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
+          role: 'doctor'
         }
       ]
     },
@@ -158,28 +167,32 @@ export const tuberkulosisPathway: DynamicPathway = {
           title: '1. Rencanakan Tes Cepat Molekuler (TCM) — Wajib Lini Pertama',
           description: 'PNPK 2019 mewajibkan TCM (GeneXpert) sebagai alat diagnostik pertama! TCM langsung mendeteksi DNA bakteri dan resistensi Rifampisin secara bersamaan.',
           required: true,
-          category: 'action'
+          category: 'action',
+          role: 'doctor'
         },
         {
           id: 'dx-kumpul-dahak',
           title: '2. Panduan Kumpul Dahak Pagi & Sewaktu (S-P)',
           description: 'Pasien klinik diminta mengumpulkan setidaknya 2 pot dahak (meskipun TCM cukup 1 pot spesimen baik).\nS: Sewaktu saat pertama datang ke klinik.\nP: Pagi baru bangun tidur keesokan harinya.\nEdukasi mengambil dahak dalam (batuk perut), BUKAN ludah.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
+          role: 'nurse'
         },
         {
           id: 'dx-rujuk-sampel',
           title: '3. Tata Cara Rujuk Sampel Test / Röntgen',
           description: 'Klinik swasta biasanya tidak punya TCM.\n→ Kirim spesimen pot dahak tersebut ke Puskesmas Rujukan / RS Jejaring TCM terdekat (lewat kurir faskes standar TB).\n→ ATAU instruksikan pasien membawa surat pengantar ke Puskesmas terdekat untuk periksa TCM.\n→ Tambahkan Rontgen Thorax jika keluhan sugestif tapi dahak sulit keluar / TCM tidak tersedia.',
           required: true,
-          category: 'action'
+          category: 'action',
+          role: 'nurse'
         },
         {
           id: 'dx-simtomatis',
           title: '4. Obat Simtomatis Sementara + Isolasi',
           description: 'Beri obat pelega (OBH, asetilsistein, parasetamol) secara suportif selama menunggu hasil. INGAT KAN: Jangan pernah mulai OAT (Obat Anti-TB) secara "Coba-Coba" (Trial TB) tanpa dasar klinis/lab yang kuat! Instruksikan isolasi di kamar sendiri dan buka ventilasi jendela di rumah.',
           required: true,
-          category: 'medication'
+          category: 'medication',
+          role: 'doctor'
         }
       ],
       nextNodeId: 'tb-rujuk-balik-lab'
@@ -199,28 +212,32 @@ export const tuberkulosisPathway: DynamicPathway = {
           title: '⚠️ Skrining Hepatotoksik — Gagal Hati Akibat OAT',
           description: 'Rifampisin, Isoniazid, Pirazinamid beracun bagi hati.\nTanyakan keluhan utama: Mual/muntah berlebih? Lemas luar biasa? Mata jadi KUNING (jaundice)? Urin sekental/segelap air teh padahal bukan dehidrasi?\nJika Ya → STOP SEMUA OAT! Rujuk lab untuk tes SGOT/SGPT dan Bilirubin STAT.',
           required: true,
-          category: 'safety'
+          category: 'safety',
+          role: 'both'
         },
         {
           id: 'oat-evaluasi-kulit',
           title: 'Skrining Alergi Kulit / Gatal',
           description: 'Ruam gatal ringan → Beri antihistamin, OAT lanjutkan perlahan.\nRuam berat/Stevens-Johnson (melepuh/lepas) → STOP OAT segera, rujukan rawat inap.',
           required: true,
-          category: 'assessment'
+          category: 'assessment',
+          role: 'both'
         },
         {
           id: 'oat-neuropati',
           title: 'Skrining Neuropati Perifer (Isoniazid)',
           description: 'Kebas atau kesemutan di tapak kaki dominan?\nBerikan tambahan Vitamin B6 (Piridoksin) 100 mg / hari. OAT tetap dilanjutkan.',
           required: true,
-          category: 'medication'
+          category: 'medication',
+          role: 'doctor'
         },
         {
           id: 'oat-keputuhan',
           title: 'Monitoring Kepatuhan (DOTS)',
           description: 'Evaluasi buku kontrol. PMO (Pengawas Menelan Obat). Jika putus obat > 2 bulan (Lost to follow-up), harus dirujuk tata laksana uji resistensi sebelum mulai sisipan obat baru.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
+          role: 'nurse'
         }
       ]
     },
@@ -247,14 +264,14 @@ export const tuberkulosisPathway: DynamicPathway = {
           title: '🔴 MTB Positif, Rifampisin Resisten (TB-RO / MDR-TB)',
           description: 'Bakteri kebal obat. Wajib dirujuk ke RS Paru rujukan regional. Dilarang diberi Kategori 1.',
           color: 'red',
-          nextNodeId: 'tb-darurat-hemoptisis' // Placeholder untuk penghentian rujukan
+          nextNodeId: 'tb-kegawatan-management'
         },
         {
           id: 'tcm-negatif',
           title: '🟣 MTB Negatif, Tapi Gejala Klinis Kuat',
           description: 'Rontgen Thorax menunjukan infiltrate aktif/kavitas. Diagnosis TB Klinis.',
           color: 'purple',
-          nextNodeId: 'tb-mulai-oat' // Lanjut secara klinis empiris via dokter spesialis
+          nextNodeId: 'tb-mulai-oat'
         }
       ]
     },
@@ -273,28 +290,32 @@ export const tuberkulosisPathway: DynamicPathway = {
           title: 'Pemberian OAT Kategori 1 Sesuai Berat Badan (BB)',
           description: 'Fase Intensif (2 bulan pertama) — (RHZE) diminum tiap hari:\n• BB 30-37 kg: 2 tablet/hari\n• BB 38-54 kg: 3 tablet/hari\n• BB 55-70 kg: 4 tablet/hari\n• BB >70 kg: 5 tablet/hari',
           required: true,
-          category: 'medication'
+          category: 'medication',
+          role: 'doctor'
         },
         {
           id: 'oat-warna-kencing',
           title: 'Edukasi Hal Wajar: Warna Kencing Merah!',
           description: 'Wajib diedukasikan bahwa air kencing dan keringat akan berubah warna jadi MERAH/ORANYE akibat obat Rifampisin. Ini NORMAL dan BUKAN BATUK DARAH.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
+          role: 'both'
         },
         {
           id: 'oat-cara-minum',
           title: 'Aturan Menelan',
           description: 'OAT harus diminum SEKALIGUS (tidak dicicil) pada pagi hari SAAT PERUT KOSONG (1 jam sebelum atau 2 jam sesudah makan) agar diserap maksimal. Jika perut mual hebat, boleh diundur ke malam sebelum tidur.',
           required: true,
-          category: 'documentation'
+          category: 'documentation',
+          role: 'both'
         },
         {
           id: 'oat-kontak-tracing',
           title: 'Investigasi Kontak Erat',
           description: 'Periksa seluruh anggota keluarga serumah (Kontak Tracing). Anak usia < 5 tahun asimtomatik di rumah pasien wajib diberikan Terapi Pencegahan Tuberkulosis (TPT) isoniazid 6 bulan.',
           required: true,
-          category: 'safety'
+          category: 'safety',
+          role: 'doctor'
         }
       ]
     }
