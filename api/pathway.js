@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ sessions });
     }
 
-    // PUT - update session
+    // PUT - update session (save draft)
     if (req.method === 'PUT' && action === 'update') {
       const { sessionId, checklist, notes, currentNodeId, pathwayHistory, decisions, variations, status } = body;
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
@@ -53,6 +53,50 @@ module.exports = async function handler(req, res) {
           sessionId,
           payload.userId
         ]
+      );
+      return res.status(200).json({ session: result[0] });
+    }
+
+    // PUT - perawat lapor ke dokter
+    if (req.method === 'PUT' && action === 'report') {
+      const { sessionId, nurseNote } = body;
+      if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
+
+      const existing = await query('SELECT id FROM pathway_sessions WHERE id = $1 AND user_id = $2', [sessionId, payload.userId]);
+      if (existing.length === 0) return res.status(404).json({ error: 'Session not found' });
+
+      const result = await query(
+        `UPDATE pathway_sessions SET
+          consultation_status = 'waiting_doctor',
+          nurse_note = COALESCE($1, nurse_note),
+          reported_at = NOW(),
+          updated_at = NOW()
+        WHERE id = $2 AND user_id = $3
+        RETURNING *`,
+        [nurseNote || null, sessionId, payload.userId]
+      );
+      return res.status(200).json({ session: result[0] });
+    }
+
+    // PUT - dokter mengisi instruksi/resep
+    if (req.method === 'PUT' && action === 'doctor-order') {
+      const { sessionId, doctorOrders } = body;
+      if (!sessionId || !doctorOrders) return res.status(400).json({ error: 'sessionId and doctorOrders are required' });
+
+      // Dokter bisa berbeda user dari perawat yg membuat session,
+      // sehingga kita tidak filter by user_id di sini tapi pastikan session ada
+      const existing = await query('SELECT id FROM pathway_sessions WHERE id = $1', [sessionId]);
+      if (existing.length === 0) return res.status(404).json({ error: 'Session not found' });
+
+      const result = await query(
+        `UPDATE pathway_sessions SET
+          doctor_orders = $1::jsonb,
+          consultation_status = 'doctor_responded',
+          doctor_id = $2,
+          updated_at = NOW()
+        WHERE id = $3
+        RETURNING *`,
+        [JSON.stringify(doctorOrders), payload.userId, sessionId]
       );
       return res.status(200).json({ session: result[0] });
     }

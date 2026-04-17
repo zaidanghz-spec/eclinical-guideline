@@ -18,18 +18,26 @@ import {
   TrendingUp,
   Pill,
   Save,
-  Calendar
+  Calendar,
+  Stethoscope,
+  UserCheck,
+  Users,
+  MessageSquare,
+  ClipboardList,
+  Phone,
+  CheckCheck
 } from 'lucide-react';
 import { diseases } from '../lib/diseases';
 import { dynamicPathways, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
+import type { DoctorOrder } from '../contexts/PathwaySessionsContext';
 
 export default function DynamicPathwayPage() {
   const { diseaseId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { currentSession, createSession, saveDraft, completeSession } = usePathwaySessions();
+  const { currentSession, createSession, saveDraft, completeSession, reportToDoctor, submitDoctorOrder } = usePathwaySessions();
   
   const disease = diseases.find(d => d.id === diseaseId);
   const pathway = dynamicPathways[diseaseId || ''];
@@ -53,6 +61,24 @@ export default function DynamicPathwayPage() {
   const [patientCodeError, setPatientCodeError] = useState('');
   const [decisions, setDecisions] = useState<any[]>([]);
   const [variations, setVariations] = useState<any[]>([]);
+
+  // Nurse-Doctor Collaboration state
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [nurseNote, setNurseNote] = useState('');
+  const [reporting, setReporting] = useState(false);
+  const [showDoctorOrderModal, setShowDoctorOrderModal] = useState(false);
+  const [doctorOrderForm, setDoctorOrderForm] = useState<Omit<DoctorOrder, 'orderedAt' | 'doctorName'>>({
+    diagnosis: '',
+    prescription: '',
+    instructions: '',
+    followupPlan: '',
+    referral: false,
+    referralNote: '',
+  });
+  const [submittingOrder, setSubmittingOrder] = useState(false);
+  // Local mirror of session consultation state (updated after API calls)
+  const [consultationStatus, setConsultationStatus] = useState<'none' | 'waiting_doctor' | 'doctor_responded'>('none');
+  const [doctorOrders, setDoctorOrders] = useState<DoctorOrder | null>(null);
   
   const nodeRef = useRef<HTMLDivElement>(null);
 
@@ -76,6 +102,9 @@ export default function DynamicPathwayPage() {
       // Track the original session start date for multi-day detection
       const startedAt = currentSession.startedAt || currentSession.started_at || currentSession.startedAt;
       if (startedAt) setSessionStartedAt(startedAt);
+      // Sync consultation status
+      if (currentSession.consultation_status) setConsultationStatus(currentSession.consultation_status);
+      if (currentSession.doctor_orders) setDoctorOrders(currentSession.doctor_orders);
     }
   }, [currentSession]);
 
@@ -225,6 +254,54 @@ export default function DynamicPathwayPage() {
     setSavingDraft(false);
   };
 
+  // ── Nurse: Lapor Dokter ──
+  const handleReportToDoctor = async () => {
+    if (!sessionId) return;
+    setReporting(true);
+    const ok = await reportToDoctor(sessionId, nurseNote);
+    if (ok) {
+      setConsultationStatus('waiting_doctor');
+      setShowReportModal(false);
+      // Also save draft first so doctor sees latest data
+      await handleSaveDraft();
+      // Build WA message
+      const waMsg = generateWAMessage();
+      window.open(`https://wa.me/?text=${encodeURIComponent(waMsg)}`, '_blank');
+    }
+    setReporting(false);
+  };
+
+  // ── Generate WA Laporan ──
+  const generateWAMessage = (): string => {
+    const now = new Date().toLocaleString('id-ID');
+    const checkedCount = Object.values(checkedSteps).filter(Boolean).length;
+    const totalCount = Object.values(pathway?.nodes || {}).reduce((acc, node) => 
+      node.type === 'checklist' ? acc + node.items.length : acc, 0);
+    
+    return [
+      `🏥 *LAPORAN KLINIS — ${disease?.name?.toUpperCase()}*`,
+      `📅 Waktu: ${now}`,
+      `👤 Pasien: ${patientCode}`,
+      `📍 Node Aktif: ${currentNode?.title || '-'}`,
+      `✅ Progress: ${checkedCount}/${totalCount} langkah selesai`,
+      nurseNote ? `\n📝 *Catatan Perawat:*\n${nurseNote}` : '',
+      `\n🔗 Silakan buka sistem untuk melihat detail lengkap dan mengisi instruksi.`,
+    ].filter(Boolean).join('\n');
+  };
+
+  // ── Doctor: Submit Order ──
+  const handleSubmitDoctorOrder = async () => {
+    if (!sessionId) return;
+    setSubmittingOrder(true);
+    const ok = await submitDoctorOrder(sessionId, doctorOrderForm);
+    if (ok) {
+      setConsultationStatus('doctor_responded');
+      setDoctorOrders({ ...doctorOrderForm, orderedAt: new Date().toISOString(), doctorName: user?.name || 'Dokter' });
+      setShowDoctorOrderModal(false);
+    }
+    setSubmittingOrder(false);
+  };
+
   // Get next node for automatic progression
   const getNextNodeId = (currentNodeId: string): string | null => {
     // FIRST: Check if current node has nextNodeId property (NEW APPROACH!)
@@ -358,13 +435,9 @@ export default function DynamicPathwayPage() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Multi-day Banner — only shown when session spans multiple days */}
+        {/* Multi-day Banner */}
         {currentDay > 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
             <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg shadow-blue-200">
               <Calendar className="w-5 h-5 flex-shrink-0" />
               <div>
@@ -372,6 +445,68 @@ export default function DynamicPathwayPage() {
                 <div className="text-blue-100 text-xs">
                   Dimulai: {sessionStartedAt ? new Date(sessionStartedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : ''} · Hari ini: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Consultation Status Banner */}
+        {consultationStatus === 'waiting_doctor' && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+            <div className="flex items-center gap-3 bg-amber-50 border-2 border-amber-300 text-amber-800 px-5 py-3 rounded-2xl">
+              <Phone className="w-5 h-5 text-amber-600 flex-shrink-0 animate-pulse" />
+              <div className="flex-1">
+                <div className="font-bold text-sm">Menunggu Instruksi Dokter</div>
+                <div className="text-xs text-amber-700">Laporan sudah dikirim. Dokter akan segera mengisi instruksi.</div>
+              </div>
+              <button
+                onClick={() => setShowDoctorOrderModal(true)}
+                className="px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition-colors"
+              >
+                Isi Instruksi (Dokter)
+              </button>
+            </div>
+          </motion.div>
+        )}
+        {consultationStatus === 'doctor_responded' && doctorOrders && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+            <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCheck className="w-5 h-5 text-green-600" />
+                <span className="font-bold text-green-800 text-sm">Instruksi Dokter Sudah Masuk</span>
+                <span className="text-xs text-green-600 ml-auto">{new Date(doctorOrders.orderedAt).toLocaleString('id-ID')}</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {doctorOrders.diagnosis && (
+                  <div className="bg-white rounded-xl p-3 border border-green-200">
+                    <div className="text-[10px] font-bold text-green-600 uppercase mb-1">Diagnosis</div>
+                    <div className="text-sm font-semibold text-slate-800">{doctorOrders.diagnosis}</div>
+                  </div>
+                )}
+                {doctorOrders.prescription && (
+                  <div className="bg-white rounded-xl p-3 border border-green-200">
+                    <div className="text-[10px] font-bold text-purple-600 uppercase mb-1">💊 Resep/Terapi</div>
+                    <div className="text-sm text-slate-700 whitespace-pre-line">{doctorOrders.prescription}</div>
+                  </div>
+                )}
+                {doctorOrders.instructions && (
+                  <div className="bg-white rounded-xl p-3 border border-green-200">
+                    <div className="text-[10px] font-bold text-teal-600 uppercase mb-1">📋 Instruksi Tindakan</div>
+                    <div className="text-sm text-slate-700 whitespace-pre-line">{doctorOrders.instructions}</div>
+                  </div>
+                )}
+                {doctorOrders.followupPlan && (
+                  <div className="bg-white rounded-xl p-3 border border-green-200">
+                    <div className="text-[10px] font-bold text-blue-600 uppercase mb-1">🔄 Rencana Tindak Lanjut</div>
+                    <div className="text-sm text-slate-700">{doctorOrders.followupPlan}</div>
+                  </div>
+                )}
+                {doctorOrders.referral && (
+                  <div className="col-span-full bg-red-50 rounded-xl p-3 border border-red-200">
+                    <div className="text-[10px] font-bold text-red-600 uppercase mb-1">🚑 RUJUK</div>
+                    <div className="text-sm text-slate-700">{doctorOrders.referralNote}</div>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -475,13 +610,26 @@ export default function DynamicPathwayPage() {
           </motion.div>
         )}
 
+        {/* Lapor Dokter Button — shown when there are nurse tasks completed but doctor tasks remain */}
+        {currentNode?.type === 'checklist' && sessionId && consultationStatus === 'none' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-4">
+            <button
+              onClick={() => setShowReportModal(true)}
+              className="w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-md transition-all"
+            >
+              <Phone className="w-5 h-5" />
+              <span>Lapor ke Dokter & Kirim via WhatsApp</span>
+            </button>
+          </motion.div>
+        )}
+
         {/* Submit Button (shown at terminal nodes ONLY when no next step exists) */}
         {currentNode?.type === 'checklist' && isCurrentNodeComplete && !getNextNodeId(currentNodeId) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="mt-8 sticky bottom-6 z-10"
+            className="mt-4 sticky bottom-6 z-10"
           >
             <button
               onClick={handleSubmitPathway}
@@ -639,42 +787,27 @@ export default function DynamicPathwayPage() {
                     <p className="text-sm text-slate-600">Kode pasien diperlukan untuk melanjutkan sesi</p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setShowPatientCodeModal(false)}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                >
+                <button onClick={() => setShowPatientCodeModal(false)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
                 </button>
               </div>
-
               <div className="p-6">
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
                   <div className="flex items-start gap-3">
                     <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800">
-                      Kode pasien diperlukan untuk melacak progres dan audit klinis. 
-                      Masukkan kode pasien yang valid.
-                    </div>
+                    <div className="text-sm text-blue-800">Kode pasien diperlukan untuk melacak progres dan audit klinis.</div>
                   </div>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Kode Pasien: <span className="text-red-600">*</span>
-                  </label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Kode Pasien: <span className="text-red-600">*</span></label>
                   <input
                     value={patientCode}
                     onChange={(e) => setPatientCode(e.target.value)}
                     placeholder="Contoh: P00123"
                     className="w-full p-4 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
-                  {patientCodeError && (
-                    <div className="mt-2 text-xs text-red-600">
-                      {patientCodeError}
-                    </div>
-                  )}
+                  {patientCodeError && <div className="mt-2 text-xs text-red-600">{patientCodeError}</div>}
                 </div>
-
                 <button
                   onClick={handlePatientCodeSubmit}
                   disabled={patientCodeError.length > 0}
@@ -685,6 +818,173 @@ export default function DynamicPathwayPage() {
                   }`}
                 >
                   Mulai Sesi
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ───── LAPOR DOKTER Modal ───── */}
+      <AnimatePresence>
+        {showReportModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowReportModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full"
+            >
+              <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-t-2xl p-5 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Phone className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Lapor ke Dokter</h3>
+                  <p className="text-xs text-amber-100">Perawat → Dokter (via WhatsApp)</p>
+                </div>
+                <button onClick={() => setShowReportModal(false)} className="ml-auto p-1.5 hover:bg-white/20 rounded-lg transition-colors">
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+              <div className="p-5 space-y-4">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                  <div className="text-xs text-amber-800">
+                    Ringkasan berikut akan disiapkan dan bisa dikirimkan ke WhatsApp Dokter:
+                    <ul className="mt-1 list-disc list-inside space-y-0.5">
+                      <li>Nama penyakit: <strong>{disease?.name}</strong></li>
+                      <li>Kode pasien: <strong>{patientCode}</strong></li>
+                      <li>Progress checklist saat ini</li>
+                      <li>Catatan perawat (opsional)</li>
+                    </ul>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">Catatan Tambahan untuk Dokter (opsional)</label>
+                  <textarea
+                    value={nurseNote}
+                    onChange={(e) => setNurseNote(e.target.value)}
+                    placeholder='Contoh: "Pasien datang dengan sesak berat, saturasi 91%, sudah diberikan nebulizer 1x"'
+                    rows={3}
+                    className="w-full px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none resize-none transition"
+                  />
+                </div>
+                <button
+                  onClick={handleReportToDoctor}
+                  disabled={reporting}
+                  className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-60"
+                >
+                  {reporting ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <MessageSquare className="w-4 h-4" />
+                      Simpan Laporan & Buka WhatsApp
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ───── INSTRUKSI DOKTER Modal ───── */}
+      <AnimatePresence>
+        {showDoctorOrderModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowDoctorOrderModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            >
+              <div className="bg-gradient-to-r from-teal-600 to-cyan-600 rounded-t-2xl p-5 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Stethoscope className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Instruksi & Resep Dokter</h3>
+                  <p className="text-xs text-teal-100">Pasien: <strong>{patientCode}</strong> — {disease?.name}</p>
+                </div>
+                <button onClick={() => setShowDoctorOrderModal(false)} className="ml-auto p-1.5 hover:bg-white/20 rounded-lg">
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+              <div className="p-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Diagnosis Klinis</label>
+                  <input
+                    value={doctorOrderForm.diagnosis}
+                    onChange={e => setDoctorOrderForm(f => ({ ...f, diagnosis: e.target.value }))}
+                    placeholder='Contoh: "Pneumonia Komunitas derajat sedang (CURB-65 = 2)"'
+                    className="w-full px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-teal-400 outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">💊 Resep / Terapi</label>
+                  <textarea
+                    value={doctorOrderForm.prescription}
+                    onChange={e => setDoctorOrderForm(f => ({ ...f, prescription: e.target.value }))}
+                    placeholder="Contoh:\n- Amoxicillin-Clavulanate 875/125mg 2x1 PO selama 7 hari\n- Paracetamol 500mg 3x1 PRN demam"
+                    rows={3}
+                    className="w-full px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-teal-400 outline-none resize-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">📋 Instruksi Tindakan untuk Perawat</label>
+                  <textarea
+                    value={doctorOrderForm.instructions}
+                    onChange={e => setDoctorOrderForm(f => ({ ...f, instructions: e.target.value }))}
+                    placeholder="Contoh:\n- Pasang infus RL 20 tpm\n- Nebulizer Salbutamol 2.5mg sekarang\n- Monitor SpO2 tiap 1 jam"
+                    rows={3}
+                    className="w-full px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-teal-400 outline-none resize-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">🔄 Rencana Tindak Lanjut</label>
+                  <input
+                    value={doctorOrderForm.followupPlan}
+                    onChange={e => setDoctorOrderForm(f => ({ ...f, followupPlan: e.target.value }))}
+                    placeholder='Contoh: "Kontrol 3 hari. Jika tidak membaik, rujuk ke RS"'
+                    className="w-full px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-teal-400 outline-none transition"
+                  />
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 rounded-xl">
+                  <input
+                    type="checkbox"
+                    id="referral-check"
+                    checked={doctorOrderForm.referral}
+                    onChange={e => setDoctorOrderForm(f => ({ ...f, referral: e.target.checked }))}
+                    className="w-4 h-4 accent-red-600"
+                  />
+                  <label htmlFor="referral-check" className="text-sm font-semibold text-red-800 cursor-pointer">🚑 Pasien perlu DIRUJUK ke RS</label>
+                </div>
+                {doctorOrderForm.referral && (
+                  <textarea
+                    value={doctorOrderForm.referralNote}
+                    onChange={e => setDoctorOrderForm(f => ({ ...f, referralNote: e.target.value }))}
+                    placeholder="Alasan rujukan dan RS yang dituju..."
+                    rows={2}
+                    className="w-full px-3 py-2.5 border-2 border-red-200 rounded-xl text-sm focus:border-red-400 outline-none resize-none transition"
+                  />
+                )}
+                <button
+                  onClick={handleSubmitDoctorOrder}
+                  disabled={submittingOrder || !doctorOrderForm.diagnosis}
+                  className="w-full py-3 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50"
+                >
+                  {submittingOrder ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <><ClipboardList className="w-4 h-4" /> Kirim Instruksi ke Perawat</>
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -900,7 +1200,7 @@ function ChecklistNodeComponent({
                                 </h4>
                               </div>
                               
-                              {/* Category badge + Required badge */}
+                              {/* Category badge + Required badge + Role badge */}
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className={`
                                   text-[9px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide
@@ -912,6 +1212,23 @@ function ChecklistNodeComponent({
                                 `}>
                                   {item.category}
                                 </span>
+
+                                {/* Role badge */}
+                                {item.role === 'nurse' && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase bg-sky-100 text-sky-700 border border-sky-200 flex items-center gap-0.5">
+                                    <Users className="w-2.5 h-2.5" /> Perawat
+                                  </span>
+                                )}
+                                {item.role === 'doctor' && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase bg-violet-100 text-violet-700 border border-violet-200 flex items-center gap-0.5">
+                                    <Stethoscope className="w-2.5 h-2.5" /> Dokter
+                                  </span>
+                                )}
+                                {item.role === 'both' && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase bg-teal-100 text-teal-700 border border-teal-200 flex items-center gap-0.5">
+                                    <UserCheck className="w-2.5 h-2.5" /> Keduanya
+                                  </span>
+                                )}
                                 
                                 {item.required && (
                                   <span className="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase bg-red-100 text-red-700 border border-red-200">

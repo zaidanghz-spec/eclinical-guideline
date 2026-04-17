@@ -2,6 +2,17 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 
+export interface DoctorOrder {
+  diagnosis: string;
+  prescription: string;      // resep / instruksi pengobatan
+  instructions: string;      // instruksi tindakan tambahan
+  followupPlan: string;      // rencana tindak lanjut
+  referral: boolean;
+  referralNote: string;
+  orderedAt: string;
+  doctorName: string;
+}
+
 export interface PathwaySession {
   id: string;
   userId: string;
@@ -34,11 +45,18 @@ export interface PathwaySession {
   disease_name?: string;
   user_id?: string;
   current_node_id?: string | null;
+  // Nurse-Doctor collaboration fields
+  consultation_status?: 'none' | 'waiting_doctor' | 'doctor_responded';
+  nurse_note?: string;
+  reported_at?: string | null;
+  doctor_orders?: DoctorOrder | null;
+  doctor_id?: string | null;
 }
 
 interface PathwaySessionsContextType {
   sessions: PathwaySession[];
   loading: boolean;
+  currentSession: PathwaySession | null;
   refreshSessions: () => Promise<void>;
   createSession: (diseaseId: string, diseaseName: string, patientCode?: string) => Promise<PathwaySession | null>;
   updateSession: (sessionId: string, updates: Partial<PathwaySession>) => Promise<boolean>;
@@ -53,6 +71,8 @@ interface PathwaySessionsContextType {
   ) => Promise<boolean>;
   completeSession: (sessionId: string) => Promise<boolean>;
   deleteSession: (sessionId: string) => Promise<boolean>;
+  reportToDoctor: (sessionId: string, nurseNote: string) => Promise<boolean>;
+  submitDoctorOrder: (sessionId: string, order: Omit<DoctorOrder, 'orderedAt' | 'doctorName'>) => Promise<boolean>;
 }
 
 const PathwaySessionsContext = createContext<PathwaySessionsContextType | undefined>(undefined);
@@ -80,6 +100,12 @@ function mapSession(raw: any): PathwaySession {
     disease_name: raw.diseaseName || raw.disease_name,
     user_id: raw.userId || raw.user_id,
     current_node_id: raw.currentNodeId || raw.current_node_id || null,
+    // Collaboration fields
+    consultation_status: raw.consultation_status || 'none',
+    nurse_note: raw.nurse_note || '',
+    reported_at: raw.reported_at || null,
+    doctor_orders: raw.doctor_orders || null,
+    doctor_id: raw.doctor_id || null,
   };
 }
 
@@ -87,6 +113,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
   const { user, accessToken } = useAuth();
   const [sessions, setSessions] = useState<PathwaySession[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentSession, setCurrentSession] = useState<PathwaySession | null>(null);
 
   const fetchSessions = useCallback(async () => {
     if (!user || !accessToken) return;
@@ -100,7 +127,11 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setSessions((data.sessions || []).map(mapSession));
+        const mapped = (data.sessions || []).map(mapSession);
+        setSessions(mapped);
+        // The most recent in-progress session is the "current" one
+        const inProgress = mapped.find((s: PathwaySession) => s.status === 'in_progress');
+        setCurrentSession(inProgress || null);
       }
     } catch (error) {
       console.error('Error fetching sessions:', error);
@@ -114,6 +145,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       fetchSessions();
     } else {
       setSessions([]);
+      setCurrentSession(null);
     }
   }, [user, accessToken, fetchSessions]);
 
@@ -132,6 +164,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       if (res.ok && data.session) {
         const session = mapSession(data.session);
         setSessions(prev => [session, ...prev]);
+        setCurrentSession(session);
         return session;
       }
       return null;
@@ -211,6 +244,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       if (res.ok) {
         toast.success('Pemeriksaan selesai!');
         await fetchSessions();
+        setCurrentSession(null);
         return true;
       }
       return false;
@@ -244,10 +278,70 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Perawat melaporkan sesi ke Dokter
+  const reportToDoctor = async (sessionId: string, nurseNote: string) => {
+    if (!user || !accessToken) return false;
+    try {
+      const res = await fetch('/api/pathway?action=report', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ sessionId, nurseNote }),
+      });
+      const data = await res.json();
+      if (res.ok && data.session) {
+        const session = mapSession(data.session);
+        setSessions(prev => prev.map(s => s.id === session.id ? session : s));
+        toast.success('Laporan berhasil dikirim ke Dokter!');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error reporting to doctor:', error);
+      toast.error('Gagal mengirim laporan');
+      return false;
+    }
+  };
+
+  // Dokter mengisi instruksi / resep
+  const submitDoctorOrder = async (sessionId: string, order: Omit<DoctorOrder, 'orderedAt' | 'doctorName'>) => {
+    if (!user || !accessToken) return false;
+    try {
+      const fullOrder: DoctorOrder = {
+        ...order,
+        orderedAt: new Date().toISOString(),
+        doctorName: user.name,
+      };
+      const res = await fetch('/api/pathway?action=doctor-order', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ sessionId, doctorOrders: fullOrder }),
+      });
+      const data = await res.json();
+      if (res.ok && data.session) {
+        const session = mapSession(data.session);
+        setSessions(prev => prev.map(s => s.id === session.id ? session : s));
+        toast.success('Instruksi dokter berhasil dikirim!');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error submitting doctor order:', error);
+      toast.error('Gagal mengirim instruksi');
+      return false;
+    }
+  };
+
   return (
     <PathwaySessionsContext.Provider value={{ 
-      sessions, loading, refreshSessions: fetchSessions, 
-      createSession, updateSession, saveDraft, completeSession, deleteSession
+      sessions, loading, currentSession, refreshSessions: fetchSessions,
+      createSession, updateSession, saveDraft, completeSession, deleteSession,
+      reportToDoctor, submitDoctorOrder,
     }}>
       {children}
     </PathwaySessionsContext.Provider>

@@ -35,6 +35,12 @@ CREATE TABLE IF NOT EXISTS pathway_sessions (
   variations JSONB DEFAULT '[]',
   notes JSONB DEFAULT '{}',
   pathway_history JSONB DEFAULT '[]',
+  -- Nurse-Doctor Collaboration Fields
+  consultation_status TEXT DEFAULT 'none' CHECK (consultation_status IN ('none', 'waiting_doctor', 'doctor_responded')),
+  nurse_note TEXT DEFAULT '',
+  reported_at TIMESTAMPTZ,
+  doctor_orders JSONB DEFAULT NULL,
+  doctor_id UUID REFERENCES users(id) ON DELETE SET NULL,
   started_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -45,3 +51,12 @@ CREATE INDEX IF NOT EXISTS idx_pathway_sessions_user_id ON pathway_sessions(user
 CREATE INDEX IF NOT EXISTS idx_pathway_sessions_status ON pathway_sessions(status);
 CREATE INDEX IF NOT EXISTS idx_whitelist_email ON whitelist(email);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+-- ============================================================
+-- MIGRATION: Run this if table already exists
+-- ============================================================
+-- ALTER TABLE pathway_sessions ADD COLUMN IF NOT EXISTS consultation_status TEXT DEFAULT 'none' CHECK (consultation_status IN ('none', 'waiting_doctor', 'doctor_responded'));
+-- ALTER TABLE pathway_sessions ADD COLUMN IF NOT EXISTS nurse_note TEXT DEFAULT '';
+-- ALTER TABLE pathway_sessions ADD COLUMN IF NOT EXISTS reported_at TIMESTAMPTZ;
+-- ALTER TABLE pathway_sessions ADD COLUMN IF NOT EXISTS doctor_orders JSONB DEFAULT NULL;
+-- ALTER TABLE pathway_sessions ADD COLUMN IF NOT EXISTS doctor_id UUID REFERENCES users(id) ON DELETE SET NULL;

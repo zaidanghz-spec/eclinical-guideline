@@ -26,11 +26,12 @@ import { sprainStrainPathway } from './pathways/sprain-strain';
 import { myalgiaPathway } from './pathways/myalgia';
 import { intoksikasiKimiaPathway } from './pathways/intoksikasi-kimia';
 export interface PathwayChecklistItem {
- id: string;
- title: string;
- description: string;
- required: boolean;
- category:'assessment' |'action' |'medication' |'safety' |'documentation';
+  id: string;
+  title: string;
+  description: string;
+  required: boolean;
+  category: 'assessment' | 'action' | 'medication' | 'safety' | 'documentation';
+  role?: 'nurse' | 'doctor' | 'both'; // Menentukan siapa yang boleh/harus melakukan ini
 }
 
 export interface PathwayBranch {
