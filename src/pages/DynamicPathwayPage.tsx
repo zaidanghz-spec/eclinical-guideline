@@ -911,71 +911,7 @@ export default function DynamicPathwayPage() {
       </AnimatePresence>
 
       {/* ───── LAPOR DOKTER (WA) Modal ───── */}
-      <AnimatePresence>
-        {showReportModal && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowReportModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full"
-            >
-              <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-t-2xl p-5 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Lapor ke Dokter</h3>
-                  <p className="text-xs text-amber-100">Perawat → Dokter (via WhatsApp)</p>
-                </div>
-                <button onClick={() => setShowReportModal(false)} className="ml-auto p-1.5 hover:bg-white/20 rounded-lg transition-colors">
-                  <X className="w-4 h-4 text-white" />
-                </button>
-              </div>
-              <div className="p-5 space-y-4">
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-                  <div className="text-xs text-amber-800">
-                    Ringkasan berikut akan disiapkan dan bisa dikirimkan ke WhatsApp Dokter:
-                    <ul className="mt-1 list-disc list-inside space-y-0.5">
-                      <li>Nama penyakit: <strong>{disease?.name}</strong></li>
-                      <li>Kode pasien: <strong>{patientCode}</strong></li>
-                      <li>Progress checklist saat ini</li>
-                      <li>Catatan perawat (opsional)</li>
-                    </ul>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-1.5">Catatan Tambahan untuk Dokter (opsional)</label>
-                  <textarea
-                    value={nurseNote}
-                    onChange={(e) => setNurseNote(e.target.value)}
-                    placeholder='Contoh: "Pasien datang dengan sesak berat, saturasi 91%, sudah diberikan nebulizer 1x"'
-                    rows={3}
-                    className="w-full px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none resize-none transition"
-                  />
-                </div>
-                <button
-                  onClick={handleReportToDoctor}
-                  disabled={reporting}
-                  className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-60"
-                >
-                  {reporting ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      <MessageSquare className="w-4 h-4" />
-                      Simpan Laporan & Buka WhatsApp
-                    </>
-                  )}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Functionality replaced by PDF Report system */}
 
       {/* Hidden — WA report replaced by PDF */}
       {/* ───── INSTRUKSI DOKTER Modal ───── */}
