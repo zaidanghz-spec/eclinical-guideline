@@ -707,6 +707,8 @@ export default function DynamicPathwayPage() {
             </ul>
           </motion.div>
         )}
+          </>
+        )}
       </div>
 
       {/* Variation Modal */}
