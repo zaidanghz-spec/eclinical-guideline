@@ -72,6 +72,16 @@ export default function PathwayHistoryPage() {
   const calculateDuration = (startedAt: string, completedAt: string | null) => {
     const start = new Date(startedAt);
     const end = completedAt ? new Date(completedAt) : new Date();
+    
+    // Calculate calendar days diff based on local date
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    const diffDays = Math.round((endDay.getTime() - startDay.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays > 0) {
+      return `Hari ke-${diffDays + 1}`;
+    }
+    
     const diffMs = end.getTime() - start.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     

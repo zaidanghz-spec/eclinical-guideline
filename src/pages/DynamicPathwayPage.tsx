@@ -150,7 +150,7 @@ export default function DynamicPathwayPage() {
 
   const navigateToNode = (nextNodeId: string, branchTitle: string) => {
     if (currentNode) {
-      setPathwayHistory(prev => [...prev, { nodeId: currentNodeId, nodeName: currentNode.type === 'checklist' ? currentNode.title : currentNode.title }]);
+      setPathwayHistory(prev => [...prev, { nodeId: currentNodeId, nodeName: currentNode.type === 'checklist' ? currentNode.title : currentNode.title, completedAt: new Date().toISOString() }]);
     }
     setCurrentNodeId(nextNodeId);
     setShowValidationWarning(false);
@@ -341,29 +341,7 @@ export default function DynamicPathwayPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Pathway Breadcrumb */}
-        {pathwayHistory.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl border border-slate-200 p-4 mb-6 shadow-sm"
-          >
-            <div className="flex items-center gap-2 text-sm text-slate-600 overflow-x-auto">
-              <Target className="w-4 h-4 text-teal-600 flex-shrink-0" />
-              <span className="font-semibold text-slate-900">Pathway:</span>
-              {pathwayHistory.map((item, idx) => (
-                <span key={idx} className="flex items-center gap-2 flex-shrink-0">
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-700">{item.nodeName}</span>
-                </span>
-              ))}
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-              <span className="text-teal-700 font-semibold">
-                {currentNode?.type === 'checklist' ? currentNode.title : (currentNode as DecisionNode)?.title}
-              </span>
-            </div>
-          </motion.div>
-        )}
+
 
         {/* Current Node */}
         <div ref={nodeRef}>

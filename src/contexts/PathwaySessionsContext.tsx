@@ -26,7 +26,7 @@ export interface PathwaySession {
   startedAt: string;
   completedAt: string | null;
   patient_code?: string;
-  pathway_history?: Array<{ nodeId: string; nodeName: string }>;
+  pathway_history?: Array<{ nodeId: string; nodeName: string; completedAt?: string }>;
   updated_at?: string;
   started_at?: string;
   completed_at?: string | null;
@@ -47,7 +47,7 @@ interface PathwaySessionsContextType {
     checklist: Record<string, boolean>, 
     notes: Record<string, string>,
     currentNodeId: string, 
-    pathwayHistory: Array<{ nodeId: string; nodeName: string }>, 
+    pathwayHistory: Array<{ nodeId: string; nodeName: string; completedAt?: string }>, 
     decisions: any[],
     variations: any[]
   ) => Promise<boolean>;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { ArrowLeft, CheckCircle2, AlertCircle, FileText, Printer, Stethoscope } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, FileText, Printer, Stethoscope, Calendar } from 'lucide-react';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
 import { dynamicPathways } from '../lib/dynamicPathways';
 import Navbar from '../components/Navbar';
@@ -188,75 +188,104 @@ export default function PathwayReportPage() {
                   Tidak ada riwayat langkah yang tercatat dalam sesi ini.
                 </div>
               ) : (
-                visitedNodes.map((historyItem, idx) => {
-                  const node = pathway.nodes[historyItem.nodeId];
-                  if (!node) return null;
-                  
-                  return (
-                    <div key={`${historyItem.nodeId}-${idx}`} className="relative pl-14">
-                      {idx !== visitedNodes.length - 1 && <div className="absolute left-6 top-10 bottom-[-48px] w-0.5 bg-slate-100" />}
-                      <div className="absolute left-0 top-0.5 w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-500 shadow-sm">
-                        {idx + 1}
-                      </div>
+                (() => {
+                  const isMultiDay = visitedNodes.some(hn => {
+                    if (!hn.completedAt || !session.startedAt) return false;
+                    const s = new Date(session.startedAt);
+                    const e = new Date(hn.completedAt);
+                    return new Date(e.getFullYear(), e.getMonth(), e.getDate()).getTime() > new Date(s.getFullYear(), s.getMonth(), s.getDate()).getTime();
+                  });
+
+                  let lastPrintedDay = 0;
+
+                  return visitedNodes.map((historyItem, idx) => {
+                    const node = pathway.nodes[historyItem.nodeId];
+                    if (!node) return null;
+                    
+                    let dayHeader = null;
+                    if (isMultiDay && historyItem.completedAt && session.startedAt) {
+                      const start = new Date(session.startedAt);
+                      const end = new Date(historyItem.completedAt);
+                      const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+                      const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+                      const diffDays = Math.round((endDay.getTime() - startDay.getTime()) / (1000 * 60 * 60 * 24));
+                      const currentDay = diffDays + 1;
                       
-                      <div className="mb-4">
-                        <h3 className="text-xl font-bold text-slate-900">{node.title}</h3>
-                        {node.description && <p className="text-slate-500 leading-relaxed mt-1">{node.description}</p>}
-                      </div>
+                      if (currentDay > lastPrintedDay) {
+                         dayHeader = <div className="mt-8 mb-6"><div className="text-sm font-bold text-teal-600 bg-teal-50 border border-teal-100 px-4 py-2 rounded-xl shadow-sm inline-flex items-center gap-2 print:border-none print:shadow-none"><Calendar className="w-4 h-4" /> Hari ke-{currentDay} ({end.toLocaleDateString('id-ID')})</div></div>;
+                         lastPrintedDay = currentDay;
+                      }
+                    }
 
-                      {node.type === 'checklist' && (
-                        <div className="mt-4 grid gap-3">
-                          {node.items.map(item => {
-                            const isChecked = session.checklist[item.id];
-                            const note = session.notes && session.notes[item.id];
-                             return (
-                              <div key={item.id} className={`p-5 rounded-2xl border ${isChecked ? 'bg-teal-50/30 border-teal-100 ring-1 ring-teal-100' : 'bg-slate-50/50 border-slate-100'}`}>
-                                <div className="flex gap-4">
-                                  {isChecked ? (
-                                    <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>
-                                  ) : (
-                                    <div className="w-6 h-6 border-2 border-slate-300 rounded-full" />
-                                  )}
-                                  <div className="flex-1">
-                                    <div className="font-bold text-slate-800">{item.title}</div>
-                                    <p className="text-slate-500 text-sm mt-1">{item.description}</p>
-                                    {note && (
-                                      <div className="mt-4 p-4 bg-white border border-yellow-200 rounded-xl text-sm text-yellow-800 shadow-sm italic">
-                                        <div className="flex items-center gap-2 mb-1 not-italic font-bold text-yellow-900 uppercase text-[10px]">Catatan Klinis:</div>
-                                        {note}
+                    return (
+                      <div key={`${historyItem.nodeId}-${idx}`}>
+                        {dayHeader}
+                        <div className="relative pl-14 mb-12">
+                          {idx !== visitedNodes.length - 1 && <div className="absolute left-6 top-10 bottom-[-64px] w-0.5 bg-slate-100" />}
+                          <div className="absolute left-0 top-0.5 w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-500 shadow-sm">
+                            {idx + 1}
+                          </div>
+                          
+                          <div className="mb-4">
+                            <h3 className="text-xl font-bold text-slate-900">{node.title}</h3>
+                            {node.description && <p className="text-slate-500 leading-relaxed mt-1">{node.description}</p>}
+                          </div>
+
+                          {node.type === 'checklist' && (
+                            <div className="mt-4 grid gap-3">
+                              {node.items.map(item => {
+                                const isChecked = session.checklist[item.id];
+                                const note = session.notes && session.notes[item.id];
+                                return (
+                                  <div key={item.id} className={`p-5 rounded-2xl border ${isChecked ? 'bg-teal-50/30 border-teal-100 ring-1 ring-teal-100' : 'bg-slate-50/50 border-slate-100'}`}>
+                                    <div className="flex gap-4">
+                                      {isChecked ? (
+                                        <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>
+                                      ) : (
+                                        <div className="w-6 h-6 border-2 border-slate-300 rounded-full" />
+                                      )}
+                                      <div className="flex-1">
+                                        <div className="font-bold text-slate-800">{item.title}</div>
+                                        <p className="text-slate-500 text-sm mt-1">{item.description}</p>
+                                        {note && (
+                                          <div className="mt-4 p-4 bg-white border border-yellow-200 rounded-xl text-sm text-yellow-800 shadow-sm italic">
+                                            <div className="flex items-center gap-2 mb-1 not-italic font-bold text-yellow-900 uppercase text-[10px]">Catatan Klinis:</div>
+                                            {note}
+                                          </div>
+                                        )}
                                       </div>
-                                    )}
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                                );
+                              })}
+                            </div>
+                          )}
 
-                      {node.type === 'decision' && (
-                        <div className="mt-4">
-                          {(() => {
-                            const dec = session.decisions?.find(d => d.nodeId === node.id);
-                            const branch = dec ? node.branches.find(b => b.id === dec.branchId) : null;
-                            return (
-                              <div className="p-6 bg-slate-900 rounded-2xl flex gap-6 items-center shadow-lg">
-                                <div className="w-14 h-14 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
-                                  <Stethoscope className="w-8 h-8 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="text-[10px] text-teal-400 font-black uppercase tracking-widest mb-1">Keputusan Klinis Diambil</div>
-                                  <div className="font-bold text-white text-lg">{branch?.title || dec?.branchTitle || 'N/A'}</div>
-                                  {branch?.description && <div className="text-slate-400 text-xs mt-1">{branch.description}</div>}
-                                </div>
-                              </div>
-                            );
-                          })()}
+                          {node.type === 'decision' && (
+                            <div className="mt-4">
+                              {(() => {
+                                const dec = session.decisions?.find(d => d.nodeId === node.id);
+                                const branch = dec ? node.branches.find(b => b.id === dec.branchId) : null;
+                                return (
+                                  <div className="p-6 bg-slate-900 rounded-2xl flex gap-6 items-center shadow-lg">
+                                    <div className="w-14 h-14 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
+                                      <Stethoscope className="w-8 h-8 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="text-[10px] text-teal-400 font-black uppercase tracking-widest mb-1">Keputusan Klinis Diambil</div>
+                                      <div className="font-bold text-white text-lg">{branch?.title || dec?.branchTitle || 'N/A'}</div>
+                                      {branch?.description && <div className="text-slate-400 text-xs mt-1">{branch.description}</div>}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  );
-                })
+                      </div>
+                    );
+                  });
+                })()
               )}
             </div>
 
