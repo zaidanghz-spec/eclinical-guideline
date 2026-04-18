@@ -228,6 +228,16 @@ export default function DynamicPathwayPage() {
     }));
   };
 
+  // Auto-save 2s after any toggle/note change so other users can resume
+  useEffect(() => {
+    if (!sessionId || showPatientCodeModal) return;
+    const timer = setTimeout(async () => {
+      await saveDraft(sessionId, checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations);
+    }, 2000);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkedSteps, stepNotes]);
+
   const handleBranchSelect = (_branchId: string, nextNodeId: string, branchTitle: string) => {
     // Check if previous node validation is needed
     const previousNode = pathwayHistory.length > 0 ? 
@@ -320,85 +330,123 @@ export default function DynamicPathwayPage() {
   // ── Generate PDF Report for nurse ──
   const handlePrintReport = () => {
     const allNodes = pathway?.nodes || {};
-    const checkedItems: string[] = [];
-    const pendingDoctorItems: string[] = [];
+    const checkedItems: { title: string; node: string }[] = [];
+    const pendingDoctorItems: { title: string; node: string }[] = [];
+    const pendingNurseItems: { title: string; node: string }[] = [];
 
-    Object.values(allNodes).forEach(node => {
-      if (node.type !== 'checklist') return;
+    // Traverse nodes in pathway history order + current node
+    const visitedNodeIds = [...pathwayHistory.map(h => h.nodeId), currentNodeId];
+    const allNodeIds = visitedNodeIds.length > 0 ? visitedNodeIds : Object.keys(allNodes);
+
+    allNodeIds.forEach(nodeId => {
+      const node = allNodes[nodeId];
+      if (!node || node.type !== 'checklist') return;
+      const nodeName = (node as ChecklistNode).title;
       (node as ChecklistNode).items.forEach(item => {
+        const itemRole = (item as any).role || 'both';
         if (checkedSteps[item.id]) {
-          checkedItems.push(item.title);
-        } else if ((item as any).role === 'doctor') {
-          pendingDoctorItems.push(item.title);
+          checkedItems.push({ title: item.title, node: nodeName });
+        } else if (itemRole === 'doctor') {
+          pendingDoctorItems.push({ title: item.title, node: nodeName });
+        } else if (!checkedSteps[item.id]) {
+          pendingNurseItems.push({ title: item.title, node: nodeName });
         }
       });
     });
 
     const now = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
+    const filename = `laporan-klinis-${patientCode.replace(/\s+/g,'-')}-${disease?.name?.replace(/\s+/g,'-') || 'pasien'}.html`;
 
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="id">
-      <head>
-        <meta charset="UTF-8" />
-        <title>Laporan Klinis — ${disease?.name}</title>
-        <style>
-          body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 32px; color: #1e293b; font-size: 13px; }
-          h1 { font-size: 20px; color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 8px; }
-          h2 { font-size: 14px; margin-top: 24px; color: #334155; border-left: 4px solid #0f766e; padding-left: 8px; }
-          .meta { background: #f1f5f9; border-radius: 8px; padding: 12px 16px; margin: 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-          .meta div { font-size: 12px; }
-          .meta span { font-weight: 700; }
-          ul { padding-left: 20px; }
-          li { margin-bottom: 4px; }
-          .checked { color: #047857; }
-          .checked::marker { content: '✓  '; }
-          .pending { color: #b45309; }
-          .pending::marker { content: '→  '; }
-          .doctor-section { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
-          .footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
-          @media print { body { margin: 16px; } }
-        </style>
-      </head>
-      <body>
-        <h1>Laporan Klinis</h1>
-        <div class="meta">
-          <div><span>Penyakit:</span> ${disease?.name}</div>
-          <div><span>Kode Pasien:</span> ${patientCode}</div>
-          <div><span>Tanggal/Waktu:</span> ${now}</div>
-          <div><span>Dibuat oleh:</span> ${userRole === 'nurse' ? 'Perawat' : 'Dokter'}</div>
-        </div>
+    const doctorOrdersHtml = doctorOrders ? `
+      <div class="doctor-orders">
+        <h2>Instruksi Dokter</h2>
+        ${doctorOrders.diagnosis ? `<p><strong>Diagnosis:</strong> ${doctorOrders.diagnosis}</p>` : ''}
+        ${doctorOrders.prescription ? `<p><strong>Resep:</strong><br/>${doctorOrders.prescription.replace(/\n/g,'<br/>')}</p>` : ''}
+        ${doctorOrders.instructions ? `<p><strong>Instruksi Tindakan:</strong><br/>${doctorOrders.instructions.replace(/\n/g,'<br/>')}</p>` : ''}
+        ${doctorOrders.followupPlan ? `<p><strong>Rencana Tindak Lanjut:</strong> ${doctorOrders.followupPlan}</p>` : ''}
+        ${doctorOrders.referral ? `<p style="color:#dc2626"><strong>⚠️ DIRUJUK:</strong> ${doctorOrders.referralNote || '-'}</p>` : ''}
+      </div>` : '';
 
-        <h2>Langkah Yang Sudah Dikerjakan</h2>
-        <ul>
-          ${checkedItems.length > 0 
-            ? checkedItems.map(t => `<li class="checked">${t}</li>`).join('')
-            : '<li><em>Belum ada langkah yang diselesaikan.</em></li>'}
-        </ul>
+    const html = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laporan Klinis — ${disease?.name} — ${patientCode}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 32px; color: #1e293b; font-size: 13px; line-height: 1.6; }
+    h1 { font-size: 22px; color: #0f766e; border-bottom: 3px solid #0f766e; padding-bottom: 10px; margin-bottom: 16px; }
+    h2 { font-size: 14px; margin-top: 24px; color: #334155; border-left: 4px solid #0f766e; padding-left: 8px; }
+    .meta { background: #f1f5f9; border-radius: 8px; padding: 12px 16px; margin: 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .meta div { font-size: 12px; } .meta span { font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+    th { background: #f1f5f9; text-align: left; padding: 6px 10px; font-weight: 600; color: #475569; }
+    td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    tr:hover td { background: #f8fafc; }
+    .status-done { color: #047857; font-weight: 600; }
+    .status-nurse { color: #b45309; }
+    .status-doctor { color: #7c3aed; font-weight: 600; }
+    .doctor-section { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
+    .doctor-orders { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
+    .footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+    @media print { @page { margin: 16px; } body { margin: 0; } }
+  </style>
+</head>
+<body>
+  <h1>📋 Laporan Klinis</h1>
+  <div class="meta">
+    <div><span>Penyakit:</span> ${disease?.name}</div>
+    <div><span>Kode Pasien:</span> ${patientCode}</div>
+    <div><span>Tanggal/Waktu:</span> ${now}</div>
+    <div><span>Dibuat oleh:</span> ${userRole === 'nurse' ? 'Perawat' : 'Dokter'}</div>
+    <div><span>Mode:</span> ${effectiveMode === 'nurse-only' ? 'Perawat (Tanpa Dokter di Tempat)' : 'Akses Penuh'}</div>
+  </div>
 
-        ${pendingDoctorItems.length > 0 ? `
-        <div class="doctor-section">
-          <h2 style="border:none;padding:0;margin:0 0 8px">Memerlukan Tindakan Dokter</h2>
-          <p style="font-size:12px;color:#92400e;margin:0 0 8px">Item berikut tidak bisa diselesaikan oleh perawat dan membutuhkan instruksi dokter:</p>
-          <ul>
-            ${pendingDoctorItems.map(t => `<li class="pending">${t}</li>`).join('')}
-          </ul>
-        </div>` : ''}
+  <h2>✅ Langkah Yang Sudah Dikerjakan (${checkedItems.length})</h2>
+  ${checkedItems.length > 0 ? `
+  <table>
+    <thead><tr><th>Langkah</th><th>Bagian Pathway</th></tr></thead>
+    <tbody>${checkedItems.map(i => `<tr><td><span class="status-done">✓</span> ${i.title}</td><td>${i.node}</td></tr>`).join('')}</tbody>
+  </table>` : '<p><em>Belum ada langkah yang diselesaikan.</em></p>'}
 
-        ${Object.entries(stepNotes).filter(([,v]) => v).length > 0 ? `
-        <h2>Catatan Klinis</h2>
-        <ul>${Object.entries(stepNotes).filter(([,v]) => v).map(([,v]) => `<li>${v}</li>`).join('')}</ul>
-        ` : ''}
+  ${pendingDoctorItems.length > 0 ? `
+  <div class="doctor-section">
+    <h2 style="border:none;padding:0;margin:0 0 8px;color:#92400e">🩺 Perlu Tindakan Dokter (${pendingDoctorItems.length})</h2>
+    <p style="font-size:12px;color:#92400e;margin:0 0 8px">Item berikut memerlukan keputusan/tindakan dokter:</p>
+    <table>
+      <thead><tr><th>Langkah</th><th>Bagian Pathway</th></tr></thead>
+      <tbody>${pendingDoctorItems.map(i => `<tr><td><span class="status-doctor">→</span> ${i.title}</td><td>${i.node}</td></tr>`).join('')}</tbody>
+    </table>
+  </div>` : ''}
 
-        <div class="footer">Dokumen ini dicetak dari sistem eclinical-guideline &bull; Hanya untuk penggunaan internal klinik</div>
-      </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => printWindow.print(), 300);
+  ${pendingNurseItems.length > 0 ? `
+  <h2>⏳ Belum Dikerjakan Perawat (${pendingNurseItems.length})</h2>
+  <table>
+    <thead><tr><th>Langkah</th><th>Bagian Pathway</th></tr></thead>
+    <tbody>${pendingNurseItems.map(i => `<tr><td><span class="status-nurse">◦</span> ${i.title}</td><td>${i.node}</td></tr>`).join('')}</tbody>
+  </table>` : ''}
+
+  ${Object.entries(stepNotes).filter(([,v]) => v).length > 0 ? `
+  <h2>📝 Catatan Klinis</h2>
+  <ul>${Object.entries(stepNotes).filter(([,v]) => v).map(([k,v]) => `<li><strong>${k}:</strong> ${v}</li>`).join('')}</ul>` : ''}
+
+  ${doctorOrdersHtml}
+
+  <div class="footer">Dokumen ini dicetak dari sistem eclinical-guideline &bull; Hanya untuk penggunaan internal klinik</div>
+</body>
+</html>`;
+
+    // Download as .html file (works on all OS including Windows)
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Laporan diunduh!', { description: filename });
   };
 
   // Get next node for automatic progression
