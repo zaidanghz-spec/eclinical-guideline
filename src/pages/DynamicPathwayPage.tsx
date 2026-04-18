@@ -228,7 +228,7 @@ export default function DynamicPathwayPage() {
     }));
   };
 
-  // Auto-save 2s after any toggle/note change so other users can resume
+  // Auto-save 2s after any toggle/note/navigation change so other users can resume
   useEffect(() => {
     if (!sessionId || showPatientCodeModal) return;
     const timer = setTimeout(async () => {
@@ -236,7 +236,7 @@ export default function DynamicPathwayPage() {
     }, 2000);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkedSteps, stepNotes]);
+  }, [checkedSteps, stepNotes, pathwayHistory, currentNodeId]);
 
   const handleBranchSelect = (_branchId: string, nextNodeId: string, branchTitle: string) => {
     // Check if previous node validation is needed
@@ -327,45 +327,134 @@ export default function DynamicPathwayPage() {
     setSubmittingOrder(false);
   };
 
-  // ── Generate PDF Report for nurse ──
+  // ── Generate Clinical Report (download as .html) ──
   const handlePrintReport = () => {
     const allNodes = pathway?.nodes || {};
-    const checkedItems: { title: string; node: string }[] = [];
-    const pendingDoctorItems: { title: string; node: string }[] = [];
-    const pendingNurseItems: { title: string; node: string }[] = [];
+    const now = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
+    const safeName = (s: string) => s.replace(/[^a-zA-Z0-9\-_]/g, '-');
+    const filename = `laporan-klinis-${safeName(patientCode)}-${safeName(disease?.name || 'pasien')}.html`;
 
-    // Traverse nodes in pathway history order + current node
-    const visitedNodeIds = [...pathwayHistory.map(h => h.nodeId), currentNodeId];
-    const allNodeIds = visitedNodeIds.length > 0 ? visitedNodeIds : Object.keys(allNodes);
-
-    allNodeIds.forEach(nodeId => {
-      const node = allNodes[nodeId];
-      if (!node || node.type !== 'checklist') return;
-      const nodeName = (node as ChecklistNode).title;
-      (node as ChecklistNode).items.forEach(item => {
-        const itemRole = (item as any).role || 'both';
-        if (checkedSteps[item.id]) {
-          checkedItems.push({ title: item.title, node: nodeName });
-        } else if (itemRole === 'doctor') {
-          pendingDoctorItems.push({ title: item.title, node: nodeName });
-        } else if (!checkedSteps[item.id]) {
-          pendingNurseItems.push({ title: item.title, node: nodeName });
-        }
+    // ── 1. Collect all visited checklist nodes (history + current) ──
+    const visitedChecklistNodeIds: string[] = [];
+    const historyIds = pathwayHistory.map(h => h.nodeId);
+    const allVisited = [...historyIds, currentNodeId];
+    // Deduplicate, keep only checklist nodes
+    const seen = new Set<string>();
+    allVisited.forEach(id => {
+      if (!seen.has(id) && allNodes[id]?.type === 'checklist') {
+        seen.add(id);
+        visitedChecklistNodeIds.push(id);
+      }
+    });
+    // Fallback: if no history at all, use all checklist nodes
+    if (visitedChecklistNodeIds.length === 0) {
+      Object.keys(allNodes).forEach(id => {
+        if (allNodes[id]?.type === 'checklist') visitedChecklistNodeIds.push(id);
       });
+    }
+
+    // ── 2. Index variations by nodeId ──
+    const variationsByNode: Record<string, typeof variations[number][]> = {};
+    variations.forEach(v => {
+      if (!variationsByNode[v.nodeId]) variationsByNode[v.nodeId] = [];
+      variationsByNode[v.nodeId].push(v);
     });
 
-    const now = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
-    const filename = `laporan-klinis-${patientCode.replace(/\s+/g,'-')}-${disease?.name?.replace(/\s+/g,'-') || 'pasien'}.html`;
+    // ── 3. Build per-node report data ──
+    interface NodeReport {
+      id: string; title: string;
+      done: string[]; pendingDoctor: string[]; pendingNurse: string[];
+      hasVariation: boolean; fullyCompliant: boolean;
+    }
+    const nodeReports: NodeReport[] = [];
+    let totalDone = 0; let totalPendingDoc = 0;
+
+    visitedChecklistNodeIds.forEach(nodeId => {
+      const node = allNodes[nodeId] as ChecklistNode;
+      if (!node) return;
+      const done: string[] = []; const pendingDoctor: string[] = []; const pendingNurse: string[] = [];
+      node.items.forEach(item => {
+        const role = (item as any).role || 'both';
+        if (checkedSteps[item.id]) {
+          done.push(item.title);
+        } else if (role === 'doctor') {
+          pendingDoctor.push(item.title);
+        } else {
+          pendingNurse.push(item.title);
+        }
+      });
+      const hasVariation = !!variationsByNode[nodeId];
+      const requiredItems = node.items.filter(it => it.required && !((it as any).role === 'doctor' && effectiveMode === 'nurse-only'));
+      const fullyCompliant = requiredItems.every(it => checkedSteps[it.id]);
+      totalDone += done.length; totalPendingDoc += pendingDoctor.length;
+      nodeReports.push({ id: nodeId, title: node.title, done, pendingDoctor, pendingNurse, hasVariation, fullyCompliant });
+    });
+
+    const overallHasVariation = variations.length > 0;
+    const allCompliant = nodeReports.every(n => n.fullyCompliant);
+    const complianceBadge = overallHasVariation
+      ? `<span class="badge badge-warn">⚠️ Ada Variasi Klinis (${variations.length})</span>`
+      : allCompliant
+        ? `<span class="badge badge-ok">✓ Fully Compliant</span>`
+        : `<span class="badge badge-info">⏳ Sebagian Selesai</span>`;
+
+    // ── 4. Generate per-node HTML ──
+    const nodeHtml = nodeReports.map((nr, idx) => {
+      const nodeVariations = variationsByNode[nr.id] || [];
+      const status = nr.hasVariation
+        ? `<span class="badge badge-warn">⚠️ Variasi Klinis</span>`
+        : nr.fullyCompliant
+          ? `<span class="badge badge-ok">✓ Selesai</span>`
+          : `<span class="badge badge-info">⏳ Sebagian</span>`;
+
+      const doneRows = nr.done.map(t => `<tr><td><span class="ic done">✓</span> ${t}</td><td class="role-tag role-done">Selesai</td></tr>`).join('');
+      const docRows = nr.pendingDoctor.map(t => `<tr><td><span class="ic doc">🩺</span> ${t}</td><td class="role-tag role-doc">Perlu Dokter</td></tr>`).join('');
+      const nurseRows = nr.pendingNurse.map(t => `<tr><td><span class="ic nurse">◦</span> ${t}</td><td class="role-tag role-nurse">Belum Dikerjakan</td></tr>`).join('');
+      const varRows = nodeVariations.map(v => {
+        const skipped = (v.incompleteSteps || []).map((sid: string) => {
+          const item = (allNodes[nr.id] as ChecklistNode)?.items?.find(i => i.id === sid);
+          return item ? `<li>◦ ${item.title}</li>` : `<li>◦ ${sid}</li>`;
+        }).join('');
+        return `<div class="variation-block">
+          <div class="variation-header">⚠️ Variasi Klinis — ${new Date(v.documentedAt).toLocaleString('id-ID')}</div>
+          <p><strong>Alasan:</strong> ${v.variationReason}</p>
+          ${skipped ? `<p><strong>Langkah yang dilewati:</strong></p><ul>${skipped}</ul>` : ''}
+        </div>`;
+      }).join('');
+
+      return `
+      <div class="node-card" id="node-${idx+1}">
+        <div class="node-header">
+          <span class="node-num">${idx+1}</span>
+          <span class="node-title">${nr.title}</span>
+          ${status}
+        </div>
+        ${doneRows || docRows || nurseRows ? `
+        <table>
+          <thead><tr><th>Langkah</th><th style="width:140px">Status</th></tr></thead>
+          <tbody>${doneRows}${docRows}${nurseRows}</tbody>
+        </table>` : '<p style="color:#94a3b8;font-size:12px">Tidak ada item checklist.</p>'}
+        ${varRows}
+      </div>`;
+    }).join('');
 
     const doctorOrdersHtml = doctorOrders ? `
-      <div class="doctor-orders">
-        <h2>Instruksi Dokter</h2>
-        ${doctorOrders.diagnosis ? `<p><strong>Diagnosis:</strong> ${doctorOrders.diagnosis}</p>` : ''}
-        ${doctorOrders.prescription ? `<p><strong>Resep:</strong><br/>${doctorOrders.prescription.replace(/\n/g,'<br/>')}</p>` : ''}
-        ${doctorOrders.instructions ? `<p><strong>Instruksi Tindakan:</strong><br/>${doctorOrders.instructions.replace(/\n/g,'<br/>')}</p>` : ''}
-        ${doctorOrders.followupPlan ? `<p><strong>Rencana Tindak Lanjut:</strong> ${doctorOrders.followupPlan}</p>` : ''}
-        ${doctorOrders.referral ? `<p style="color:#dc2626"><strong>⚠️ DIRUJUK:</strong> ${doctorOrders.referralNote || '-'}</p>` : ''}
-      </div>` : '';
+    <div class="section-card orders">
+      <h2>👩‍⚕️ Instruksi Dokter</h2>
+      ${doctorOrders.diagnosis ? `<p><strong>Diagnosis Medis:</strong> ${doctorOrders.diagnosis}</p>` : ''}
+      ${doctorOrders.prescription ? `<p><strong>Resep / Terapi:</strong></p><pre>${doctorOrders.prescription}</pre>` : ''}
+      ${doctorOrders.instructions ? `<p><strong>Instruksi Tindakan Perawat:</strong></p><pre>${doctorOrders.instructions}</pre>` : ''}
+      ${doctorOrders.followupPlan ? `<p><strong>Rencana Tindak Lanjut:</strong> ${doctorOrders.followupPlan}</p>` : ''}
+      ${doctorOrders.referral ? `<div class="referral-box"><strong>🚑 Pasien DIRUJUK:</strong> ${doctorOrders.referralNote || '-'}</div>` : ''}
+      <p style="font-size:11px;color:#94a3b8">Diinput oleh: ${doctorOrders.doctorName || 'Dokter'} pada ${new Date(doctorOrders.orderedAt).toLocaleString('id-ID')}</p>
+    </div>` : '';
+
+    const notesHtml = Object.entries(stepNotes).filter(([,v]) => v).length > 0 ? `
+    <div class="section-card">
+      <h2>📝 Catatan Klinis</h2>
+      <table><thead><tr><th>ID Langkah</th><th>Catatan</th></tr></thead>
+      <tbody>${Object.entries(stepNotes).filter(([,v]) => v).map(([k,v]) => `<tr><td style="font-family:monospace;font-size:11px;color:#64748b">${k}</td><td>${v}</td></tr>`).join('')}</tbody></table>
+    </div>` : '';
 
     const html = `<!DOCTYPE html>
 <html lang="id">
@@ -374,69 +463,74 @@ export default function DynamicPathwayPage() {
   <title>Laporan Klinis — ${disease?.name} — ${patientCode}</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 32px; color: #1e293b; font-size: 13px; line-height: 1.6; }
-    h1 { font-size: 22px; color: #0f766e; border-bottom: 3px solid #0f766e; padding-bottom: 10px; margin-bottom: 16px; }
-    h2 { font-size: 14px; margin-top: 24px; color: #334155; border-left: 4px solid #0f766e; padding-left: 8px; }
-    .meta { background: #f1f5f9; border-radius: 8px; padding: 12px 16px; margin: 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .meta div { font-size: 12px; } .meta span { font-weight: 700; }
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
-    th { background: #f1f5f9; text-align: left; padding: 6px 10px; font-weight: 600; color: #475569; }
-    td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
-    tr:hover td { background: #f8fafc; }
-    .status-done { color: #047857; font-weight: 600; }
-    .status-nurse { color: #b45309; }
-    .status-doctor { color: #7c3aed; font-weight: 600; }
-    .doctor-section { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
-    .doctor-orders { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
-    .footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
-    @media print { @page { margin: 16px; } body { margin: 0; } }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 32px; color: #1e293b; font-size: 13px; line-height: 1.6; background: #f8fafc; }
+    .report-header { background: linear-gradient(135deg, #0f766e, #0891b2); color: white; padding: 24px 28px; border-radius: 12px; margin-bottom: 24px; }
+    .report-header h1 { margin: 0 0 6px; font-size: 22px; }
+    .report-header p { margin: 0; opacity: 0.85; font-size: 12px; }
+    .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .meta-card { background: white; border-radius: 8px; padding: 10px 14px; border: 1px solid #e2e8f0; }
+    .meta-card .label { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #94a3b8; letter-spacing: 0.05em; }
+    .meta-card .value { font-size: 14px; font-weight: 600; color: #1e293b; }
+    .compliance-bar { background: white; border-radius: 8px; padding: 12px 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .badge-ok { background: #dcfce7; color: #166534; }
+    .badge-warn { background: #fef3c7; color: #92400e; }
+    .badge-info { background: #e0f2fe; color: #0c4a6e; }
+    .node-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 16px; overflow: hidden; }
+    .node-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; }
+    .node-num { width: 24px; height: 24px; border-radius: 50%; background: #0f766e; color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .node-title { font-weight: 700; font-size: 13px; color: #1e293b; flex: 1; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: #f1f5f9; text-align: left; padding: 7px 12px; font-weight: 600; color: #475569; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    td { padding: 7px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .ic { font-weight: 700; margin-right: 4px; }
+    .ic.done { color: #047857; }
+    .ic.doc { color: #7c3aed; }
+    .ic.nurse { color: #b45309; }
+    .role-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+    .role-done { color: #166534; background: #dcfce7; }
+    .role-doc { color: #7c3aed; background: #f3e8ff; }
+    .role-nurse { color: #92400e; background: #fef3c7; }
+    .variation-block { margin: 12px 16px; padding: 12px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 12px; }
+    .variation-header { font-weight: 700; color: #b45309; margin-bottom: 6px; }
+    .variation-block ul { margin: 4px 0 0 16px; padding: 0; }
+    .variation-block li { color: #78350f; }
+    .section-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 16px 20px; margin-bottom: 16px; }
+    .section-card h2 { margin: 0 0 10px; font-size: 14px; color: #0f766e; }
+    .orders { border-color: #86efac; background: #f0fdf4; }
+    .referral-box { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px 14px; color: #dc2626; font-weight: 600; margin-top: 8px; }
+    pre { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; font-size: 12px; font-family: inherit; white-space: pre-wrap; word-break: break-word; }
+    .footer { margin-top: 24px; font-size: 11px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+    @media print { @page { margin: 20px; size: A4; } body { background: white; padding: 0; } .node-card, .section-card { break-inside: avoid; } }
   </style>
 </head>
 <body>
-  <h1>📋 Laporan Klinis</h1>
-  <div class="meta">
-    <div><span>Penyakit:</span> ${disease?.name}</div>
-    <div><span>Kode Pasien:</span> ${patientCode}</div>
-    <div><span>Tanggal/Waktu:</span> ${now}</div>
-    <div><span>Dibuat oleh:</span> ${userRole === 'nurse' ? 'Perawat' : 'Dokter'}</div>
-    <div><span>Mode:</span> ${effectiveMode === 'nurse-only' ? 'Perawat (Tanpa Dokter di Tempat)' : 'Akses Penuh'}</div>
+  <div class="report-header">
+    <h1>📋 Laporan Klinis Pasien</h1>
+    <p>${disease?.name} &bull; Dicetak: ${now}</p>
   </div>
 
-  <h2>✅ Langkah Yang Sudah Dikerjakan (${checkedItems.length})</h2>
-  ${checkedItems.length > 0 ? `
-  <table>
-    <thead><tr><th>Langkah</th><th>Bagian Pathway</th></tr></thead>
-    <tbody>${checkedItems.map(i => `<tr><td><span class="status-done">✓</span> ${i.title}</td><td>${i.node}</td></tr>`).join('')}</tbody>
-  </table>` : '<p><em>Belum ada langkah yang diselesaikan.</em></p>'}
+  <div class="meta-grid">
+    <div class="meta-card"><div class="label">Kode Pasien</div><div class="value">${patientCode}</div></div>
+    <div class="meta-card"><div class="label">Penyakit</div><div class="value">${disease?.name}</div></div>
+    <div class="meta-card"><div class="label">Status Laporan</div><div class="value">${complianceBadge}</div></div>
+    <div class="meta-card"><div class="label">Dibuat Oleh</div><div class="value">${userRole === 'nurse' ? '👨‍⚕️ Perawat' : '🩺 Dokter'}</div></div>
+    <div class="meta-card"><div class="label">Mode Akses</div><div class="value">${effectiveMode === 'nurse-only' ? 'Perawat (Mandiri)' : 'Kolaborasi'}</div></div>
+    <div class="meta-card"><div class="label">Tahap Selesai</div><div class="value">${totalDone} langkah &bull; ${totalPendingDoc > 0 ? `${totalPendingDoc} tunda dokter` : 'Tidak ada tunda dokter'}</div></div>
+  </div>
 
-  ${pendingDoctorItems.length > 0 ? `
-  <div class="doctor-section">
-    <h2 style="border:none;padding:0;margin:0 0 8px;color:#92400e">🩺 Perlu Tindakan Dokter (${pendingDoctorItems.length})</h2>
-    <p style="font-size:12px;color:#92400e;margin:0 0 8px">Item berikut memerlukan keputusan/tindakan dokter:</p>
-    <table>
-      <thead><tr><th>Langkah</th><th>Bagian Pathway</th></tr></thead>
-      <tbody>${pendingDoctorItems.map(i => `<tr><td><span class="status-doctor">→</span> ${i.title}</td><td>${i.node}</td></tr>`).join('')}</tbody>
-    </table>
-  </div>` : ''}
+  <h2 style="font-size:14px;font-weight:700;color:#334155;margin:0 0 10px;border-left:4px solid #0f766e;padding-left:8px">📋 Detail Pathway per Tahap (${nodeReports.length} node)</h2>
+  ${nodeHtml}
 
-  ${pendingNurseItems.length > 0 ? `
-  <h2>⏳ Belum Dikerjakan Perawat (${pendingNurseItems.length})</h2>
-  <table>
-    <thead><tr><th>Langkah</th><th>Bagian Pathway</th></tr></thead>
-    <tbody>${pendingNurseItems.map(i => `<tr><td><span class="status-nurse">◦</span> ${i.title}</td><td>${i.node}</td></tr>`).join('')}</tbody>
-  </table>` : ''}
-
-  ${Object.entries(stepNotes).filter(([,v]) => v).length > 0 ? `
-  <h2>📝 Catatan Klinis</h2>
-  <ul>${Object.entries(stepNotes).filter(([,v]) => v).map(([k,v]) => `<li><strong>${k}:</strong> ${v}</li>`).join('')}</ul>` : ''}
-
+  ${notesHtml}
   ${doctorOrdersHtml}
 
-  <div class="footer">Dokumen ini dicetak dari sistem eclinical-guideline &bull; Hanya untuk penggunaan internal klinik</div>
+  <div class="footer">
+    Dokumen ini dihasilkan oleh sistem eclinical-guideline &bull; Hanya untuk penggunaan internal klinik &bull; ${now}
+  </div>
 </body>
 </html>`;
 
-    // Download as .html file (works on all OS including Windows)
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
