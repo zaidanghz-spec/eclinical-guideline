@@ -10,10 +10,20 @@ function getPool() {
       .replace('?channel_binding=require&', '?')
       .replace('?channel_binding=require', '');
 
+    // Fix #19: SSL rejectUnauthorized only disabled in local dev
+    // Fix #20: Pool size raised from 1 → 5 to handle concurrent nurse+doctor requests
     pool = new Pool({
       connectionString,
-      ssl: { rejectUnauthorized: false },
-      max: 1,
+      ssl: process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: true }
+        : { rejectUnauthorized: false },
+      max: parseInt(process.env.DB_POOL_MAX || '5', 10),
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+
+    pool.on('error', (err) => {
+      console.error('[DB] Unexpected pool error:', err);
     });
   }
   return pool;

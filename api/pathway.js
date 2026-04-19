@@ -1,9 +1,23 @@
 const { query, verifyToken } = require('./_lib/db');
 
-module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+// Fix #4: CORS — hanya izinkan origin yang terdaftar, bukan wildcard
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173').split(',').map(s => s.trim());
+
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (!origin) {
+    // server-to-server requests (no Origin header) — izinkan untuk Vercel internal
+    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGINS[0]);
+  }
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
+
+module.exports = async function handler(req, res) {
+  setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
 
   const payload = verifyToken(req.headers.authorization || null);
@@ -12,8 +26,11 @@ module.exports = async function handler(req, res) {
   const action = req.query.action;
   const body = req.body || {};
 
+  // Fix #21: Jangan expose error.message ke client di production
+  const isDev = process.env.NODE_ENV !== 'production';
+
   try {
-    // GET - list sessions
+    // GET - list sessions (hanya milik user yang login)
     if (req.method === 'GET') {
       const sessions = await query(
         'SELECT * FROM pathway_sessions WHERE user_id = $1 ORDER BY started_at DESC',
@@ -96,14 +113,15 @@ module.exports = async function handler(req, res) {
     }
 
     // DELETE - delete session
+    // Fix #3: Tambahkan user_id check agar hanya pemilik yang bisa delete
     if (req.method === 'DELETE') {
       const { sessionId } = body;
       if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
       const result = await query(
-        'DELETE FROM pathway_sessions WHERE id = $1 RETURNING id',
-        [sessionId]
+        'DELETE FROM pathway_sessions WHERE id = $1 AND user_id = $2 RETURNING id',
+        [sessionId, payload.userId] // ← fix: tambah ownership check
       );
-      if (result.length === 0) return res.status(404).json({ error: 'Session not found' });
+      if (result.length === 0) return res.status(404).json({ error: 'Session not found or not owned by you' });
       return res.status(200).json({ deleted: true, id: sessionId });
     }
 
@@ -113,12 +131,12 @@ module.exports = async function handler(req, res) {
     if (action === 'create') {
       const { diseaseId, diseaseName, patientCode } = body;
       if (!diseaseId || !diseaseName) return res.status(400).json({ error: 'diseaseId and diseaseName are required' });
-      
+
       // Collaborative Resuming: if a session with this code exists and is in_progress, JOIN it
       if (patientCode && patientCode.trim()) {
         const trimmedCode = patientCode.trim();
         const existing = await query(
-          'SELECT * FROM pathway_sessions WHERE disease_id = $1 AND patient_code = $2 AND status = \'in_progress\' LIMIT 1',
+          "SELECT * FROM pathway_sessions WHERE disease_id = $1 AND patient_code = $2 AND status = 'in_progress' LIMIT 1",
           [diseaseId, trimmedCode]
         );
         if (existing.length > 0) {
@@ -149,6 +167,10 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid action' });
   } catch (error) {
     console.error('[PATHWAY ERROR]', error);
-    return res.status(500).json({ error: 'Server error', detail: error.message });
+    // Fix #21: error.message hanya dikirim ke dev, production hanya generic message
+    return res.status(500).json({
+      error: 'Server error',
+      detail: isDev ? error.message : undefined,
+    });
   }
 };

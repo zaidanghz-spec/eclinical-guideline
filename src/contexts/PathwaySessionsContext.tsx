@@ -2,6 +2,21 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 
+// ─── Fix #14: Typed interfaces menggantikan any[] ───────────────────────────
+export interface ClinicalDecision {
+  nodeId: string;
+  branchId: string;
+  branchTitle: string;
+  selectedAt: string;
+}
+
+export interface ClinicalVariation {
+  nodeId: string;
+  variationReason: string;
+  incompleteSteps: string[];  // Fix #14: was any[]
+  documentedAt: string;
+}
+
 export interface DoctorOrder {
   diagnosis: string;
   prescription: string;      // resep / instruksi pengobatan
@@ -13,6 +28,7 @@ export interface DoctorOrder {
   doctorName: string;
 }
 
+// ─── Fix #8: Unifikasi interface — hanya camelCase, snake_case hanya di DB ───
 export interface PathwaySession {
   id: string;
   userId: string;
@@ -21,35 +37,36 @@ export interface PathwaySession {
   status: 'in_progress' | 'completed' | 'abandoned';
   currentNodeId: string | null;
   checklist: Record<string, boolean>;
-  decisions: Array<{
-    nodeId: string;
-    branchId: string;
-    branchTitle: string;
-    selectedAt: string;
-  }>;
-  variations: Array<{
-    nodeId: string;
-    variationReason: string;
-    incompleteSteps: any[];
-    documentedAt: string;
-  }>;
+  decisions: ClinicalDecision[];     // Fix #14: typed
+  variations: ClinicalVariation[];   // Fix #14: typed
   notes: Record<string, string>;
   startedAt: string;
   completedAt: string | null;
-  patient_code?: string;
-  pathway_history?: Array<{ nodeId: string; nodeName: string; completedAt?: string }>;
-  updated_at?: string;
+  patientCode: string;
+  pathwayHistory: Array<{ nodeId: string; nodeName: string; completedAt?: string }>;
+  updatedAt: string;
+  // Nurse-Doctor collaboration
+  consultationStatus: 'none' | 'waiting_doctor' | 'doctor_responded';
+  nurseNote: string;
+  reportedAt: string | null;
+  doctorOrders: DoctorOrder | null;
+  doctorId: string | null;
+
+  // Fix #8: Snake_case aliases retained ONLY for DB/API compat — consumers should use camelCase
+  /** @deprecated use patientCode */ patient_code?: string;
+  /** @deprecated use pathwayHistory */ pathway_history?: PathwaySession['pathwayHistory'];
+  /** @deprecated use currentNodeId */ current_node_id?: string | null;
+  /** @deprecated use consultationStatus */ consultation_status?: PathwaySession['consultationStatus'];
+  /** @deprecated use doctorOrders */ doctor_orders?: DoctorOrder | null;
+  // Legacy fields from earlier API versions
   started_at?: string;
+  updated_at?: string;
   completed_at?: string | null;
   disease_id?: string;
   disease_name?: string;
   user_id?: string;
-  current_node_id?: string | null;
-  // Nurse-Doctor collaboration fields
-  consultation_status?: 'none' | 'waiting_doctor' | 'doctor_responded';
   nurse_note?: string;
   reported_at?: string | null;
-  doctor_orders?: DoctorOrder | null;
   doctor_id?: string | null;
 }
 
@@ -61,13 +78,13 @@ interface PathwaySessionsContextType {
   createSession: (diseaseId: string, diseaseName: string, patientCode?: string) => Promise<PathwaySession | null>;
   updateSession: (sessionId: string, updates: Partial<PathwaySession>) => Promise<boolean>;
   saveDraft: (
-    sessionId: string, 
-    checklist: Record<string, boolean>, 
+    sessionId: string,
+    checklist: Record<string, boolean>,
     notes: Record<string, string>,
-    currentNodeId: string, 
-    pathwayHistory: Array<{ nodeId: string; nodeName: string; completedAt?: string }>, 
-    decisions: any[],
-    variations: any[]
+    currentNodeId: string,
+    pathwayHistory: PathwaySession['pathwayHistory'],
+    decisions: ClinicalDecision[],
+    variations: ClinicalVariation[]
   ) => Promise<boolean>;
   completeSession: (sessionId: string) => Promise<boolean>;
   deleteSession: (sessionId: string) => Promise<boolean>;
@@ -77,35 +94,45 @@ interface PathwaySessionsContextType {
 
 const PathwaySessionsContext = createContext<PathwaySessionsContextType | undefined>(undefined);
 
-function mapSession(raw: any): PathwaySession {
+// ─── Fix #9: mapSession — validasi ID, normalize ke camelCase ────────────────
+function mapSession(raw: unknown): PathwaySession {
+  if (!raw || typeof raw !== 'object') {
+    throw new Error('mapSession: received non-object data');
+  }
+  const r = raw as Record<string, unknown>;
+
+  // Fix #9: defensive ID check — jangan biarkan id = "undefined"
+  const rawId = r.id ?? r.session_id ?? r.sessionId ?? r._id;
+  if (!rawId) {
+    throw new Error(`mapSession: session has no ID. Keys: ${Object.keys(r).join(', ')}`);
+  }
+
   return {
-    id: String(raw.id || raw.session_id || raw.sessionId || raw._id),
-    userId: raw.userId || raw.user_id,
-    diseaseId: raw.diseaseId || raw.disease_id,
-    diseaseName: raw.diseaseName || raw.disease_name,
-    status: raw.status || 'in_progress',
-    currentNodeId: raw.currentNodeId || raw.current_node_id || null,
-    checklist: raw.checklist || {},
-    decisions: raw.decisions || [],
-    variations: raw.variations || [],
-    notes: raw.notes || {},
-    startedAt: raw.startedAt || raw.started_at || '',
-    completedAt: raw.completedAt || raw.completed_at || null,
-    patient_code: raw.patientCode || raw.patient_code || '',
-    pathway_history: raw.pathwayHistory || raw.pathway_history || [],
-    updated_at: raw.updatedAt || raw.updated_at || raw.startedAt || '',
-    started_at: raw.startedAt || raw.started_at || '',
-    completed_at: raw.completedAt || raw.completed_at || null,
-    disease_id: raw.diseaseId || raw.disease_id,
-    disease_name: raw.diseaseName || raw.disease_name,
-    user_id: raw.userId || raw.user_id,
-    current_node_id: raw.currentNodeId || raw.current_node_id || null,
-    // Collaboration fields
-    consultation_status: raw.consultation_status || 'none',
-    nurse_note: raw.nurse_note || '',
-    reported_at: raw.reported_at || null,
-    doctor_orders: raw.doctor_orders || null,
-    doctor_id: raw.doctor_id || null,
+    id: String(rawId),
+    userId: String(r.userId ?? r.user_id ?? ''),
+    diseaseId: String(r.diseaseId ?? r.disease_id ?? ''),
+    diseaseName: String(r.diseaseName ?? r.disease_name ?? ''),
+    status: (r.status as PathwaySession['status']) ?? 'in_progress',
+    currentNodeId: (r.currentNodeId ?? r.current_node_id ?? null) as string | null,
+    checklist: (r.checklist as Record<string, boolean>) ?? {},
+    decisions: (r.decisions as ClinicalDecision[]) ?? [],
+    variations: (r.variations as ClinicalVariation[]) ?? [],
+    notes: (r.notes as Record<string, string>) ?? {},
+    startedAt: String(r.startedAt ?? r.started_at ?? ''),
+    completedAt: (r.completedAt ?? r.completed_at ?? null) as string | null,
+    patientCode: String(r.patientCode ?? r.patient_code ?? ''),
+    pathwayHistory: (r.pathwayHistory ?? r.pathway_history ?? []) as PathwaySession['pathwayHistory'],
+    updatedAt: String(r.updatedAt ?? r.updated_at ?? r.startedAt ?? r.started_at ?? ''),
+    consultationStatus: ((r.consultationStatus ?? r.consultation_status) as PathwaySession['consultationStatus']) ?? 'none',
+    nurseNote: String(r.nurseNote ?? r.nurse_note ?? ''),
+    reportedAt: (r.reportedAt ?? r.reported_at ?? null) as string | null,
+    doctorOrders: (r.doctorOrders ?? r.doctor_orders ?? null) as DoctorOrder | null,
+    doctorId: (r.doctorId ?? r.doctor_id ?? null) as string | null,
+    // snake_case passthrough aliases for legacy consumers
+    patient_code: String(r.patientCode ?? r.patient_code ?? ''),
+    current_node_id: (r.currentNodeId ?? r.current_node_id ?? null) as string | null,
+    consultation_status: ((r.consultationStatus ?? r.consultation_status) as PathwaySession['consultationStatus']) ?? 'none',
+    doctor_orders: (r.doctorOrders ?? r.doctor_orders ?? null) as DoctorOrder | null,
   };
 }
 
@@ -129,12 +156,16 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       if (res.ok) {
         const mapped = (data.sessions || []).map(mapSession);
         setSessions(mapped);
-        // The most recent in-progress session is the "current" one
         const inProgress = mapped.find((s: PathwaySession) => s.status === 'in_progress');
         setCurrentSession(inProgress || null);
+      } else {
+        // Fix #24: user-facing error untuk fetch failure
+        console.error('Error fetching sessions:', data.error);
       }
     } catch (error) {
       console.error('Error fetching sessions:', error);
+      // Fix #24: user-facing notification
+      toast.error('Gagal memuat sesi. Periksa koneksi internet Anda.');
     } finally {
       setLoading(false);
     }
@@ -167,9 +198,13 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         setCurrentSession(session);
         return session;
       }
+      // Fix #24: error response handling
+      toast.error(`Gagal membuat sesi: ${data.error || 'Kesalahan server'}`);
       return null;
     } catch (error) {
       console.error('Error creating session:', error);
+      // Fix #24: user-facing error
+      toast.error('Gagal membuat sesi. Periksa koneksi internet Anda.');
       return null;
     }
   };
@@ -199,8 +234,13 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
   };
 
   const saveDraft = async (
-    sessionId: string, checklist: Record<string, boolean>, notes: Record<string, string>,
-    currentNodeId: string, pathwayHistory: any[], decisions: any[], variations: any[]
+    sessionId: string,
+    checklist: Record<string, boolean>,
+    notes: Record<string, string>,
+    currentNodeId: string,
+    pathwayHistory: PathwaySession['pathwayHistory'],
+    decisions: ClinicalDecision[],
+    variations: ClinicalVariation[]
   ) => {
     if (!user || !accessToken) return false;
     try {
@@ -210,9 +250,9 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ 
-          sessionId, checklist, notes, currentNodeId, 
-          pathwayHistory, decisions, variations, status: 'in_progress' 
+        body: JSON.stringify({
+          sessionId, checklist, notes, currentNodeId,
+          pathwayHistory, decisions, variations, status: 'in_progress'
         }),
       });
       const data = await res.json();
@@ -222,9 +262,16 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         toast.success('Draf berhasil disimpan');
         return true;
       }
+      // Fix #24: user-visible error jika save gagal
+      toast.error('Gagal menyimpan draf. Data mungkin tidak tersimpan.', { duration: 5000 });
       return false;
     } catch (error) {
       console.error('Error saving draft:', error);
+      // Fix #24: kritis — perawat di klinik harus tahu jika save gagal
+      toast.error('Gagal menyimpan data. Pastikan koneksi internet stabil sebelum melanjutkan.', {
+        duration: 8000,
+        description: 'Coba simpan ulang secara manual dengan tombol Simpan.',
+      });
       return false;
     }
   };
@@ -240,16 +287,19 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         },
         body: JSON.stringify({ sessionId }),
       });
-      const data = await res.json();
       if (res.ok) {
         toast.success('Pemeriksaan selesai!');
         await fetchSessions();
         setCurrentSession(null);
         return true;
       }
+      const data = await res.json();
+      // Fix #24
+      toast.error(`Gagal menyelesaikan sesi: ${data.error || 'Kesalahan server'}`);
       return false;
     } catch (error) {
       console.error('Error completing session:', error);
+      toast.error('Gagal menyelesaikan sesi. Periksa koneksi Anda.');
       return false;
     }
   };
@@ -271,9 +321,11 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         toast.success('Sesi berhasil dihapus');
         return true;
       }
+      toast.error(`Gagal menghapus sesi: ${data.error || 'Tidak ditemukan'}`);
       return false;
     } catch (error) {
       console.error('Error deleting session:', error);
+      toast.error('Gagal menghapus sesi.');
       return false;
     }
   };
@@ -297,10 +349,11 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         toast.success('Laporan berhasil dikirim ke Dokter!');
         return true;
       }
+      toast.error('Gagal mengirim laporan ke dokter');
       return false;
     } catch (error) {
       console.error('Error reporting to doctor:', error);
-      toast.error('Gagal mengirim laporan');
+      toast.error('Gagal mengirim laporan. Periksa koneksi Anda.');
       return false;
     }
   };
@@ -329,16 +382,17 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         toast.success('Instruksi dokter berhasil dikirim!');
         return true;
       }
+      toast.error('Gagal mengirim instruksi dokter');
       return false;
     } catch (error) {
       console.error('Error submitting doctor order:', error);
-      toast.error('Gagal mengirim instruksi');
+      toast.error('Gagal mengirim instruksi. Periksa koneksi Anda.');
       return false;
     }
   };
 
   return (
-    <PathwaySessionsContext.Provider value={{ 
+    <PathwaySessionsContext.Provider value={{
       sessions, loading, currentSession, refreshSessions: fetchSessions,
       createSession, updateSession, saveDraft, completeSession, deleteSession,
       reportToDoctor, submitDoctorOrder,

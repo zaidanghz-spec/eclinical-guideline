@@ -33,7 +33,31 @@ import { diseases } from '../lib/diseases';
 import { dynamicPathways, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
-import type { DoctorOrder } from '../contexts/PathwaySessionsContext';
+import type { DoctorOrder, ClinicalDecision, ClinicalVariation } from '../contexts/PathwaySessionsContext';
+
+// ─── Fix #1 (XSS): Sanitasi semua string user sebelum diinjeksi ke HTML laporan ───
+function escapeHtml(unsafe: string): string {
+  return String(unsafe)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ─── Fix #11: NodeReport interface di level modul, bukan di dalam fungsi ───
+interface NodeReport {
+  id: string;
+  title: string;
+  done: string[];
+  pendingDoctor: string[];
+  pendingNurse: string[];
+  hasVariation: boolean;
+  fullyCompliant: boolean;
+}
+
+// ─── Fix #22: Role sebagai literal type, hindari magic string tersebar ───
+type ClinicalRole = 'nurse' | 'doctor' | 'both';
 
 export default function DynamicPathwayPage() {
   const { diseaseId } = useParams();
@@ -64,8 +88,9 @@ export default function DynamicPathwayPage() {
   const [patientCodeError, setPatientCodeError] = useState('');
   const [userRole, setUserRole] = useState<'nurse' | 'doctor' | null>(null);
   const [doctorPresent, setDoctorPresent] = useState<boolean | null>(null);
-  const [decisions, setDecisions] = useState<any[]>([]);
-  const [variations, setVariations] = useState<any[]>([]);
+  // Fix #14: Typed arrays menggantikan any[]
+  const [decisions, setDecisions] = useState<ClinicalDecision[]>([]);
+  const [variations, setVariations] = useState<ClinicalVariation[]>([]);
 
   // Effective mode: full (semua item) atau nurse-only (item dokter dilock)
   const effectiveMode = useMemo(() => {
@@ -90,30 +115,40 @@ export default function DynamicPathwayPage() {
   const [submittingOrder, setSubmittingOrder] = useState(false);
   
   const nodeRef = useRef<HTMLDivElement>(null);
+  // Fix #25: Guard agar resume effect hanya berjalan sekali
+  const hasResumedRef = useRef(false);
+  // Fix #2: Ref untuk menyimpan nilai state terkini (mencegah stale closure di auto-save)
+  const latestStateRef = useRef({ checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations });
 
   const currentNode = pathway?.nodes[currentNodeId];
-  
-  // Check for resume from location state
+
+  // Fix #2: Selalu update latestStateRef setiap state berubah
   useEffect(() => {
+    latestStateRef.current = { checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations };
+  }, [checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations]);
+
+  // Fix #25: Resume effect — hanya jalankan sekali, tidak looping saat currentSession refresh
+  useEffect(() => {
+    if (hasResumedRef.current) return;  // sudah diresume, jangan ulangi
     const state = window.history.state?.usr;
     if (state?.sessionId && state?.resume && currentSession) {
+      hasResumedRef.current = true;
       setShowPatientCodeModal(false);
       setSessionId(state.sessionId);
-      setPatientCode(currentSession.patient_code || (currentSession as any).patientCode || '');
+      // Fix #8: gunakan camelCase dari context yang sudah di-normalize
+      setPatientCode(currentSession.patientCode || '');
       if (currentSession.checklist) setCheckedSteps(currentSession.checklist);
       if (currentSession.notes) setStepNotes(currentSession.notes);
-      if (currentSession.current_node_id || currentSession.currentNodeId) {
-        setCurrentNodeId(currentSession.current_node_id || currentSession.currentNodeId || pathway?.startNodeId || '');
+      if (currentSession.currentNodeId) {
+        setCurrentNodeId(currentSession.currentNodeId || pathway?.startNodeId || '');
       }
-      if (currentSession.pathway_history) setPathwayHistory(currentSession.pathway_history);
-      if (currentSession.decisions) setDecisions(currentSession.decisions);
-      if (currentSession.variations) setVariations(currentSession.variations);
-      // Track the original session start date for multi-day detection
-      const startedAt = currentSession.startedAt || currentSession.started_at || currentSession.startedAt;
-      if (startedAt) setSessionStartedAt(startedAt);
-      // Sync consultation status
-      if (currentSession.consultation_status) setConsultationStatus(currentSession.consultation_status);
-      if (currentSession.doctor_orders) setDoctorOrders(currentSession.doctor_orders);
+      if (currentSession.pathwayHistory?.length) setPathwayHistory(currentSession.pathwayHistory);
+      if (currentSession.decisions?.length) setDecisions(currentSession.decisions);
+      if (currentSession.variations?.length) setVariations(currentSession.variations);
+      if (currentSession.startedAt) setSessionStartedAt(currentSession.startedAt);
+      // Fix #8: gunakan camelCase
+      if (currentSession.consultationStatus) setConsultationStatus(currentSession.consultationStatus);
+      if (currentSession.doctorOrders) setDoctorOrders(currentSession.doctorOrders);
     }
   }, [currentSession]);
 
@@ -125,15 +160,14 @@ export default function DynamicPathwayPage() {
     setModalStep('role');
   };
 
-  const handleRoleSelect = (role: 'nurse' | 'doctor') => {
+  // Fix #6: async + await — mencegah race condition saat session dibuat
+  const handleRoleSelect = async (role: 'nurse' | 'doctor') => {
     setUserRole(role);
     if (role === 'doctor') {
-      // Doctor → full mode, create session immediately
       setDoctorPresent(true);
-      setModalStep('code'); // reset for next time
-      startSession();
+      setModalStep('code');
+      await startSession(); // Fix #6: ditambahkan await
     } else {
-      // Nurse → ask about doctor presence
       setModalStep('doctor-presence');
     }
   };
@@ -150,21 +184,20 @@ export default function DynamicPathwayPage() {
       if (session) {
         setSessionId(session.id);
         setSessionStartedAt(session.startedAt || now);
-        
-        // Sync states if it's a resumed session
+        // Fix #8: gunakan camelCase yang sudah di-normalize di mapSession
         if (session.checklist) setCheckedSteps(session.checklist);
         if (session.notes) setStepNotes(session.notes);
-        if (session.pathway_history) setPathwayHistory(session.pathway_history);
-        if (session.current_node_id || session.currentNodeId) {
-          setCurrentNodeId(session.current_node_id || session.currentNodeId || pathway.startNodeId);
+        if (session.pathwayHistory?.length) setPathwayHistory(session.pathwayHistory);
+        if (session.currentNodeId) {
+          setCurrentNodeId(session.currentNodeId || pathway.startNodeId);
         }
-        if (session.consultation_status) setConsultationStatus(session.consultation_status);
-        if (session.doctor_orders) setDoctorOrders(session.doctor_orders);
+        if (session.consultationStatus) setConsultationStatus(session.consultationStatus);
+        if (session.doctorOrders) setDoctorOrders(session.doctorOrders);
 
         setShowPatientCodeModal(false);
-        const isResume = (session as any).resumed || (session.checklist && Object.keys(session.checklist).length > 0);
-        toast.success(isResume ? 'Melanjutkan Sesi Pasien' : 'Sesi Baru Dimulai', { 
-          description: `Pasien: ${patientCode.trim()}` 
+        const isResume = session.checklist && Object.keys(session.checklist).length > 0;
+        toast.success(isResume ? 'Melanjutkan Sesi Pasien' : 'Sesi Baru Dimulai', {
+          description: `Pasien: ${patientCode.trim()}`
         });
       }
     } else {
@@ -214,7 +247,9 @@ export default function DynamicPathwayPage() {
     if (!currentNode || currentNode.type !== 'checklist') return [];
     const node = currentNode as ChecklistNode;
     return node.items.filter(item => {
-      if (effectiveMode === 'nurse-only' && (item as any).role === 'doctor') return false;
+      // Fix #22: gunakan ClinicalRole type assertion
+      const role = ((item as any).role as ClinicalRole | undefined) || 'both';
+      if (effectiveMode === 'nurse-only' && role === 'doctor') return false;
       const isChecked = checkedSteps[item.id];
       const hasNote = stepNotes[item.id] && stepNotes[item.id].trim().length > 0;
       return !(isChecked || hasNote);
@@ -228,15 +263,27 @@ export default function DynamicPathwayPage() {
     }));
   };
 
-  // Auto-save 2s after any toggle/note/navigation change so other users can resume
+  // Fix #2 (lanjutan): saveDraft dibungkus ref agar selalu fresh tanpa jadi dependency
+  // Ini mencegah auto-save trigger ulang setiap kali context re-render
+  const saveDraftRef = useRef(saveDraft);
+  useEffect(() => { saveDraftRef.current = saveDraft; }, [saveDraft]);
+
+  // Fix #2 + #12: Auto-save dengan latestStateRef + dirty check + saveDraftRef
+  const lastSavedHashRef = useRef<string>('');
   useEffect(() => {
     if (!sessionId || showPatientCodeModal) return;
     const timer = setTimeout(async () => {
-      await saveDraft(sessionId, checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations);
+      const s = latestStateRef.current;
+      const currentHash = JSON.stringify({
+        checklist: s.checkedSteps, notes: s.stepNotes, node: s.currentNodeId
+      });
+      if (currentHash === lastSavedHashRef.current) return; // fix #12: skip jika tidak ada perubahan
+      lastSavedHashRef.current = currentHash;
+      await saveDraftRef.current(sessionId, s.checkedSteps, s.stepNotes, s.currentNodeId, s.pathwayHistory, s.decisions, s.variations);
     }, 2000);
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkedSteps, stepNotes, pathwayHistory, currentNodeId]);
+  // saveDraftRef stabil via ref — tidak perlu masuk dependency
+  }, [checkedSteps, stepNotes, pathwayHistory, currentNodeId, sessionId, showPatientCodeModal]);
 
   const handleBranchSelect = (_branchId: string, nextNodeId: string, branchTitle: string) => {
     // Check if previous node validation is needed
@@ -255,12 +302,13 @@ export default function DynamicPathwayPage() {
 
   const navigateToNode = (nextNodeId: string, branchTitle: string) => {
     if (currentNode) {
-      setPathwayHistory(prev => [...prev, { nodeId: currentNodeId, nodeName: currentNode.type === 'checklist' ? currentNode.title : currentNode.title, completedAt: new Date().toISOString() }]);
+      setPathwayHistory(prev => [...prev, { nodeId: currentNodeId, nodeName: currentNode.title, completedAt: new Date().toISOString() }]);
     }
     setCurrentNodeId(nextNodeId);
     setShowValidationWarning(false);
     setPendingBranchId(null);
-    toast.success(`Navigating to: ${branchTitle}`);
+    // Fix #17: Ubah toast ke Bahasa Indonesia
+    toast.success(`Melanjutkan ke: ${branchTitle}`);
   };
 
   const handleContinueWithIncomplete = () => {
@@ -298,9 +346,11 @@ export default function DynamicPathwayPage() {
   const handleSubmitPathway = async () => {
     if (sessionId) {
       await handleSaveDraft();
-      completeSession(sessionId);
+      // Fix #7: await completeSession agar navigate tidak terjadi sebelum data tersimpan
+      await completeSession(sessionId);
     }
-    toast.success(`Clinical pathway for ${disease?.name} completed!`);
+    // Fix #17: Ubah ke Bahasa Indonesia
+    toast.success(`Pathway ${disease?.name} selesai!`);
     navigate('/home');
   };
 
@@ -360,12 +410,7 @@ export default function DynamicPathwayPage() {
       variationsByNode[v.nodeId].push(v);
     });
 
-    // ── 3. Build per-node report data ──
-    interface NodeReport {
-      id: string; title: string;
-      done: string[]; pendingDoctor: string[]; pendingNurse: string[];
-      hasVariation: boolean; fullyCompliant: boolean;
-    }
+    // ── 3. Build per-node report data ── (NodeReport interface dipindah ke level modul, Fix #11)
     const nodeReports: NodeReport[] = [];
     let totalDone = 0; let totalPendingDoc = 0;
 
@@ -407,17 +452,19 @@ export default function DynamicPathwayPage() {
           ? `<span class="badge badge-ok">✓ Selesai</span>`
           : `<span class="badge badge-info">⏳ Sebagian</span>`;
 
-      const doneRows = nr.done.map(t => `<tr><td><span class="ic done">✓</span> ${t}</td><td class="role-tag role-done">Selesai</td></tr>`).join('');
-      const docRows = nr.pendingDoctor.map(t => `<tr><td><span class="ic doc">🩺</span> ${t}</td><td class="role-tag role-doc">Perlu Dokter</td></tr>`).join('');
-      const nurseRows = nr.pendingNurse.map(t => `<tr><td><span class="ic nurse">◦</span> ${t}</td><td class="role-tag role-nurse">Belum Dikerjakan</td></tr>`).join('');
+      // Fix #1 (XSS): Semua data user di-escape sebelum dimasukkan ke HTML
+      const doneRows = nr.done.map(t => `<tr><td><span class="ic done">✓</span> ${escapeHtml(t)}</td><td class="role-tag role-done">Selesai</td></tr>`).join('');
+      const docRows = nr.pendingDoctor.map(t => `<tr><td><span class="ic doc">🩺</span> ${escapeHtml(t)}</td><td class="role-tag role-doc">Perlu Dokter</td></tr>`).join('');
+      const nurseRows = nr.pendingNurse.map(t => `<tr><td><span class="ic nurse">◦</span> ${escapeHtml(t)}</td><td class="role-tag role-nurse">Belum Dikerjakan</td></tr>`).join('');
       const varRows = nodeVariations.map(v => {
         const skipped = (v.incompleteSteps || []).map((sid: string) => {
           const item = (allNodes[nr.id] as ChecklistNode)?.items?.find(i => i.id === sid);
-          return item ? `<li>◦ ${item.title}</li>` : `<li>◦ ${sid}</li>`;
+          // Fix #1: escape item title dan sid
+          return item ? `<li>◦ ${escapeHtml(item.title)}</li>` : `<li>◦ ${escapeHtml(sid)}</li>`;
         }).join('');
         return `<div class="variation-block">
-          <div class="variation-header">⚠️ Variasi Klinis — ${new Date(v.documentedAt).toLocaleString('id-ID')}</div>
-          <p><strong>Alasan:</strong> ${v.variationReason}</p>
+          <div class="variation-header">⚠️ Variasi Klinis — ${escapeHtml(new Date(v.documentedAt).toLocaleString('id-ID'))}</div>
+          <p><strong>Alasan:</strong> ${escapeHtml(v.variationReason)}</p>
           ${skipped ? `<p><strong>Langkah yang dilewati:</strong></p><ul>${skipped}</ul>` : ''}
         </div>`;
       }).join('');
@@ -426,7 +473,7 @@ export default function DynamicPathwayPage() {
       <div class="node-card" id="node-${idx+1}">
         <div class="node-header">
           <span class="node-num">${idx+1}</span>
-          <span class="node-title">${nr.title}</span>
+          <span class="node-title">${escapeHtml(nr.title)}</span>
           ${status}
         </div>
         ${doneRows || docRows || nurseRows ? `
@@ -438,22 +485,24 @@ export default function DynamicPathwayPage() {
       </div>`;
     }).join('');
 
+    // Fix #1 (XSS): Semua field doctorOrders di-escape
     const doctorOrdersHtml = doctorOrders ? `
     <div class="section-card orders">
       <h2>👩‍⚕️ Instruksi Dokter</h2>
-      ${doctorOrders.diagnosis ? `<p><strong>Diagnosis Medis:</strong> ${doctorOrders.diagnosis}</p>` : ''}
-      ${doctorOrders.prescription ? `<p><strong>Resep / Terapi:</strong></p><pre>${doctorOrders.prescription}</pre>` : ''}
-      ${doctorOrders.instructions ? `<p><strong>Instruksi Tindakan Perawat:</strong></p><pre>${doctorOrders.instructions}</pre>` : ''}
-      ${doctorOrders.followupPlan ? `<p><strong>Rencana Tindak Lanjut:</strong> ${doctorOrders.followupPlan}</p>` : ''}
-      ${doctorOrders.referral ? `<div class="referral-box"><strong>🚑 Pasien DIRUJUK:</strong> ${doctorOrders.referralNote || '-'}</div>` : ''}
-      <p style="font-size:11px;color:#94a3b8">Diinput oleh: ${doctorOrders.doctorName || 'Dokter'} pada ${new Date(doctorOrders.orderedAt).toLocaleString('id-ID')}</p>
+      ${doctorOrders.diagnosis ? `<p><strong>Diagnosis Medis:</strong> ${escapeHtml(doctorOrders.diagnosis)}</p>` : ''}
+      ${doctorOrders.prescription ? `<p><strong>Resep / Terapi:</strong></p><pre>${escapeHtml(doctorOrders.prescription)}</pre>` : ''}
+      ${doctorOrders.instructions ? `<p><strong>Instruksi Tindakan Perawat:</strong></p><pre>${escapeHtml(doctorOrders.instructions)}</pre>` : ''}
+      ${doctorOrders.followupPlan ? `<p><strong>Rencana Tindak Lanjut:</strong> ${escapeHtml(doctorOrders.followupPlan)}</p>` : ''}
+      ${doctorOrders.referral ? `<div class="referral-box"><strong>🚑 Pasien DIRUJUK:</strong> ${escapeHtml(doctorOrders.referralNote || '-')}</div>` : ''}
+      <p style="font-size:11px;color:#94a3b8">Diinput oleh: ${escapeHtml(doctorOrders.doctorName || 'Dokter')} pada ${escapeHtml(new Date(doctorOrders.orderedAt).toLocaleString('id-ID'))}</p>
     </div>` : '';
 
+    // Fix #1 (XSS): Catatan klinis di-escape, tampilkan nama langkah bukan raw ID
     const notesHtml = Object.entries(stepNotes).filter(([,v]) => v).length > 0 ? `
     <div class="section-card">
       <h2>📝 Catatan Klinis</h2>
-      <table><thead><tr><th>ID Langkah</th><th>Catatan</th></tr></thead>
-      <tbody>${Object.entries(stepNotes).filter(([,v]) => v).map(([k,v]) => `<tr><td style="font-family:monospace;font-size:11px;color:#64748b">${k}</td><td>${v}</td></tr>`).join('')}</tbody></table>
+      <table><thead><tr><th>Langkah</th><th>Catatan</th></tr></thead>
+      <tbody>${Object.entries(stepNotes).filter(([,v]) => v).map(([k,v]) => `<tr><td style="font-family:monospace;font-size:11px;color:#64748b">${escapeHtml(k)}</td><td>${escapeHtml(v)}</td></tr>`).join('')}</tbody></table>
     </div>` : '';
 
     const html = `<!DOCTYPE html>
@@ -507,12 +556,12 @@ export default function DynamicPathwayPage() {
 <body>
   <div class="report-header">
     <h1>📋 Laporan Klinis Pasien</h1>
-    <p>${disease?.name} &bull; Dicetak: ${now}</p>
+    <p>${escapeHtml(disease?.name || '')} &bull; Dicetak: ${escapeHtml(now)}</p>
   </div>
 
   <div class="meta-grid">
-    <div class="meta-card"><div class="label">Kode Pasien</div><div class="value">${patientCode}</div></div>
-    <div class="meta-card"><div class="label">Penyakit</div><div class="value">${disease?.name}</div></div>
+    <div class="meta-card"><div class="label">Kode Pasien</div><div class="value">${escapeHtml(patientCode)}</div></div>
+    <div class="meta-card"><div class="label">Penyakit</div><div class="value">${escapeHtml(disease?.name || '')}</div></div>
     <div class="meta-card"><div class="label">Status Laporan</div><div class="value">${complianceBadge}</div></div>
     <div class="meta-card"><div class="label">Dibuat Oleh</div><div class="value">${userRole === 'nurse' ? '👨‍⚕️ Perawat' : '🩺 Dokter'}</div></div>
     <div class="meta-card"><div class="label">Mode Akses</div><div class="value">${effectiveMode === 'nurse-only' ? 'Perawat (Mandiri)' : 'Kolaborasi'}</div></div>
