@@ -738,18 +738,40 @@ function ResultsView({
                   )}
 
                   {/* CTA */}
-                  <button
-                    onClick={() => navigate(`/pathway-dynamic/${s.diseaseId}`)}
-                    className={`w-full py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
-                      idx === 0
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-md'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    <Activity className="w-4 h-4" />
-                    Buka Pathway {s.diseaseName}
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                  {s.hasPathway ? (
+                    <button
+                      onClick={() => navigate(`/pathway-dynamic/${s.diseaseId}`)}
+                      className={`w-full py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
+                        idx === 0
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-md'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      <Activity className="w-4 h-4" />
+                      Buka Pathway {s.diseaseName}
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <div className={`rounded-xl p-3 border text-sm ${
+                      s.urgency === 'emergency'
+                        ? 'bg-red-50 border-red-300'
+                        : 'bg-blue-50 border-blue-200'
+                    }`}>
+                      <div className={`font-bold text-[10px] uppercase tracking-wider mb-1.5 ${
+                        s.urgency === 'emergency' ? 'text-red-700' : 'text-blue-700'
+                      }`}>
+                        {s.urgency === 'emergency' ? '🚨 Tindakan Segera Direkomendasikan' : '💡 Rekomendasi Klinis'}
+                      </div>
+                      <p className={`text-xs leading-relaxed ${
+                        s.urgency === 'emergency' ? 'text-red-800' : 'text-blue-800'
+                      }`}>
+                        {s.pathwayNote || 'Pathway untuk kondisi ini belum tersedia. Silakan tangani sesuai protokol klinis setempat.'}
+                      </p>
+                      <div className="mt-2 text-[10px] text-slate-400 italic">
+                        ⚠️ Pathway interaktif untuk penyakit ini belum tersedia di sistem
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}

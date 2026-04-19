@@ -57,6 +57,8 @@ export interface PathwaySuggestion {
   additionalQuestions: string[];
   urgency: 'emergency' | 'urgent' | 'routine';
   reasoning: string;             // penjelasan singkat klinisi
+  hasPathway: boolean;           // apakah pathway tersedia di sistem
+  pathwayNote?: string;          // jika tidak ada pathway, tindakan apa yang disarankan
 }
 
 export function calculateCompletion(data: AnamnesisData): number {
@@ -116,6 +118,8 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     reasoning: string;
     score: () => number;
     additionalQuestions: string[];
+    hasPathway: boolean;
+    pathwayNote?: string;
   }
 
   const rules: DiseaseRule[] = [
@@ -124,9 +128,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // KARDIOVASKULAR
     // ──────────────────────────────────────────
     {
-      id: 'acs',
-      name: 'Acute Coronary Syndrome (ACS)',
+      id: 'sindrom-koroner-akut', // pathway: sindrom-koroner-akut ✓
+      name: 'Sindrom Koroner Akut / ACS',
       urgency: 'emergency',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Nyeri dada khas iskemik dengan onset akut. Perlu EKG segera.',
       additionalQuestions: [
         'Apakah ada keringat dingin atau rasa akan pingsan?',
@@ -143,16 +149,41 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (isHighSeverity) s += 10;
         if (has('aktivitas', 'exertion', 'olah raga', 'naik tangga')) s += 10;
         if (has('diabetes', 'dm', 'hipertensi', 'merokok', 'kolesterol')) s += 8;
-        // Penalti: jika keluhan di perut tanpa ada nyeri dada
         if (!has('dada', 'chest') && has('perut', 'ulu hati')) s -= 20;
         return s;
       },
     },
 
     {
-      id: 'heart-failure',
+      id: 'angina-pektoris-stabil', // pathway: angina-pektoris-stabil ✓
+      name: 'Angina Pektoris Stabil',
+      urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
+      reasoning: 'Nyeri dada saat aktivitas yang hilang saat istirahat, berulang — khas angina stabil.',
+      additionalQuestions: [
+        'Apakah nyeri hanya muncul saat aktivitas dan hilang saat istirahat?',
+        'Sudah berapa lama keluhan ini berlangsung?',
+        'Apakah ada riwayat penyakit jantung koroner sebelumnya?',
+      ],
+      score: () => {
+        let s = 0;
+        if (has('nyeri dada', 'dada')) s += 15;
+        if (has('aktivitas', 'naik tangga', 'olahraga', 'berjalan')) s += 20;
+        if (has('hilang saat istirahat', 'membaik istirahat')) s += 25;
+        if (isChronic || has('berulang', 'sering')) s += 15;
+        if (has('nitrogliserin', 'isosorbid', 'nitrat')) s += 20;
+        if (!isSudden) s += 10;
+        return s;
+      },
+    },
+
+    {
+      id: 'gagal-jantung', // pathway: tidak ada — rekomendasikan nama saja
       name: 'Gagal Jantung (Heart Failure)',
       urgency: 'urgent',
+      hasPathway: false,
+      pathwayNote: 'Rujuk ke poli jantung atau IGD untuk evaluasi ekokardiografi. Cek EKG, Rontgen dada, BNP/NT-proBNP.',
       reasoning: 'Sesak napas progresif dengan edema tungkai, sulit tidur telentang.',
       additionalQuestions: [
         'Berapa bantal yang dipakai tidur agar tidak sesak?',
@@ -174,9 +205,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     },
 
     {
-      id: 'hipertensi-dewasa',
+      id: 'hipertensi-dewasa', // pathway: hipertensi-dewasa ✓
       name: 'Hipertensi Dewasa',
       urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Tekanan darah tinggi dengan gejala target organ atau tanpa gejala.',
       additionalQuestions: [
         'Berapa tekanan darah yang terukur saat ini?',
@@ -190,7 +223,30 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('tengkuk', 'kuduk', 'leher belakang')) s += 15;
         if (has('pandangan kabur', 'penglihatan buram', 'blur')) s += 20;
         if (has('mual', 'muntah') && has('kepala', 'pusing')) s += 10;
-        if (has('diabetes', 'dm', 'ginjal', 'jantung')) s += 8; // komorbid
+        if (has('diabetes', 'dm', 'ginjal', 'jantung')) s += 8;
+        return s;
+      },
+    },
+
+    {
+      id: 'svt', // pathway: svt ✓ (aritmia)
+      name: 'Aritmia / Supraventrikular Takikardia (SVT)',
+      urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
+      reasoning: 'Jantung berdebar cepat tiba-tiba, mungkin disertai pusing atau pingsan.',
+      additionalQuestions: [
+        'Apakah detak jantung sangat cepat dan teratur atau tidak teratur?',
+        'Apakah disertai pingsan atau hampir pingsan?',
+        'Apakah sudah pernah dilakukan EKG saat serangan?',
+      ],
+      score: () => {
+        let s = 0;
+        if (has('jantung berdebar', 'palpitasi', 'berdebar', 'takikardia', 'denyut cepat')) s += 40;
+        if (isSudden || isAcute) s += 15;
+        if (has('pusing', 'hampir pingsan', 'presinkop')) s += 15;
+        if (has('sesak') && has('berdebar')) s += 10;
+        if (has('svt', 'atrial fibrilasi', 'af')) s += 25;
         return s;
       },
     },
@@ -199,12 +255,14 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // RESPIRASI
     // ──────────────────────────────────────────
     {
-      id: 'pneumonia-komunitas',
+      id: 'pneumonia-komunitas', // pathway: pneumonia-komunitas ✓
       name: 'Pneumonia Komunitas (CAP)',
       urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Demam + batuk produktif + sesak: khas pneumonia komunitas.',
       additionalQuestions: [
-        'Apakah sudahadu dilakukan foto Rontgen dada?',
+        'Apakah sudah dilakukan foto Rontgen dada?',
         'Apakah dahak berwarna kuning/hijau atau berdarah?',
         'Apakah saturasi oksigen sudah dicek?',
       ],
@@ -217,16 +275,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('dada nyeri', 'nyeri dada saat napas', 'pleuritik')) s += 15;
         if (isSudden || isAcute) s += 10;
         if (has('menggigil', 'chills', 'keringat')) s += 10;
-        // Penalti: batuk kronik tanpa demam lebih ke TB
         if (isChronic && !has('demam', 'fever')) s -= 15;
         return s;
       },
     },
 
     {
-      id: 'tuberkulosis-paru',
+      id: 'tuberkulosis', // pathway: tuberkulosis ✓
       name: 'Tuberkulosis Paru (TB)',
       urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Batuk >2 minggu + demam subfebris + keringat malam khas TB.',
       additionalQuestions: [
         'Sudah berapa minggu batuk ini berlangsung?',
@@ -243,16 +302,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('demam', 'fever') && isChronic) s += 15;
         if (has('kontak tb', 'tinggal serumah penderita tb')) s += 20;
         if (has('lelah', 'lemas', 'fatigue')) s += 8;
-        // Penalti: batuk kurang 2 minggu sangat kecil kemungkinannya TB
         if (isAcute && !isChronic) s -= 20;
         return s;
       },
     },
 
     {
-      id: 'asthma-exacerbation',
+      id: 'asma-eksaserbasi', // pathway: TIDAK ADA — rekomendasikan nama saja
       name: 'Asma Eksaserbasi Akut',
       urgency: 'urgent',
+      hasPathway: false,
+      pathwayNote: 'Berikan bronkodilator (salbutamol inhaler/nebulisasi) segera. Nilai SpO2 dan peak flow. Rujuk IGD jika tidak respons dalam 20 menit.',
       reasoning: 'Sesak episodik dengan mengi, riwayat asma, dipicu alergen/infeksi.',
       additionalQuestions: [
         'Apakah ada riwayat asma sebelumnya?',
@@ -272,9 +332,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     },
 
     {
-      id: 'ispa',
+      id: 'ispa', // pathway: ispa ✓ (ispa-non-pneumonia juga ada tapi incomplete)
       name: 'ISPA (Infeksi Saluran Napas Atas)',
       urgency: 'routine',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Batuk, pilek, nyeri tenggorok ringan — typical viral upper respiratory.',
       additionalQuestions: [
         'Apakah ada demam tinggi atau sesak napas?',
@@ -288,7 +350,6 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('nyeri tenggorok', 'sakit tenggorok', 'sore throat')) s += 20;
         if (has('demam ringan', 'subfebris', 'agak panas')) s += 10;
         if (isAcute) s += 10;
-        // Penalti: bila ada sesak berat atau infiltrat dada → bukan ISPA biasa
         if (has('sesak berat', 'nyeri dada')) s -= 15;
         if (isChronic) s -= 20;
         return s;
@@ -299,9 +360,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // NEUROLOGI
     // ──────────────────────────────────────────
     {
-      id: 'vertigo',
-      name: 'Vertigo (BPPV)',
+      id: 'vertigo', // pathway: vertigo ✓ (bppvPathway)
+      name: 'Vertigo / BPPV',
       urgency: 'routine',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Pusing berputar episodik dipicu perubahan posisi kepala khas BPPV.',
       additionalQuestions: [
         'Apakah pusing berputar timbul saat berguling di kasur atau bangun dari tidur?',
@@ -313,7 +376,6 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('berputar', 'spinning', 'vertigo', 'pusing berputar')) s += 30;
         if (has('posisi', 'miring', 'bangun tidur', 'toleh', 'positional')) s += 30;
         if (has('mual', 'nausea') && has('pusing')) s += 10;
-        // Penalti: jika ada defisit neurologis → bukan BPPV
         if (has('pelo', 'kelemahan', 'hemiparesis', 'diplopia', 'wajah miring')) s -= 30;
         if (has('kepala terasa berat') && !has('berputar')) s -= 10;
         return s;
@@ -321,9 +383,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     },
 
     {
-      id: 'tension-type-headache',
+      id: 'tension-type-headache', // pathway: tension-type-headache ✓
       name: 'Nyeri Kepala Tipe Tegang (TTH)',
       urgency: 'routine',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Sakit kepala bilateral seperti diikat, berkaitan dengan stres/postur.',
       additionalQuestions: [
         'Apakah nyeri kepala seperti ditekan atau diikat seperti helm?',
@@ -337,16 +401,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('stres', 'capek', 'lelah', 'kelelahan', 'fatigue')) s += 15;
         if (!has('berputar', 'mual berat', 'muntah', 'photophobia', 'phonophobia')) s += 10;
         if (isChronic || has('berulang', 'sering')) s += 10;
-        // Penalti: sakit kepala mendadak sangat berat → perlu menyingkirkan SAH
         if (isSudden && isHighSeverity && has('kepala')) s -= 20;
         return s;
       },
     },
 
     {
-      id: 'meningitis',
-      name: 'Meningitis',
+      id: 'meningitis-note', // pathway: TIDAK ADA — EMERGENCY — hanya rekomendasikan
+      name: 'Meningitis (KEGAWATAN NEUROLOGIS)',
       urgency: 'emergency',
+      hasPathway: false,
+      pathwayNote: '⚠️ DARURAT: Segera rujuk IGD RS. Jangan tunda antibiotik jika ada kaku kuduk + demam + kesadaran menurun. Pertimbangkan deksametason IV sebelum/bersamaan antibiotik.',
       reasoning: 'Triad demam + sakit kepala hebat + kaku kuduk — emergency neurologis.',
       additionalQuestions: [
         'Apakah ada kaku leher yang tidak bisa digerakkan?',
@@ -364,13 +429,39 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       },
     },
 
+    {
+      id: 'stroke-note', // pathway: TIDAK ADA — EMERGENCY — hanya rekomendasikan
+      name: 'Stroke Akut (KEGAWATAN OTAK)',
+      urgency: 'emergency',
+      hasPathway: false,
+      pathwayNote: '⚠️ DARURAT - "Time is Brain": Aktivasi protokol stroke. Cek FAST (Face-Arm-Speech-Time). Rujuk ke RS dengan fasilitas CT-Scan segera. HINDARI antihipertensi kecuali TD >220/120.',
+      reasoning: 'Defisit neurologis fokal akut (pelo, kelemahan satu sisi, bicara cadel) — stroke sampai terbukti bukan.',
+      additionalQuestions: [
+        'Apakah ada kelemahan atau mati rasa pada wajah, lengan, atau kaki satu sisi?',
+        'Apakah bicara menjadi cadel atau tidak bisa berbicara sama sekali?',
+        'Kapan tepat waktu gejala pertama kali muncul?',
+      ],
+      score: () => {
+        let s = 0;
+        if (has('pelo', 'bicara cadel', 'bicara kacau', 'afasia')) s += 40;
+        if (has('kelemahan', 'lumpuh', 'hemiparesis', 'satu sisi lemah')) s += 40;
+        if (has('wajah miring', 'mulut miring', 'face droop')) s += 30;
+        if (isSudden && isAcute) s += 15;
+        if (has('pandangan ganda', 'buta mendadak', 'diplopia')) s += 20;
+        if (has('hipertensi', 'dm', 'merokok', 'kolesterol', 'jantung')) s += 10;
+        return s;
+      },
+    },
+
     // ──────────────────────────────────────────
     // GASTROINTESTINAL
     // ──────────────────────────────────────────
     {
-      id: 'dispepsia',
+      id: 'dispepsia', // pathway: dispepsia ✓
       name: 'Dispepsia / Maag',
       urgency: 'routine',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Nyeri ulu hati, kembung, mual — khas sindrom dispepsia fungsional.',
       additionalQuestions: [
         'Apakah gejala muncul atau memburuk setelah makan?',
@@ -385,18 +476,18 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('makan', 'setelah makan', 'sebelum makan')) s += 15;
         if (has('terbakar', 'panas', 'perih', 'burning')) s += 15;
         if (isChronic || has('sering', 'berulang')) s += 10;
-        // Penalti: demam + nyeri RLQ → bukan dispepsia
         if (has('demam', 'fever') && has('kanan bawah')) s -= 15;
-        // Penalti: muntah darah → ke GI bleeding
         if (has('muntah darah', 'hematemesis', 'melena')) s -= 30;
         return s;
       },
     },
 
     {
-      id: 'acute-gastroenteritis',
-      name: 'Acute Gastroenteritis (AGE)',
+      id: 'acute-gastroenteritis', // pathway: acute-gastroenteritis ✓ (diare-dewasa)
+      name: 'Diare Akut / Gastroenteritis',
       urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Diare akut + mual/muntah, sering disertai demam dan riwayat makan.',
       additionalQuestions: [
         'Berapa kali BAB dalam 24 jam terakhir?',
@@ -416,14 +507,16 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     },
 
     {
-      id: 'acute-appendicitis',
-      name: 'Appendisitis Akut',
+      id: 'appendisitis-note', // pathway: TIDAK ADA — rekomendasikan
+      name: 'Appendisitis Akut (KEGAWATAN BEDAH)',
       urgency: 'emergency',
-      reasoning: 'Nyeri berpindah ke RLQ + demam + mual, mcburney sign khas apendisitis.',
+      hasPathway: false,
+      pathwayNote: '⚠️ DARURAT BEDAH: Hitung darah lengkap (leukositosis), Skor Alvarado. Jangan beri makanan/minuman. Rujuk ke RS bedah SEGERA.',
+      reasoning: 'Nyeri berpindah ke RLQ + demam + mual, McBurney sign khas apendisitis.',
       additionalQuestions: [
         'Apakah nyeri dimulai dari sekitar pusar lalu berpindah ke perut kanan bawah?',
         'Apakah nyeri memberat saat berjalan atau berbalik badan?',
-        'Apakah ada demam > 38°C?',
+        'Apakah ada demam >38°C?',
       ],
       score: () => {
         let s = 0;
@@ -433,37 +526,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('mual', 'muntah')) s += 10;
         if (has('mual', 'anoreksia', 'tidak nafsu makan')) s += 10;
         if (isSudden || isAcute) s += 10;
-        // Penalti: lokasi bukan perut kanan bawah
         if (!has('kanan bawah', 'rlq') && has('perut kiri', 'ulu hati')) s -= 20;
         return s;
       },
     },
 
     {
-      id: 'acute-pancreatitis',
-      name: 'Pankreatitis Akut',
-      urgency: 'emergency',
-      reasoning: 'Nyeri ulu hati tembus punggung + mual muntah berat, riwayat batu empedu/alkohol.',
-      additionalQuestions: [
-        'Apakah nyeri terasa tembus ke punggung belakang?',
-        'Apakah ada riwayat batu empedu atau konsumsi alkohol?',
-        'Apakah nyeri sangat berat dan tidak membaik dengan posisi apapun?',
-      ],
-      score: () => {
-        let s = 0;
-        if (has('ulu hati', 'epigastrik') && has('punggung', 'tembus punggung', 'back')) s += 40;
-        if (has('mual', 'muntah berat')) s += 15;
-        if (has('batu empedu', 'cholelithiasis', 'alkohol', 'alcohol')) s += 20;
-        if (isHighSeverity) s += 15;
-        if (isSudden) s += 10;
-        return s;
-      },
-    },
-
-    {
-      id: 'upper-gi-bleeding',
+      id: 'perdarahan-gi-note', // pathway: TIDAK ADA — rekomendasikan
       name: 'Perdarahan GI Atas',
       urgency: 'emergency',
+      hasPathway: false,
+      pathwayNote: '⚠️ DARURAT: Pasang IV line dua jalur besar, resusitasi cairan. Puasakan pasien. Pasang NGT jika perlu. Rujuk ke RS dengan endoskopi SEGERA.',
       reasoning: 'Hematemesis/melena adalah alarm sign perdarahan GI atas.',
       additionalQuestions: [
         'Berapa banyak kira-kira darah yang dimuntahkan?',
@@ -481,10 +554,12 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     },
 
     {
-      id: 'typhoid-fever',
+      id: 'demam-tifoid-note', // pathway: TIDAK ADA — rekomendasikan
       name: 'Demam Tifoid',
       urgency: 'urgent',
-      reasoning: 'Demam tangga > 1 minggu + nyeri perut + bradikardi relatif.',
+      hasPathway: false,
+      pathwayNote: 'Lakukan Widal/IgM-IgG Salmonella. Mulai rehidrasi oral. Obati dengan siprofloksasin atau kloramfenikol sesuai keparahan. Hindari semua obat anti-diare.',
+      reasoning: 'Demam tangga >1 minggu + nyeri perut + bradikardi relatif.',
       additionalQuestions: [
         'Sudah berapa hari demam berlangsung?',
         'Apakah demam makin tinggi tiap hari dan lebih tinggi sore/malam?',
@@ -498,7 +573,6 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('sembelit', 'konstipasi', 'bab keras')) s += 15;
         if (has('bradikardi', 'denyut pelan', 'nadi pelan')) s += 15;
         if (has('lemas', 'malaise')) s += 10;
-        // Penalti: menggigil periodik → malaria lebih dari tifoid
         if (has('menggigil periodik', 'periodic fever')) s -= 15;
         return s;
       },
@@ -508,9 +582,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // INFEKSI TROPIS
     // ──────────────────────────────────────────
     {
-      id: 'dbd',
+      id: 'dbd', // pathway: dbd ✓
       name: 'Demam Berdarah Dengue (DBD)',
       urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Demam tinggi mendadak + nyeri retro-orbital + trombositopenia khas dengue.',
       additionalQuestions: [
         'Apakah demam tiba-tiba tinggi dan sudah berapa hari?',
@@ -525,16 +601,17 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         if (has('bintik merah', 'petechiae', 'rash', 'ruam')) s += 20;
         if (has('mimisan', 'epistaxis', 'gusi berdarah', 'perdarahan')) s += 15;
         if (has('mual', 'nausea') && has('demam')) s += 5;
-        // Penalti kuat: kalau ada batuk kronik / kaku kuduk itu bukan DBD
         if (has('kaku kuduk', 'batuk kronik')) s -= 15;
         return s;
       },
     },
 
     {
-      id: 'malaria',
+      id: 'malaria-note', // pathway: TIDAK ADA — rekomendasikan
       name: 'Malaria',
       urgency: 'urgent',
+      hasPathway: false,
+      pathwayNote: 'Lakukan apusan darah tebal/tipis atau RDT malaria. Tatalaksana sesuai jenis plasmodium (P.falciparum: ACT; P.vivax: klorokuin+primakuin). Rujuk jika malaria berat.',
       reasoning: 'Demam periodik + menggigil + berkeringat trias khas malaria.',
       additionalQuestions: [
         'Apakah ada riwayat bepergian ke daerah endemis malaria?',
@@ -556,9 +633,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // METABOLIK / ENDOKRIN
     // ──────────────────────────────────────────
     {
-      id: 'diabetes-melitus',
+      id: 'diabetes-melitus', // pathway: diabetes-melitus ✓
       name: 'Diabetes Melitus Tipe 2',
       urgency: 'routine',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Trias poliuria, polidipsia, polifagia + berat badan turun khas DM.',
       additionalQuestions: [
         'Apakah sering kencing berlebihan, termasuk malam hari?',
@@ -582,12 +661,14 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // GINJAL
     // ──────────────────────────────────────────
     {
-      id: 'acute-kidney-injury',
+      id: 'acute-kidney-injury', // pathway: acute-kidney-injury ✓
       name: 'Gangguan Ginjal Akut (AKI)',
       urgency: 'emergency',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Penurunan output urine akut ± nyeri pinggang — perlu penanganan segera.',
       additionalQuestions: [
-        'Apakah jumlah kencing berkurang drastis (< 400 ml/hari)?',
+        'Apakah jumlah kencing berkurang drastis (<400 ml/hari)?',
         'Apakah ada riwayat diare berat, perdarahan, atau muntah sebelumnya?',
         'Apakah ada konsumsi obat NSAID (asam mefenamat, ibuprofen) dalam waktu lama?',
       ],
@@ -607,9 +688,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // TOKSIKOLOGI
     // ──────────────────────────────────────────
     {
-      id: 'intoksikasi-kimia',
+      id: 'intoksikasi-kimia', // pathway: intoksikasi-kimia ✓
       name: 'Intoksikasi / Keracunan',
       urgency: 'emergency',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Riwayat paparan zat beracun adalah kedaruratan; perlu identifikasi zat segera.',
       additionalQuestions: [
         'Zat apa yang dikonsumsi/terpapar?',
@@ -620,10 +703,79 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
         let s = 0;
         if (has('keracunan', 'menelan', 'tertelan', 'minum zat', 'intoksikasi', 'overdosis')) s += 50;
         if (has('oplosan', 'miras', 'alkohol palsu')) s += 30;
-        if (has('pandangan buram', 'mata kabur', 'buta mendadak') && has('miras', 'alkohol', 'oplosan')) s += 30; // methanol
-        if (has('pupil kecil', 'saliva', 'air liur banyak', 'keringat banyak', 'bradikardia') && has('pestisida', 'organofosfor', 'obat serangga')) s += 40; // OP
+        if (has('pandangan buram', 'mata kabur', 'buta mendadak') && has('miras', 'alkohol', 'oplosan')) s += 30;
+        if (has('pupil kecil', 'saliva', 'air liur banyak', 'keringat banyak', 'bradikardia') && has('pestisida', 'organofosfor', 'obat serangga')) s += 40;
         if (has('parasetamol', 'panadol', 'overdosis obat')) s += 35;
         if (has('menelan bahan kimia', 'pemutih', 'asam', 'basa', 'caustic')) s += 35;
+        return s;
+      },
+    },
+
+    // ──────────────────────────────────────────
+    // MUSKULOSKELETAL
+    // ──────────────────────────────────────────
+    {
+      id: 'sprain-strain', // pathway: sprain-strain ✓
+      name: 'Sprain / Strain Muskuloskeletal',
+      urgency: 'routine',
+      hasPathway: true,
+      pathwayNote: undefined,
+      reasoning: 'Nyeri sendi/otot pasca-trauma olahraga atau kecelakaan ringan, khas sprain/strain.',
+      additionalQuestions: [
+        'Apakah ada riwayat cedera atau terkilir sebelumnya?',
+        'Apakah ada bengkak atau memar di area yang sakit?',
+        'Apakah masih bisa menopang berat badan di kaki yang cedera?',
+      ],
+      score: () => {
+        let s = 0;
+        if (has('terkilir', 'keseleo', 'jatuh', 'cedera', 'olahraga')) s += 35;
+        if (has('bengkak', 'memar', 'biru') && has('sendi', 'pergelangan', 'lutut', 'pergelangan kaki')) s += 25;
+        if (has('nyeri sendi', 'nyeri otot', 'gerak terbatas')) s += 15;
+        if (!has('demam') && !has('merah menyebar', 'panas area luas')) s += 10;
+        return s;
+      },
+    },
+
+    {
+      id: 'myalgia', // pathway: myalgia ✓
+      name: 'Myalgia / Nyeri Otot',
+      urgency: 'routine',
+      hasPathway: true,
+      pathwayNote: undefined,
+      reasoning: 'Nyeri otot difus tanpa riwayat trauma, sering berhubungan dengan infeksi/kelelahan.',
+      additionalQuestions: [
+        'Apakah nyeri otot di seluruh badan atau area tertentu?',
+        'Apakah disertai demam atau gejala flu?',
+        'Apakah berhubungan dengan aktivitas fisik berlebihan?',
+      ],
+      score: () => {
+        let s = 0;
+        if (has('nyeri otot', 'pegal', 'mialgia', 'otot sakit', 'seluruh badan')) s += 30;
+        if (!has('bengkak sendi', 'memar', 'jatuh', 'terkilir')) s += 15;
+        if (has('demam', 'flu', 'virus') && has('pegal', 'otot')) s += 20;
+        if (has('kelelahan', 'capek berat', 'olahraga berlebih')) s += 15;
+        return s;
+      },
+    },
+
+    {
+      id: 'fraktur', // pathway: fraktur ✓
+      name: 'Fraktur / Patah Tulang',
+      urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
+      reasoning: 'Nyeri hebat + deformitas pasca-trauma kuat, curiga fraktur.',
+      additionalQuestions: [
+        'Apakah ada deformitas (bengkok abnormal) di area yang cedera?',
+        'Apakah sama sekali tidak bisa menggerakkan bagian yang cedera?',
+        'Apakah sudah dilakukan foto Rontgen?',
+      ],
+      score: () => {
+        let s = 0;
+        if (has('patah', 'fraktur', 'tulang patah', 'deformitas')) s += 50;
+        if (has('kecelakaan', 'trauma berat', 'jatuh dari ketinggian', 'tabrak')) s += 25;
+        if (has('tidak bisa gerak', 'gerak terbatas', 'imobilisasi')) s += 15;
+        if (isHighSeverity) s += 10;
         return s;
       },
     },
@@ -632,9 +784,11 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     // LAIN-LAIN
     // ──────────────────────────────────────────
     {
-      id: 'insect-bite-reaction',
+      id: 'reaksi-gigitan-serangga', // pathway: reaksi-gigitan-serangga ✓
       name: 'Reaksi Gigitan Serangga / Anafilaksis',
       urgency: 'emergency',
+      hasPathway: true,
+      pathwayNote: undefined,
       reasoning: 'Riwayat gigitan/sengatan + reaksi sistemik: anafilaksis sampai terbukti sebaliknya.',
       additionalQuestions: [
         'Apakah ada sesak napas atau suara serak sejak gigitan/sengatan?',
@@ -652,9 +806,33 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
     },
 
     {
-      id: 'dvt',
+      id: 'reaksi-alergi', // pathway: reaksi-alergi ✓
+      name: 'Reaksi Alergi Akut / Urtikaria',
+      urgency: 'urgent',
+      hasPathway: true,
+      pathwayNote: undefined,
+      reasoning: 'Ruam gatal mendadak, biduran, atau reaksi alergi sistemik pasca-paparan alergen.',
+      additionalQuestions: [
+        'Apakah ada riwayat alergi makanan, obat, atau zat tertentu?',
+        'Apakah ada sesak napas atau bengkak pada wajah/bibir?',
+        'Apa kira-kira pemicu yang mungkin?',
+      ],
+      score: () => {
+        let s = 0;
+        if (has('alergi', 'ruam', 'gatal', 'biduran', 'urtikaria')) s += 35;
+        if (has('sesak') && has('gatal', 'ruam')) s += 20;
+        if (has('bengkak bibir', 'bengkak wajah', 'angioedema')) s += 25;
+        if (isSudden) s += 10;
+        return s;
+      },
+    },
+
+    {
+      id: 'dvt-note', // pathway: TIDAK ADA — rekomendasikan
       name: 'Deep Vein Thrombosis (DVT)',
       urgency: 'urgent',
+      hasPathway: false,
+      pathwayNote: 'Hitung Wells Score DVT. Lakukan D-Dimer dan USG Doppler vena. Mulai antikoagulan (LMWH/heparin) sambil menunggu konfirmasi. Hindari pijat pada kaki yang terpengaruh.',
       reasoning: 'Nyeri + bengkak asimetris pada betis/tungkai, faktor risiko imobilisasi.',
       additionalQuestions: [
         'Apakah kaki yang sakit teraba hangat dan kemerahan?',
@@ -700,6 +878,8 @@ export function generateSuggestions(data: AnamnesisData): PathwaySuggestion[] {
       additionalQuestions: rule.additionalQuestions,
       urgency: rule.urgency,
       reasoning: rule.reasoning,
+      hasPathway: rule.hasPathway,
+      pathwayNote: rule.pathwayNote,
     });
   }
 
