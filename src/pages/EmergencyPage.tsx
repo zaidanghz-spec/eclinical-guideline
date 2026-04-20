@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router';
 import { motion } from 'motion/react';
-import { ArrowLeft, AlertCircle, Clock, TrendingUp } from 'lucide-react';
-import { emergencyDiseases } from '../lib/diseases';
+import { ArrowLeft, AlertCircle, Clock, TrendingUp, GitBranch, ClipboardList, ChevronRight } from 'lucide-react';
+import { diseases, organSystems } from '../lib/diseases';
+import { pathways } from '../lib/pathways';
+import { dynamicPathways } from '../lib/dynamicPathways';
 
 const urgencyColors: Record<string, string> = {
   immediate: 'bg-red-600',
@@ -17,6 +19,12 @@ const urgencyLabels: Record<string, string> = {
 
 export default function EmergencyPage() {
   const navigate = useNavigate();
+
+  // Filter emergency diseases that actually have a pathway defined
+  const availableEmergencyDiseases = diseases.filter(disease => {
+    const hasPathway = pathways[disease.id] || dynamicPathways[disease.id];
+    return disease.isEmergency && hasPathway;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
@@ -73,58 +81,90 @@ export default function EmergencyPage() {
 
         {/* Emergency List */}
         <div className="space-y-4">
-          {emergencyDiseases.map((disease, index) => (
-            <motion.div
-              key={disease.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <Link
-                to={`/pathway/${disease.id}`}
-                className="block bg-white rounded-xl p-6 shadow-md border-2 border-slate-200 hover:border-red-400 hover:shadow-xl transition-all group"
+          {availableEmergencyDiseases.map((disease, index) => {
+            const pathway = pathways[disease.id];
+            const dynamicPathway = dynamicPathways[disease.id];
+            const isDynamic = !!dynamicPathway;
+
+            // Optional: calculate steps
+            const stepCount = dynamicPathway 
+              ? Object.values(dynamicPathway.nodes).filter(n => n.type === 'checklist').reduce((acc, node) => {
+                  if (node.type === 'checklist') return acc + node.items.length;
+                  return acc;
+                }, 0)
+              : (pathway?.steps.length || 0);
+
+            return (
+              <motion.div
+                key={disease.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className={`text-xs font-bold px-3 py-1 rounded-full border ${urgencyColors[(disease as any).urgency] || 'bg-red-600'}`}>
-                        {urgencyLabels[(disease as any).urgency] || 'EMERGENCY'}
-                      </span>
-                      {disease.timeToIntervention && (
-                        <div className="flex items-center gap-2 text-sm text-slate-600">
-                          <Clock className="w-4 h-4" />
-                          <span className="font-semibold">{disease.timeToIntervention}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <h3 className="font-bold text-xl text-slate-900 mb-1 group-hover:text-red-600 transition-colors">
-                      {disease.name}
-                    </h3>
-                    <p className="text-sm text-slate-500 mb-3">{disease.nameEn}</p>
-
-                    <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
-                      <TrendingUp className="w-4 h-4" />
-                      <span>{disease.prevalenceIndonesia}</span>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {disease.keywords.slice(0, 4).map((keyword) => (
-                        <span key={keyword} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
-                          {keyword}
+                <Link
+                  to={isDynamic ? `/pathway-dynamic/${disease.id}` : `/pathway-checklist/${disease.id}`}
+                  className="block bg-white rounded-xl p-6 shadow-md border-2 border-slate-200 hover:border-red-400 hover:shadow-xl transition-all group"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full border ${urgencyColors[(disease as any).urgency] || 'bg-red-600'} text-white`}>
+                          {urgencyLabels[(disease as any).urgency] || 'EMERGENCY'}
                         </span>
-                      ))}
+                        {isDynamic && (
+                          <div className="flex items-center gap-1 text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded-full">
+                            <GitBranch className="w-3 h-3" />
+                            Dynamic
+                          </div>
+                        )}
+                        {disease.timeToIntervention && (
+                          <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <Clock className="w-4 h-4" />
+                            <span className="font-semibold">{disease.timeToIntervention}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <h3 className="font-bold text-xl text-slate-900 mb-1 group-hover:text-red-600 transition-colors">
+                        {disease.name}
+                      </h3>
+                      <p className="text-sm text-slate-500 mb-3">{disease.nameEn}</p>
+
+                      <div className="flex items-center gap-6 mb-3">
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                          <ClipboardList className="w-4 h-4 text-teal-600" />
+                          <span>{stepCount} clinical steps</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-600 max-w-sm truncate">
+                          <TrendingUp className="w-4 h-4 flex-shrink-0 text-blue-600" />
+                          <span className="truncate">{disease.prevalenceIndonesia}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {disease.keywords.slice(0, 4).map((keyword) => (
+                          <span key={keyword} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center text-red-600 group-hover:translate-x-2 transition-transform self-center">
+                      <span className="font-semibold hidden sm:inline">Start Checklist</span>
+                      <ChevronRight className="w-6 h-6 ml-1" />
                     </div>
                   </div>
-
-                  <div className="flex items-center text-red-600 group-hover:translate-x-2 transition-transform">
-                    <span className="font-semibold">Lihat Pathway</span>
-                    <span className="ml-2 text-xl">→</span>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                </Link>
+              </motion.div>
+            );
+          })}
+          
+          {availableEmergencyDiseases.length === 0 && (
+            <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
+              <p className="text-slate-500">Tidak ada pathway emergency yang tersedia saat ini.</p>
+            </div>
+          )}
         </div>
 
         {/* Footer Note */}
