@@ -14,13 +14,14 @@ module.exports = async function handler(req, res) {
   const isDev = process.env.NODE_ENV !== 'production';
 
   try {
-    // GET - list sessions (Collaborative mode: semua user di klinik bisa melihat & mereply)
+    // GET - list sessions (Collaborative mode hanya untuk staff ITK, yang lain cuma bisa lihat miliknya sendiri)
     if (req.method === 'GET') {
-      // Fix #26: Hapus filter user_id agar dokter & perawat lain bisa melihat riwayat pasien yang sama
-      const sessions = await query(
-        'SELECT * FROM pathway_sessions ORDER BY started_at DESC',
-        []
-      );
+      let sessions;
+      if (payload.email.toLowerCase().includes('itk')) {
+        sessions = await query('SELECT * FROM pathway_sessions ORDER BY started_at DESC', []);
+      } else {
+        sessions = await query('SELECT * FROM pathway_sessions WHERE user_id = $1 ORDER BY started_at DESC', [payload.userId]);
+      }
       return res.status(200).json({ sessions });
     }
 
