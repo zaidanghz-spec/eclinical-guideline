@@ -49,9 +49,7 @@ function escapeHtml(unsafe: string): string {
 interface NodeReport {
   id: string;
   title: string;
-  done: string[];
-  pendingDoctor: string[];
-  pendingNurse: string[];
+  itemRows: string[];
   hasVariation: boolean;
   fullyCompliant: boolean;
 }
@@ -63,7 +61,7 @@ export default function DynamicPathwayPage() {
   const { diseaseId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { currentSession, createSession, saveDraft, completeSession, reportToDoctor, submitDoctorOrder } = usePathwaySessions();
+  const { sessions, createSession, saveDraft, completeSession, reportToDoctor, submitDoctorOrder } = usePathwaySessions();
   
   const disease = diseases.find(d => d.id === diseaseId);
   const pathway = dynamicPathways[diseaseId || ''];
@@ -127,30 +125,42 @@ export default function DynamicPathwayPage() {
     latestStateRef.current = { checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations };
   }, [checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations]);
 
-  // Fix #25: Resume effect — hanya jalankan sekali, tidak looping saat currentSession refresh
+  // Fix #25 & Fix #23: Resume effect via URL params instead of fragile history state
+  // Fix #10: Filter specific session based on ID instead of using shared currentSession
   useEffect(() => {
-    if (hasResumedRef.current) return;  // sudah diresume, jangan ulangi
+    if (hasResumedRef.current) return;
+    
+    // Fallback to history state for backward compatibility but prioritize URL search params
+    const searchParams = new URLSearchParams(window.location.search);
+    const urlSessionId = searchParams.get('session');
     const state = window.history.state?.usr;
-    if (state?.sessionId && state?.resume && currentSession) {
-      hasResumedRef.current = true;
-      setShowPatientCodeModal(false);
-      setSessionId(state.sessionId);
-      // Fix #8: gunakan camelCase dari context yang sudah di-normalize
-      setPatientCode(currentSession.patientCode || '');
-      if (currentSession.checklist) setCheckedSteps(currentSession.checklist);
-      if (currentSession.notes) setStepNotes(currentSession.notes);
-      if (currentSession.currentNodeId) {
-        setCurrentNodeId(currentSession.currentNodeId || pathway?.startNodeId || '');
+    const targetSessionId = urlSessionId || state?.sessionId;
+
+    if (targetSessionId && sessions.length > 0) {
+      // Find the specific session for this pathway to avoid cross-tab pollution
+      const targetSession = sessions.find(s => s.id === targetSessionId);
+      
+      if (targetSession) {
+        hasResumedRef.current = true;
+        setShowPatientCodeModal(false);
+        setSessionId(targetSession.id);
+        
+        // Fix #8: gunakan camelCase dari context yang sudah di-normalize
+        setPatientCode(targetSession.patientCode || '');
+        if (targetSession.checklist) setCheckedSteps(targetSession.checklist);
+        if (targetSession.notes) setStepNotes(targetSession.notes);
+        if (targetSession.currentNodeId) {
+          setCurrentNodeId(targetSession.currentNodeId || pathway?.startNodeId || '');
+        }
+        if (targetSession.pathwayHistory?.length) setPathwayHistory(targetSession.pathwayHistory);
+        if (targetSession.decisions?.length) setDecisions(targetSession.decisions);
+        if (targetSession.variations?.length) setVariations(targetSession.variations);
+        if (targetSession.startedAt) setSessionStartedAt(targetSession.startedAt);
+        if (targetSession.consultationStatus) setConsultationStatus(targetSession.consultationStatus);
+        if (targetSession.doctorOrders) setDoctorOrders(targetSession.doctorOrders);
       }
-      if (currentSession.pathwayHistory?.length) setPathwayHistory(currentSession.pathwayHistory);
-      if (currentSession.decisions?.length) setDecisions(currentSession.decisions);
-      if (currentSession.variations?.length) setVariations(currentSession.variations);
-      if (currentSession.startedAt) setSessionStartedAt(currentSession.startedAt);
-      // Fix #8: gunakan camelCase
-      if (currentSession.consultationStatus) setConsultationStatus(currentSession.consultationStatus);
-      if (currentSession.doctorOrders) setDoctorOrders(currentSession.doctorOrders);
     }
-  }, [currentSession]);
+  }, [sessions, diseaseId, pathway]);
 
   const handlePatientCodeSubmit = async () => {
     if (!patientCode.trim()) { setPatientCodeError('Kode pasien wajib diisi'); return; }
@@ -417,22 +427,31 @@ export default function DynamicPathwayPage() {
     visitedChecklistNodeIds.forEach(nodeId => {
       const node = allNodes[nodeId] as ChecklistNode;
       if (!node) return;
-      const done: string[] = []; const pendingDoctor: string[] = []; const pendingNurse: string[] = [];
+      
+      const itemRows: string[] = [];
+      
       node.items.forEach(item => {
         const role = (item as any).role || 'both';
-        if (checkedSteps[item.id]) {
-          done.push(item.title);
+        const isChecked = checkedSteps[item.id];
+        
+        if (isChecked) {
+          itemRows.push(`<tr><td><span class="ic done">✓</span> ${escapeHtml(item.title)}</td><td class="role-tag role-done">Selesai</td></tr>`);
+          totalDone++;
         } else if (role === 'doctor') {
-          pendingDoctor.push(item.title);
+          // Expand doctor details natively
+          const detailsText = (item as any).details || (item as any).indication;
+          const detailsHTML = detailsText ? `<br/><span style="display:inline-block;margin-top:4px;font-size:10.5px;color:#64748b;line-height:1.4">📋 Detail Tatalaksana: ${escapeHtml(detailsText)}</span>` : '';
+          itemRows.push(`<tr><td><div style="font-weight:600;color:#1e293b"><span class="ic doc">🩺</span> ${escapeHtml(item.title)}</div>${detailsHTML}</td><td class="role-tag role-doc">Perlu Dokter</td></tr>`);
+          totalPendingDoc++;
         } else {
-          pendingNurse.push(item.title);
+          itemRows.push(`<tr><td><span class="ic nurse">◦</span> ${escapeHtml(item.title)}</td><td class="role-tag role-nurse">Belum Dikerjakan</td></tr>`);
         }
       });
+      
       const hasVariation = !!variationsByNode[nodeId];
       const requiredItems = node.items.filter(it => it.required && !((it as any).role === 'doctor' && effectiveMode === 'nurse-only'));
       const fullyCompliant = requiredItems.every(it => checkedSteps[it.id]);
-      totalDone += done.length; totalPendingDoc += pendingDoctor.length;
-      nodeReports.push({ id: nodeId, title: node.title, done, pendingDoctor, pendingNurse, hasVariation, fullyCompliant });
+      nodeReports.push({ id: nodeId, title: node.title, itemRows, hasVariation, fullyCompliant });
     });
 
     const overallHasVariation = variations.length > 0;
@@ -453,9 +472,8 @@ export default function DynamicPathwayPage() {
           : `<span class="badge badge-info">⏳ Sebagian</span>`;
 
       // Fix #1 (XSS): Semua data user di-escape sebelum dimasukkan ke HTML
-      const doneRows = nr.done.map(t => `<tr><td><span class="ic done">✓</span> ${escapeHtml(t)}</td><td class="role-tag role-done">Selesai</td></tr>`).join('');
-      const docRows = nr.pendingDoctor.map(t => `<tr><td><span class="ic doc">🩺</span> ${escapeHtml(t)}</td><td class="role-tag role-doc">Perlu Dokter</td></tr>`).join('');
-      const nurseRows = nr.pendingNurse.map(t => `<tr><td><span class="ic nurse">◦</span> ${escapeHtml(t)}</td><td class="role-tag role-nurse">Belum Dikerjakan</td></tr>`).join('');
+      const combinedRows = nr.itemRows.join('');
+
       const varRows = nodeVariations.map(v => {
         const skipped = (v.incompleteSteps || []).map((sid: string) => {
           const item = (allNodes[nr.id] as ChecklistNode)?.items?.find(i => i.id === sid);
@@ -476,10 +494,10 @@ export default function DynamicPathwayPage() {
           <span class="node-title">${escapeHtml(nr.title)}</span>
           ${status}
         </div>
-        ${doneRows || docRows || nurseRows ? `
+        ${combinedRows ? `
         <table>
           <thead><tr><th>Langkah</th><th style="width:140px">Status</th></tr></thead>
-          <tbody>${doneRows}${docRows}${nurseRows}</tbody>
+          <tbody>${combinedRows}</tbody>
         </table>` : '<p style="color:#94a3b8;font-size:12px">Tidak ada item checklist.</p>'}
         ${varRows}
       </div>`;
