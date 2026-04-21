@@ -12,6 +12,7 @@
     "deploy": "vercel --prod"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
@@ -43,6 +44,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "latest",
     "cmdk": "^0.2.0",
+    "dotenv": "^17.4.2",
     "jsonwebtoken": "^9.0.0",
     "lucide-react": "latest",
     "motion": "latest",

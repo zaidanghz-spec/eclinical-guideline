@@ -1,38 +1,36 @@
-const { Pool } = require('pg');
+const { createClient } = require('@libsql/client');
 const jwt = require('jsonwebtoken');
 
-let pool;
+let client;
 
-function getPool() {
-  if (!pool) {
-    const connectionString = (process.env.DATABASE_URL || '')
-      .replace('&channel_binding=require', '')
-      .replace('?channel_binding=require&', '?')
-      .replace('?channel_binding=require', '');
-
-    // Fix #19: SSL rejectUnauthorized only disabled in local dev
-    // Fix #20: Pool size raised from 1 → 5 to handle concurrent nurse+doctor requests
-    pool = new Pool({
-      connectionString,
-      ssl: process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: true }
-        : { rejectUnauthorized: false },
-      max: parseInt(process.env.DB_POOL_MAX || '5', 10),
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
-    });
-
-    pool.on('error', (err) => {
-      console.error('[DB] Unexpected pool error:', err);
+function getClient() {
+  if (!client) {
+    client = createClient({
+      url: process.env.TURSO_DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN,
     });
   }
-  return pool;
+  return client;
 }
 
 async function query(text, params) {
-  const client = getPool();
-  const result = await client.query(text, params);
-  return result.rows;
+  // Translate Postgres dialect to SQLite minimally
+  let sql = text.replace(/\$(\d+)/g, '?$1');
+  sql = sql.replace(/::[a-zA-Z]+/g, '');
+  sql = sql.replace(/NOW\(\)/gi, "datetime('now')");
+
+  // Basic Postgres RETURNING polyfill handled naturally by Turso for standard INSERT/UPDATE/DELETE. 
+  const turso = getClient();
+  
+  try {
+    const result = await turso.execute({ sql, args: params || [] });
+    // In libsql, row values are returned natively, so we just return the array format
+    return result.rows;
+  } catch (err) {
+    console.error('[DB EXECUTOR ERROR] Query:', sql);
+    console.error('Args:', params);
+    throw err;
+  }
 }
 
 function verifyToken(authHeader) {
@@ -48,4 +46,18 @@ function createToken(userId, email, role) {
   return jwt.sign({ userId, email, role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 }
 
-module.exports = { query, verifyToken, createToken };
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173').split(',').map(s => s.trim());
+
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (!origin) {
+    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGINS[0]);
+  }
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
+
+module.exports = { query, verifyToken, createToken, setCorsHeaders };
