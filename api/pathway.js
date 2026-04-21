@@ -1,20 +1,4 @@
-const { query, verifyToken } = require('./_lib/db');
-
-// Fix #4: CORS — hanya izinkan origin yang terdaftar, bukan wildcard
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173').split(',').map(s => s.trim());
-
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else if (!origin) {
-    // server-to-server requests (no Origin header) — izinkan untuk Vercel internal
-    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGINS[0]);
-  }
-  res.setHeader('Vary', 'Origin');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-}
+const { query, verifyToken, setCorsHeaders } = require('./_lib/db');
 
 module.exports = async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -144,9 +128,12 @@ module.exports = async function handler(req, res) {
         }
       }
 
+      const crypto = require('crypto');
+      const newId = crypto.randomUUID();
+
       const result = await query(
-        'INSERT INTO pathway_sessions (user_id, disease_id, disease_name, patient_code) VALUES ($1, $2, $3, $4) RETURNING *',
-        [payload.userId, diseaseId, diseaseName, patientCode || '']
+        'INSERT INTO pathway_sessions (id, user_id, disease_id, disease_name, patient_code) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [newId, payload.userId, diseaseId, diseaseName, patientCode || '']
       );
       return res.status(200).json({ session: result[0] });
     }

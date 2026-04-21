@@ -1,10 +1,8 @@
 const bcrypt = require('bcryptjs');
-const { query, verifyToken, createToken } = require('./_lib/db');
+const { query, verifyToken, createToken, setCorsHeaders } = require('./_lib/db');
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
 
   const action = req.query.action;
@@ -47,12 +45,14 @@ module.exports = async function handler(req, res) {
 
       const passwordHash = await bcrypt.hash(password, 10);
       const role = isFirstUser ? 'admin' : 'user';
+      const crypto = require('crypto');
+      const newId = crypto.randomUUID();
 
       const result = await query(
-        `INSERT INTO users (email, password_hash, name, title, institution, role)
-         VALUES ($1, $2, $3, $4, $5, $6)
+        `INSERT INTO users (id, email, password_hash, name, title, institution, role)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING id, email, name, title, institution, role, created_at`,
-        [normalizedEmail, passwordHash, name, title || '', institution || '', role]
+        [newId, normalizedEmail, passwordHash, name, title || '', institution || '', role]
       );
 
       const user = result[0];
