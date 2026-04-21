@@ -24,6 +24,16 @@ export default function PathwayReportPage() {
     }
   }, [loading, session, sessions.length, refreshSessions, attemptedRefresh]);
 
+  // Fix #26: Auto-refresh (Polling) every 5s if session is still in progress
+  useEffect(() => {
+    if (session?.status === 'in_progress') {
+      const interval = setInterval(() => {
+        refreshSessions();
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [session?.status, refreshSessions]);
+
   const displayDate = (s: any) => {
     try {
       const d = new Date(s.updated_at || s.startedAt || Date.now());
@@ -125,7 +135,17 @@ export default function PathwayReportPage() {
   }
 
   // 4. MAIN REPORT CONTENT
-  const visitedNodes = session.pathway_history || [];
+  // Fix #26: Include current node if session is in progress
+  const history = session.pathwayHistory || session.pathway_history || [];
+  const visitedNodes = [...history];
+  if (session.status === 'in_progress' && session.currentNodeId) {
+    if (!visitedNodes.find(n => n.nodeId === session.currentNodeId)) {
+      visitedNodes.push({ 
+        nodeId: session.currentNodeId, 
+        nodeName: pathway.nodes[session.currentNodeId]?.title || 'Langkah Saat Ini' 
+      });
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -141,6 +161,12 @@ export default function PathwayReportPage() {
             <Printer className="w-5 h-5" />
             <span>Cetak PDF</span>
           </button>
+          {session.status === 'in_progress' && (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg border border-teal-100 text-xs font-bold animate-pulse">
+              <div className="w-2 h-2 bg-teal-500 rounded-full" />
+              LIVE UPDATE AKTIF
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden print:shadow-none print:border-none">
@@ -156,10 +182,14 @@ export default function PathwayReportPage() {
                   <p className="text-slate-400 text-sm">Dokumentasi Digital E-Clinical</p>
                 </div>
               </div>
-              <div className="px-4 py-2 bg-teal-500/20 border border-teal-500/30 rounded-xl text-teal-400 text-sm font-bold uppercase tracking-wider">
-                {session.status}
+                <div className={`px-4 py-2 border rounded-xl text-sm font-bold uppercase tracking-wider ${
+                  session.status === 'completed' 
+                    ? 'bg-teal-500/20 border-teal-500/30 text-teal-400' 
+                    : 'bg-amber-500/20 border-amber-500/30 text-amber-400'
+                }`}>
+                  {session.status === 'completed' ? 'SELESAI' : 'BERJALAN (LIVE)'}
+                </div>
               </div>
-            </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/10 pt-8">
               <div>
@@ -233,31 +263,59 @@ export default function PathwayReportPage() {
 
                           {node.type === 'checklist' && (
                             <div className="mt-4 grid gap-3">
-                              {node.items.map(item => {
-                                const isChecked = session.checklist[item.id];
-                                const note = session.notes && session.notes[item.id];
-                                return (
-                                  <div key={item.id} className={`p-5 rounded-2xl border ${isChecked ? 'bg-teal-50/30 border-teal-100 ring-1 ring-teal-100' : 'bg-slate-50/50 border-slate-100'}`}>
-                                    <div className="flex gap-4">
-                                      {isChecked ? (
-                                        <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>
-                                      ) : (
-                                        <div className="w-6 h-6 border-2 border-slate-300 rounded-full" />
-                                      )}
-                                      <div className="flex-1">
-                                        <div className="font-bold text-slate-800">{item.title}</div>
-                                        <p className="text-slate-500 text-sm mt-1">{item.description}</p>
-                                        {note && (
-                                          <div className="mt-4 p-4 bg-white border border-yellow-200 rounded-xl text-sm text-yellow-800 shadow-sm italic">
-                                            <div className="flex items-center gap-2 mb-1 not-italic font-bold text-yellow-900 uppercase text-[10px]">Catatan Klinis:</div>
-                                            {note}
+                                {node.items.map(item => {
+                                  const isChecked = session.checklist[item.id];
+                                  const note = session.notes && session.notes[item.id];
+                                  const role = (item as any).role || 'both';
+                                  
+                                  return (
+                                    <div key={item.id} className={`p-5 rounded-2xl border transition-all ${
+                                      isChecked 
+                                        ? 'bg-teal-50/30 border-teal-100 ring-1 ring-teal-100' 
+                                        : role === 'doctor'
+                                          ? 'bg-purple-50/40 border-purple-100 border-dashed'
+                                          : 'bg-slate-50/50 border-slate-100'
+                                    }`}>
+                                      <div className="flex gap-4">
+                                        {isChecked ? (
+                                          <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <CheckCircle2 className="w-4 h-4 text-white" />
                                           </div>
+                                        ) : (
+                                          <div className={`w-6 h-6 border-2 rounded-full flex-shrink-0 mt-0.5 ${
+                                            role === 'doctor' ? 'border-purple-300' : 'border-slate-300'
+                                          }`} />
                                         )}
+                                        <div className="flex-1">
+                                          <div className="flex items-center justify-between gap-4">
+                                            <div className="font-bold text-slate-800">{item.title}</div>
+                                            {!isChecked && (
+                                              <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-tighter ${
+                                                role === 'doctor' 
+                                                  ? 'bg-purple-100 text-purple-700' 
+                                                  : 'bg-slate-200 text-slate-600'
+                                              }`}>
+                                                {role === 'doctor' ? 'KURANG DOKTER' : 'BELUM DIKERJAKAN'}
+                                              </span>
+                                            )}
+                                            {isChecked && (
+                                              <span className="text-[10px] font-black px-2 py-0.5 bg-teal-100 text-teal-700 rounded uppercase tracking-tighter">
+                                                SELESAI {role === 'doctor' ? 'DOKTER' : 'PERAWAT'}
+                                              </span>
+                                            )}
+                                          </div>
+                                          <p className="text-slate-500 text-sm mt-1">{item.description}</p>
+                                          {note && (
+                                            <div className="mt-4 p-4 bg-white border border-yellow-200 rounded-xl text-sm text-yellow-800 shadow-sm italic">
+                                              <div className="flex items-center gap-2 mb-1 not-italic font-bold text-yellow-900 uppercase text-[10px]">Catatan Klinis:</div>
+                                              {note}
+                                            </div>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                );
-                              })}
+                                  );
+                                })}
                             </div>
                           )}
 
