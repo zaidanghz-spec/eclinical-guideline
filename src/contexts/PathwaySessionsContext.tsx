@@ -131,6 +131,39 @@ async function readApiJson(res: Response) {
   throw new Error(`Unexpected ${res.status} ${res.statusText || 'response'} from pathway API: ${body.slice(0, 140)}`);
 }
 
+function parseJsonValue<T>(value: unknown, fallback: T): T {
+  if (value === null || value === undefined || value === '') return fallback;
+  if (typeof value !== 'string') return value as T;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed === null || parsed === undefined ? fallback : parsed as T;
+  } catch {
+    console.warn('[PathwaySessions] Ignoring malformed JSON session field');
+    return fallback;
+  }
+}
+
+function normalizeChecklist(value: unknown): Record<string, boolean> {
+  const parsed = parseJsonValue<Record<string, unknown>>(value, {});
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+  return Object.fromEntries(
+    Object.entries(parsed).map(([key, val]) => [key, Boolean(val)])
+  );
+}
+
+function normalizeNotes(value: unknown): Record<string, string> {
+  const parsed = parseJsonValue<Record<string, unknown>>(value, {});
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+  return Object.fromEntries(
+    Object.entries(parsed).map(([key, val]) => [key, val === null || val === undefined ? '' : String(val)])
+  );
+}
+
+function normalizeArray<T>(value: unknown): T[] {
+  const parsed = parseJsonValue<unknown>(value, []);
+  return Array.isArray(parsed) ? parsed as T[] : [];
+}
+
 // ─── Fix #9: mapSession — validasi ID, normalize ke camelCase ────────────────
 function mapSession(raw: unknown): PathwaySession {
   if (!raw || typeof raw !== 'object') {
@@ -144,6 +177,18 @@ function mapSession(raw: unknown): PathwaySession {
     throw new Error(`mapSession: session has no ID. Keys: ${Object.keys(r).join(', ')}`);
   }
 
+  const checklist = normalizeChecklist(r.checklist);
+  const notes = normalizeNotes(r.notes);
+  const decisions = normalizeArray<ClinicalDecision>(r.decisions);
+  const variations = normalizeArray<ClinicalVariation>(r.variations)
+    .map((variation) => ({
+      ...variation,
+      incompleteSteps: Array.isArray(variation.incompleteSteps) ? variation.incompleteSteps : [],
+    }));
+  const pathwayHistory = normalizeArray<{ nodeId: string; nodeName: string; completedAt?: string }>(r.pathwayHistory ?? r.pathway_history)
+    .filter((entry) => entry && typeof entry.nodeId === 'string');
+  const doctorOrders = parseJsonValue<DoctorOrder | null>(r.doctorOrders ?? r.doctor_orders, null);
+
   return {
     id: String(rawId),
     userId: String(r.userId ?? r.user_id ?? ''),
@@ -151,25 +196,25 @@ function mapSession(raw: unknown): PathwaySession {
     diseaseName: String(r.diseaseName ?? r.disease_name ?? ''),
     status: (r.status as PathwaySession['status']) ?? 'in_progress',
     currentNodeId: (r.currentNodeId ?? r.current_node_id ?? null) as string | null,
-    checklist: (r.checklist as Record<string, boolean>) ?? {},
-    decisions: (r.decisions as ClinicalDecision[]) ?? [],
-    variations: (r.variations as ClinicalVariation[]) ?? [],
-    notes: (r.notes as Record<string, string>) ?? {},
+    checklist,
+    decisions,
+    variations,
+    notes,
     startedAt: String(r.startedAt ?? r.started_at ?? ''),
     completedAt: (r.completedAt ?? r.completed_at ?? null) as string | null,
     patientCode: String(r.patientCode ?? r.patient_code ?? ''),
-    pathwayHistory: (r.pathwayHistory ?? r.pathway_history ?? []) as PathwaySession['pathwayHistory'],
+    pathwayHistory,
     updatedAt: String(r.updatedAt ?? r.updated_at ?? r.startedAt ?? r.started_at ?? ''),
     consultationStatus: ((r.consultationStatus ?? r.consultation_status) as PathwaySession['consultationStatus']) ?? 'none',
     nurseNote: String(r.nurseNote ?? r.nurse_note ?? ''),
     reportedAt: (r.reportedAt ?? r.reported_at ?? null) as string | null,
-    doctorOrders: (r.doctorOrders ?? r.doctor_orders ?? null) as DoctorOrder | null,
+    doctorOrders,
     doctorId: (r.doctorId ?? r.doctor_id ?? null) as string | null,
     // snake_case passthrough aliases for legacy consumers
     patient_code: String(r.patientCode ?? r.patient_code ?? ''),
     current_node_id: (r.currentNodeId ?? r.current_node_id ?? null) as string | null,
     consultation_status: ((r.consultationStatus ?? r.consultation_status) as PathwaySession['consultationStatus']) ?? 'none',
-    doctor_orders: (r.doctorOrders ?? r.doctor_orders ?? null) as DoctorOrder | null,
+    doctor_orders: doctorOrders,
   };
 }
 
