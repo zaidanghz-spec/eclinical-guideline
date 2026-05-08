@@ -164,6 +164,32 @@ function normalizeArray<T>(value: unknown): T[] {
   return Array.isArray(parsed) ? parsed as T[] : [];
 }
 
+function normalizeSessionId(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  return String(value).trim();
+}
+
+function mapSessions(rawSessions: unknown): PathwaySession[] {
+  const rows = Array.isArray(rawSessions) ? rawSessions : [];
+  const mapped: PathwaySession[] = [];
+  let skipped = 0;
+
+  rows.forEach((row, index) => {
+    try {
+      mapped.push(mapSession(row));
+    } catch (error) {
+      skipped += 1;
+      console.warn(`[PathwaySessions] Skipping invalid pathway session row #${index + 1}`, error);
+    }
+  });
+
+  if (skipped > 0) {
+    console.warn(`[PathwaySessions] Skipped ${skipped} invalid pathway session row(s) from API response`);
+  }
+
+  return mapped;
+}
+
 // ─── Fix #9: mapSession — validasi ID, normalize ke camelCase ────────────────
 function mapSession(raw: unknown): PathwaySession {
   if (!raw || typeof raw !== 'object') {
@@ -172,7 +198,7 @@ function mapSession(raw: unknown): PathwaySession {
   const r = raw as Record<string, unknown>;
 
   // Fix #9: defensive ID check — jangan biarkan id = "undefined"
-  const rawId = r.id ?? r.session_id ?? r.sessionId ?? r._id;
+  const rawId = normalizeSessionId(r.id ?? r.session_id ?? r.sessionId ?? r._id);
   if (!rawId) {
     throw new Error(`mapSession: session has no ID. Keys: ${Object.keys(r).join(', ')}`);
   }
@@ -190,7 +216,7 @@ function mapSession(raw: unknown): PathwaySession {
   const doctorOrders = parseJsonValue<DoctorOrder | null>(r.doctorOrders ?? r.doctor_orders, null);
 
   return {
-    id: String(rawId),
+    id: rawId,
     userId: String(r.userId ?? r.user_id ?? ''),
     diseaseId: String(r.diseaseId ?? r.disease_id ?? ''),
     diseaseName: String(r.diseaseName ?? r.disease_name ?? ''),
@@ -257,12 +283,13 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       });
       const data = await readApiJson(res);
       if (res.ok) {
-        const mapped = (data.sessions || []).map(mapSession);
+        const mapped = mapSessions(data.sessions);
         if (!mountedRef.current || seq !== fetchSeqRef.current) return mapped;
         setSessions(mapped);
         const inProgress = mapped.find((s: PathwaySession) => s.status === 'in_progress');
         setCurrentSession(inProgress || null);
-        setAuthError(null);
+        const skippedCount = Array.isArray(data.sessions) ? data.sessions.length - mapped.length : 0;
+        setAuthError(skippedCount > 0 ? `${skippedCount} sesi lama tidak ditampilkan karena ID data kosong. Sesi lain tetap bisa digunakan.` : null);
         return mapped;
       } else {
         // Fix #24: user-facing error untuk fetch failure
