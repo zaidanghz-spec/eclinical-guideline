@@ -93,6 +93,30 @@ interface PathwaySessionsContextType {
 }
 
 const PathwaySessionsContext = createContext<PathwaySessionsContextType | undefined>(undefined);
+const DEV_SESSIONS_KEY = 'dev_pathway_sessions';
+
+function isDevToken(token: string | null) {
+  return import.meta.env.DEV && !!token?.startsWith('dev-token:');
+}
+
+function readDevSessions(): PathwaySession[] {
+  try {
+    return JSON.parse(localStorage.getItem(DEV_SESSIONS_KEY) || '[]') as PathwaySession[];
+  } catch {
+    return [];
+  }
+}
+
+function writeDevSessions(sessions: PathwaySession[]) {
+  localStorage.setItem(DEV_SESSIONS_KEY, JSON.stringify(sessions));
+}
+
+function updateDevSession(sessionId: string, updater: (session: PathwaySession) => PathwaySession) {
+  const sessions = readDevSessions();
+  const updated = sessions.map((session) => session.id === sessionId ? updater(session) : session);
+  writeDevSessions(updated);
+  return updated.find((session) => session.id === sessionId) || null;
+}
 
 // ─── Fix #9: mapSession — validasi ID, normalize ke camelCase ────────────────
 function mapSession(raw: unknown): PathwaySession {
@@ -144,6 +168,12 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
 
   const fetchSessions = useCallback(async () => {
     if (!user || !accessToken) return;
+    if (isDevToken(accessToken)) {
+      setSessions(readDevSessions());
+      setCurrentSession(readDevSessions().find(s => s.status === 'in_progress') || null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch('/api/pathway', {
@@ -182,6 +212,43 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
 
   const createSession = async (diseaseId: string, diseaseName: string, patientCode?: string) => {
     if (!user || !accessToken) return null;
+    if (isDevToken(accessToken)) {
+      const existing = readDevSessions().find(
+        session => session.diseaseId === diseaseId && session.patientCode === (patientCode || '') && session.status === 'in_progress'
+      );
+      if (existing) {
+        setCurrentSession(existing);
+        return existing;
+      }
+      const now = new Date().toISOString();
+      const session: PathwaySession = {
+        id: `dev-session-${crypto.randomUUID()}`,
+        userId: user.id,
+        diseaseId,
+        diseaseName,
+        status: 'in_progress',
+        currentNodeId: null,
+        checklist: {},
+        decisions: [],
+        variations: [],
+        notes: {},
+        startedAt: now,
+        completedAt: null,
+        patientCode: patientCode || '',
+        pathwayHistory: [],
+        updatedAt: now,
+        consultationStatus: 'none',
+        nurseNote: '',
+        reportedAt: null,
+        doctorOrders: null,
+        doctorId: null,
+      };
+      const sessions = [session, ...readDevSessions()];
+      writeDevSessions(sessions);
+      setSessions(sessions);
+      setCurrentSession(session);
+      return session;
+    }
     try {
       const res = await fetch('/api/pathway?action=create', {
         method: 'POST',
@@ -211,6 +278,14 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
 
   const updateSession = async (sessionId: string, updates: Partial<PathwaySession>) => {
     if (!user || !accessToken) return false;
+    if (isDevToken(accessToken)) {
+      const session = updateDevSession(sessionId, prev => ({ ...prev, ...updates, updatedAt: new Date().toISOString() }));
+      if (!session) return false;
+      const sessions = readDevSessions();
+      setSessions(sessions);
+      setCurrentSession(session.status === 'in_progress' ? session : null);
+      return true;
+    }
     try {
       const res = await fetch('/api/pathway?action=update', {
         method: 'PUT',
@@ -243,6 +318,23 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
     variations: ClinicalVariation[]
   ) => {
     if (!user || !accessToken) return false;
+    if (isDevToken(accessToken)) {
+      const session = updateDevSession(sessionId, prev => ({
+        ...prev,
+        checklist,
+        notes,
+        currentNodeId,
+        pathwayHistory,
+        decisions,
+        variations,
+        status: 'in_progress',
+        updatedAt: new Date().toISOString(),
+      }));
+      if (!session) return false;
+      setSessions(readDevSessions());
+      setCurrentSession(session);
+      return true;
+    }
     try {
       const res = await fetch('/api/pathway?action=update', {
         method: 'PUT',
@@ -278,6 +370,18 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
 
   const completeSession = async (sessionId: string) => {
     if (!user || !accessToken) return false;
+    if (isDevToken(accessToken)) {
+      updateDevSession(sessionId, prev => ({
+        ...prev,
+        status: 'completed',
+        completedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }));
+      setSessions(readDevSessions());
+      setCurrentSession(null);
+      toast.success('Pemeriksaan selesai!');
+      return true;
+    }
     try {
       const res = await fetch('/api/pathway?action=complete', {
         method: 'POST',
@@ -306,6 +410,13 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
 
   const deleteSession = async (sessionId: string) => {
     if (!user || !accessToken) return false;
+    if (isDevToken(accessToken)) {
+      const sessions = readDevSessions().filter(session => session.id !== sessionId);
+      writeDevSessions(sessions);
+      setSessions(sessions);
+      toast.success('Sesi berhasil dihapus');
+      return true;
+    }
     try {
       const res = await fetch('/api/pathway', {
         method: 'DELETE',
@@ -333,6 +444,19 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
   // Perawat melaporkan sesi ke Dokter
   const reportToDoctor = async (sessionId: string, nurseNote: string) => {
     if (!user || !accessToken) return false;
+    if (isDevToken(accessToken)) {
+      const session = updateDevSession(sessionId, prev => ({
+        ...prev,
+        consultationStatus: 'waiting_doctor',
+        nurseNote,
+        reportedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }));
+      if (!session) return false;
+      setSessions(readDevSessions());
+      toast.success('Laporan berhasil dikirim ke Dokter!');
+      return true;
+    }
     try {
       const res = await fetch('/api/pathway?action=report', {
         method: 'PUT',
@@ -361,6 +485,24 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
   // Dokter mengisi instruksi / resep
   const submitDoctorOrder = async (sessionId: string, order: Omit<DoctorOrder, 'orderedAt' | 'doctorName'>) => {
     if (!user || !accessToken) return false;
+    if (isDevToken(accessToken)) {
+      const fullOrder: DoctorOrder = {
+        ...order,
+        orderedAt: new Date().toISOString(),
+        doctorName: user.name,
+      };
+      const session = updateDevSession(sessionId, prev => ({
+        ...prev,
+        doctorOrders: fullOrder,
+        consultationStatus: 'doctor_responded',
+        doctorId: user.id,
+        updatedAt: new Date().toISOString(),
+      }));
+      if (!session) return false;
+      setSessions(readDevSessions());
+      toast.success('Instruksi dokter berhasil dikirim!');
+      return true;
+    }
     try {
       const fullOrder: DoctorOrder = {
         ...order,

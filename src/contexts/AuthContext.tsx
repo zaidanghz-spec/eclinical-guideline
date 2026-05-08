@@ -2,6 +2,34 @@ import { createContext, useContext, useState, useEffect, useRef, ReactNode } fro
 import { toast } from 'sonner';
 
 const API_BASE = '/api';
+const DEV_AUTH_USER_KEY = 'dev_auth_user';
+
+function createDevUser(email: string): User {
+  const normalizedEmail = email.toLowerCase().trim() || 'demo@local.test';
+  const stored = localStorage.getItem(DEV_AUTH_USER_KEY);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored) as User;
+      if (parsed.email === normalizedEmail) return parsed;
+    } catch {
+      // ignore malformed dev data
+    }
+  }
+  const user: User = {
+    id: `dev-${normalizedEmail}`,
+    email: normalizedEmail,
+    name: normalizedEmail.split('@')[0] || 'Demo User',
+    title: 'Dev Preview',
+    institution: 'Local',
+    role: normalizedEmail.includes('admin') ? 'admin' : 'user',
+  };
+  localStorage.setItem(DEV_AUTH_USER_KEY, JSON.stringify(user));
+  return user;
+}
+
+function isDevToken(token: string) {
+  return import.meta.env.DEV && token.startsWith('dev-token:');
+}
 
 // Fix #5 (SECURITY NOTE):
 // JWT disimpan di localStorage agar sesi tetap ada setelah refresh halaman.
@@ -61,6 +89,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (validatingRef.current) return;
     validatingRef.current = true;
     try {
+      if (isDevToken(token)) {
+        const email = token.replace('dev-token:', '');
+        setUser(createDevUser(email));
+        setAccessToken(token);
+        setLoading(false);
+        return;
+      }
       const res = await fetch(`${API_BASE}/auth?action=me`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
@@ -95,6 +130,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<boolean> => {
     try {
+      if (import.meta.env.DEV && password.length > 0) {
+        const user = createDevUser(email);
+        const token = `dev-token:${user.email}`;
+        localStorage.setItem('auth_token', token);
+        setAccessToken(token);
+        setUser(user);
+        toast.success(`Dev preview login: ${user.name}`);
+        return true;
+      }
       const res = await fetch(`${API_BASE}/auth?action=signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -113,6 +157,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return true;
     } catch (error: unknown) {
       console.error('[AUTH] Sign in error:', error);
+      if (import.meta.env.DEV && password.length > 0) {
+        const user = createDevUser(email);
+        const token = `dev-token:${user.email}`;
+        localStorage.setItem('auth_token', token);
+        setAccessToken(token);
+        setUser(user);
+        toast.success(`Dev preview login: ${user.name}`);
+        return true;
+      }
       toast.error('Gagal masuk. Periksa koneksi internet Anda.');
       return false;
     }
@@ -122,6 +175,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string, email: string, password: string, title?: string, institution?: string
   ): Promise<boolean> => {
     try {
+      if (import.meta.env.DEV) {
+        createDevUser(email);
+        toast.success('Dev preview account created. Silakan masuk.');
+        return true;
+      }
       const res = await fetch(`${API_BASE}/auth?action=signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

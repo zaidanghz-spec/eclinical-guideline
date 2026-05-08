@@ -22,15 +22,24 @@ import {
   Stethoscope,
   UserCheck,
   Users,
-  Printer,
   ClipboardList,
-  Phone,
   CheckCheck,
   Lock,
-  Download
+  Download,
+  ShieldAlert,
+  GitBranch,
+  ClipboardCheck,
+  Activity
 } from 'lucide-react';
 import { diseases } from '../lib/diseases';
 import { dynamicPathways, ChecklistNode, DecisionNode } from '../lib/dynamicPathways';
+import {
+  buildPathwayExecutionReport,
+  formatClinicalActionRequest,
+  structureChecklistItem,
+  type ClinicalExecutionReport,
+  type StructuredSubcard,
+} from '../lib/clinicalPathwayEngine';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
 import type { DoctorOrder, ClinicalDecision, ClinicalVariation } from '../contexts/PathwaySessionsContext';
@@ -285,7 +294,11 @@ export default function DynamicPathwayPage() {
     const timer = setTimeout(async () => {
       const s = latestStateRef.current;
       const currentHash = JSON.stringify({
-        checklist: s.checkedSteps, notes: s.stepNotes, node: s.currentNodeId
+        checklist: s.checkedSteps,
+        notes: s.stepNotes,
+        node: s.currentNodeId,
+        decisions: s.decisions,
+        variations: s.variations,
       });
       if (currentHash === lastSavedHashRef.current) return; // fix #12: skip jika tidak ada perubahan
       lastSavedHashRef.current = currentHash;
@@ -295,7 +308,7 @@ export default function DynamicPathwayPage() {
   // saveDraftRef stabil via ref — tidak perlu masuk dependency
   }, [checkedSteps, stepNotes, pathwayHistory, currentNodeId, sessionId, showPatientCodeModal]);
 
-  const handleBranchSelect = (_branchId: string, nextNodeId: string, branchTitle: string) => {
+  const handleBranchSelect = (branchId: string, nextNodeId: string, branchTitle: string) => {
     // Check if previous node validation is needed
     const previousNode = pathwayHistory.length > 0 ? 
       pathway?.nodes[pathwayHistory[pathwayHistory.length - 1].nodeId] : null;
@@ -305,6 +318,16 @@ export default function DynamicPathwayPage() {
       setPendingBranchId(nextNodeId);
       return;
     }
+
+    setDecisions(prev => [
+      ...prev.filter(decision => decision.nodeId !== currentNodeId),
+      {
+        nodeId: currentNodeId,
+        branchId,
+        branchTitle,
+        selectedAt: new Date().toISOString(),
+      },
+    ]);
 
     // Navigate to next node
     navigateToNode(nextNodeId, branchTitle);
@@ -372,6 +395,33 @@ export default function DynamicPathwayPage() {
     setSavingDraft(true);
     await saveDraft(sessionId, checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations);
     setSavingDraft(false);
+  };
+
+  const executionReport = useMemo(() => {
+    if (!pathway) return null;
+    return buildPathwayExecutionReport({
+      pathway,
+      currentNodeId,
+      checkedSteps,
+      notes: stepNotes,
+      decisions,
+      variations,
+      pathwayHistory,
+      effectiveMode,
+    });
+  }, [pathway, currentNodeId, checkedSteps, stepNotes, decisions, variations, pathwayHistory, effectiveMode]);
+
+  const handleSendDynamicDoctorReport = async () => {
+    if (!sessionId || !executionReport || !disease) {
+      toast.error('Sesi belum siap untuk dilaporkan');
+      return;
+    }
+    const message = formatClinicalActionRequest(executionReport, patientCode, disease.name);
+    const ok = await reportToDoctor(sessionId, message);
+    if (ok) {
+      setConsultationStatus('waiting_doctor');
+      toast.success('Permintaan tindakan dinamis dikirim ke dokter');
+    }
   };
 
   // ── Doctor: Submit Order ──
@@ -791,6 +841,14 @@ export default function DynamicPathwayPage() {
           </motion.div>
         )}
 
+        {executionReport && !showPatientCodeModal && (
+          <ClinicalActionRequestPanel
+            report={executionReport}
+            consultationStatus={consultationStatus}
+            onSendDoctorReport={handleSendDynamicDoctorReport}
+          />
+        )}
+
         {/* Current Node */}
         <div ref={nodeRef}>
           <AnimatePresence mode="wait">
@@ -913,6 +971,10 @@ export default function DynamicPathwayPage() {
               <Sparkles className="w-5 h-5" />
             </button>
           </motion.div>
+        )}
+
+        {executionReport && !showPatientCodeModal && (
+          <PathwayAuditTrailPanel report={executionReport} />
         )}
 
         {/* Clinical References Section */}
@@ -1265,6 +1327,174 @@ export default function DynamicPathwayPage() {
   );
 }
 
+function ClinicalActionRequestPanel({
+  report,
+  consultationStatus,
+  onSendDoctorReport,
+}: {
+  report: ClinicalExecutionReport;
+  consultationStatus: 'none' | 'waiting_doctor' | 'doctor_responded';
+  onSendDoctorReport: () => void;
+}) {
+  const statusClass = report.compliance.status === 'compliant'
+    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+    : report.compliance.status === 'variation'
+      ? 'bg-amber-50 text-amber-800 border-amber-200'
+      : 'bg-red-50 text-red-800 border-red-200';
+  const priorityClass: Record<string, string> = {
+    critical: 'bg-red-100 text-red-800 border-red-200',
+    urgent: 'bg-amber-100 text-amber-800 border-amber-200',
+    routine: 'bg-blue-100 text-blue-800 border-blue-200',
+  };
+  const visibleActions = report.actions.slice(0, 5);
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <ClipboardCheck className="w-5 h-5 text-teal-600" />
+            <h3 className="font-bold text-slate-900">Permintaan Tindakan Klinis Dinamis</h3>
+          </div>
+          <p className="text-xs text-slate-500">Generated dari checklist aktual, decision node, variasi, dan subpathway aktif.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${statusClass}`}>{report.compliance.label}</span>
+          <button
+            onClick={onSendDoctorReport}
+            disabled={report.actions.length === 0 || consultationStatus === 'waiting_doctor'}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-600 text-white text-xs font-bold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Stethoscope className="w-3.5 h-3.5" />
+            {consultationStatus === 'waiting_doctor' ? 'Menunggu Dokter' : 'Kirim ke Dokter'}
+          </button>
+        </div>
+      </div>
+
+      {visibleActions.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+          Belum ada action request aktif. Isi checklist atau pilih decision branch untuk menghasilkan rekomendasi spesifik.
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-3">
+          {visibleActions.map((action) => (
+            <div key={action.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${priorityClass[action.priority]}`}>
+                  {action.priority}
+                </span>
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200">
+                  {action.sourceState}
+                </span>
+              </div>
+              <h4 className="text-sm font-bold text-slate-900 mb-1">{action.title}</h4>
+              <p className="text-[11px] text-teal-700 font-semibold mb-2">{action.subPathway}</p>
+              <ul className="space-y-1.5">
+                {action.actions.map((item) => (
+                  <li key={item} className="flex gap-2 text-xs text-slate-700 leading-relaxed">
+                    <ChevronRight className="w-3.5 h-3.5 text-teal-600 flex-shrink-0 mt-0.5" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function PathwayAuditTrailPanel({ report }: { report: ClinicalExecutionReport }) {
+  const badgeClass: Record<string, string> = {
+    completed: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    skipped: 'bg-slate-100 text-slate-700 border-slate-200',
+    variation: 'bg-amber-100 text-amber-800 border-amber-200',
+    justified: 'bg-blue-100 text-blue-800 border-blue-200',
+    'non-compliant': 'bg-red-100 text-red-800 border-red-200',
+    decision: 'bg-violet-100 text-violet-800 border-violet-200',
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="mt-10 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <GitBranch className="w-5 h-5 text-slate-600" />
+            <h3 className="font-bold text-slate-900">Audit Trail Pathway</h3>
+          </div>
+          <p className="text-xs text-slate-500">Riwayat ini membandingkan mandatory steps vs eksekusi aktual.</p>
+        </div>
+        <div className="grid grid-cols-4 gap-2 text-center">
+          <Metric label="Done" value={report.compliance.completed} tone="text-emerald-700" />
+          <Metric label="Var" value={report.compliance.variations} tone="text-amber-700" />
+          <Metric label="NC" value={report.compliance.nonCompliant} tone="text-red-700" />
+          <Metric label="Req" value={`${report.compliance.mandatoryCompleted}/${report.compliance.mandatoryTotal}`} tone="text-slate-700" />
+        </div>
+      </div>
+
+      {report.compliance.warnings.length > 0 && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3">
+          <div className="flex items-center gap-2 text-sm font-bold text-red-800 mb-2">
+            <ShieldAlert className="w-4 h-4" />
+            Warning Compliance
+          </div>
+          <ul className="space-y-1">
+            {report.compliance.warnings.slice(0, 4).map((warning) => (
+              <li key={warning} className="text-xs text-red-800">{warning}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+        {report.timeline.map((entry) => (
+          <details key={entry.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <summary className="list-none cursor-pointer">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex gap-3">
+                  <div className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-600 flex-shrink-0">
+                    {entry.order}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900">{entry.title}</h4>
+                    <p className="text-[11px] text-slate-500">{entry.subPathway}</p>
+                  </div>
+                </div>
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${badgeClass[entry.status]}`}>
+                  {entry.status}
+                </span>
+              </div>
+            </summary>
+            <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-600 space-y-1">
+              {entry.note && <p><strong>Justifikasi/Catatan:</strong> {entry.note}</p>}
+              {entry.details.slice(0, 4).map((detail) => <p key={detail}>{detail}</p>)}
+            </div>
+          </details>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function Metric({ label, value, tone }: { label: string; value: number | string; tone: string }) {
+  return (
+    <div className="min-w-[52px] rounded-lg border border-slate-200 bg-slate-50 px-2 py-1">
+      <div className="text-[9px] font-bold uppercase text-slate-400">{label}</div>
+      <div className={`text-sm font-black ${tone}`}>{value}</div>
+    </div>
+  );
+}
+
+function SectionIcon({ kind }: { kind: StructuredSubcard['kind'] }) {
+  if (kind === 'red_flag' || kind === 'contraindication') return <ShieldAlert className="w-3.5 h-3.5" />;
+  if (kind === 'decision') return <GitBranch className="w-3.5 h-3.5" />;
+  if (kind === 'immediate_action') return <Activity className="w-3.5 h-3.5" />;
+  if (kind === 'monitoring') return <ClipboardCheck className="w-3.5 h-3.5" />;
+  if (kind === 'medication') return <Pill className="w-3.5 h-3.5" />;
+  return <FileText className="w-3.5 h-3.5" />;
+}
+
 // Checklist Node Component
 function ChecklistNodeComponent({ 
   node, 
@@ -1421,6 +1651,17 @@ function ChecklistNodeComponent({
               
               // Extract decision chip
               const decisionChip = extractDecisionChip(item.description);
+              const structured = structureChecklistItem(item);
+              const subcardTone: Record<string, string> = {
+                assessment: 'bg-purple-50 border-purple-200 text-purple-800',
+                red_flag: 'bg-red-50 border-red-200 text-red-800',
+                decision: 'bg-amber-50 border-amber-200 text-amber-800',
+                immediate_action: 'bg-teal-50 border-teal-200 text-teal-800',
+                monitoring: 'bg-cyan-50 border-cyan-200 text-cyan-800',
+                medication: 'bg-violet-50 border-violet-200 text-violet-800',
+                documentation: 'bg-blue-50 border-blue-200 text-blue-800',
+                contraindication: 'bg-red-50 border-red-200 text-red-800',
+              };
 
               return (
                 <motion.div
@@ -1484,7 +1725,7 @@ function ChecklistNodeComponent({
                                 <h4 className={`text-sm leading-tight ${
                                   isMedication ? 'font-bold text-slate-900' : 'font-semibold text-slate-800'
                                 } ${isChecked ? 'line-through text-slate-500' : ''}`}>
-                                  {item.title}
+                                  {structured.title}
                                 </h4>
                               </div>
                               
@@ -1531,6 +1772,7 @@ function ChecklistNodeComponent({
                                   </span>
                                 )}
                               </div>
+                              <p className="text-[11px] text-slate-500 mt-1">{structured.subtitle}</p>
                             </div>
 
                             {/* Notes button - small */}
@@ -1546,43 +1788,35 @@ function ChecklistNodeComponent({
                             </button>
                           </div>
 
-                          {/* Description - Clinical hierarchy */}
-                          {!isMedication ? (
-                            <p className={`text-xs leading-relaxed ${
-                              isChecked ? 'text-slate-400' : 'text-slate-600'
-                            }`}>
-                              {item.description}
-                            </p>
-                          ) : (
-                            // Medication-specific structured display
-                            <div className="space-y-0.5 text-xs">
-                              {/* Parse medication details */}
-                              {(() => {
-                                const parts = item.description.split('.');
-                                const indication = parts[0];
-                                const details = parts.slice(1).join('.');
-                                
-                                return (
-                                  <>
-                                    <div className="flex items-start gap-2">
-                                      <span className="text-slate-500 text-[10px] uppercase min-w-[60px] font-semibold">Indication:</span>
-                                      <span className={`${isChecked ? 'text-slate-400' : 'text-slate-700'} font-medium`}>
-                                        {indication}
-                                      </span>
-                                    </div>
-                                    {details && (
-                                      <div className="flex items-start gap-2">
-                                        <span className="text-slate-500 text-[10px] uppercase min-w-[60px] font-semibold">Details:</span>
-                                        <span className={`${isChecked ? 'text-slate-400' : 'text-slate-600'}`}>
-                                          {details}
-                                        </span>
-                                      </div>
-                                    )}
-                                  </>
-                                );
-                              })()}
-                            </div>
-                          )}
+                          {/* Structured clinical subcards: no long wall text */}
+                          <div className="mt-2 grid sm:grid-cols-2 gap-2">
+                            {structured.subcards.map((card, subIndex) => (
+                              <div
+                                key={`${item.id}-${card.label}-${subIndex}`}
+                                className={`rounded-lg border p-2.5 ${subcardTone[card.kind]} ${isChecked ? 'opacity-70' : ''}`}
+                              >
+                                <div className="flex items-center gap-1.5 mb-1">
+                                  <SectionIcon kind={card.kind} />
+                                  <span className="text-[10px] font-black uppercase tracking-wide">{card.label}</span>
+                                  {card.priority === 'critical' && (
+                                    <span className="ml-auto text-[9px] font-black bg-red-600 text-white rounded px-1.5 py-0.5">URGENT</span>
+                                  )}
+                                </div>
+                                {card.bullets.length > 0 ? (
+                                  <ul className="space-y-0.5">
+                                    {card.bullets.map((bullet) => (
+                                      <li key={bullet} className="text-[11px] leading-relaxed text-slate-700 flex gap-1.5">
+                                        <span className="text-slate-400">•</span>
+                                        <span>{bullet}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <p className={`text-[11px] leading-relaxed ${isChecked ? 'text-slate-500' : 'text-slate-700'}`}>{card.content}</p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
 
                           {/* Notes textarea */}
                           <AnimatePresence>
