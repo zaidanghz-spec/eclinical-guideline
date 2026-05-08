@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { ArrowLeft, CheckCircle2, AlertCircle, FileText, Printer, Stethoscope, Calendar } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, FileText, Printer, Stethoscope, Calendar, ShieldAlert, GitBranch, Activity, Pill, ClipboardCheck } from 'lucide-react';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
 import { dynamicPathways } from '../lib/dynamicPathways';
+import { buildPathwayExecutionReport, structureChecklistItem, type ClinicalExecutionReport, type StructuredSubcard } from '../lib/clinicalPathwayEngine';
 import Navbar from '../components/Navbar';
 
 export default function PathwayReportPage() {
@@ -146,6 +147,16 @@ export default function PathwayReportPage() {
       });
     }
   }
+  const executionReport: ClinicalExecutionReport = buildPathwayExecutionReport({
+    pathway,
+    currentNodeId: session.currentNodeId || session.current_node_id || pathway.startNodeId,
+    checkedSteps: session.checklist || {},
+    notes: session.notes || {},
+    decisions: session.decisions || [],
+    variations: session.variations || [],
+    pathwayHistory: history,
+    effectiveMode: 'full',
+  });
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -212,6 +223,8 @@ export default function PathwayReportPage() {
           </div>
 
           <div className="p-8">
+            <ReportComplianceSummary report={executionReport} />
+
             <div className="space-y-12">
               {visitedNodes.length === 0 ? (
                 <div className="p-16 border-2 border-dashed border-slate-100 rounded-3xl text-center text-slate-400 italic">
@@ -267,11 +280,29 @@ export default function PathwayReportPage() {
                                   const isChecked = session.checklist[item.id];
                                   const note = session.notes && session.notes[item.id];
                                   const role = (item as any).role || 'both';
+                                  const structured = structureChecklistItem(item);
+                                  const timelineEntry = executionReport.timeline.find(entry => entry.itemId === item.id);
+                                  const variation = session.variations?.find(v => v.incompleteSteps?.includes(item.id));
+                                  const status = timelineEntry?.status || (isChecked ? 'completed' : item.required ? 'non-compliant' : 'skipped');
+                                  const statusClass: Record<string, string> = {
+                                    completed: 'bg-teal-100 text-teal-800 border-teal-200',
+                                    skipped: 'bg-slate-100 text-slate-700 border-slate-200',
+                                    variation: 'bg-orange-100 text-orange-800 border-orange-200',
+                                    justified: 'bg-blue-100 text-blue-800 border-blue-200',
+                                    'non-compliant': 'bg-red-100 text-red-800 border-red-200',
+                                    decision: 'bg-purple-100 text-purple-800 border-purple-200',
+                                  };
                                   
                                   return (
                                     <div key={item.id} className={`p-5 rounded-2xl border transition-all ${
                                       isChecked 
                                         ? 'bg-teal-50/30 border-teal-100 ring-1 ring-teal-100' 
+                                        : status === 'justified'
+                                          ? 'bg-blue-50/40 border-blue-100'
+                                        : status === 'variation'
+                                          ? 'bg-orange-50/40 border-orange-100'
+                                        : status === 'non-compliant'
+                                          ? 'bg-red-50/40 border-red-100'
                                         : role === 'doctor'
                                           ? 'bg-purple-50/40 border-purple-100 border-dashed'
                                           : 'bg-slate-50/50 border-slate-100'
@@ -288,27 +319,31 @@ export default function PathwayReportPage() {
                                         )}
                                         <div className="flex-1">
                                           <div className="flex items-center justify-between gap-4">
-                                            <div className="font-bold text-slate-800">{item.title}</div>
-                                            {!isChecked && (
-                                              <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-tighter ${
-                                                role === 'doctor' 
-                                                  ? 'bg-purple-100 text-purple-700' 
-                                                  : 'bg-slate-200 text-slate-600'
-                                              }`}>
-                                                {role === 'doctor' ? 'KURANG DOKTER' : 'BELUM DIKERJAKAN'}
-                                              </span>
-                                            )}
-                                            {isChecked && (
-                                              <span className="text-[10px] font-black px-2 py-0.5 bg-teal-100 text-teal-700 rounded uppercase tracking-tighter">
-                                                SELESAI {role === 'doctor' ? 'DOKTER' : 'PERAWAT'}
-                                              </span>
-                                            )}
+                                            <div>
+                                              <div className="font-bold text-slate-800">{structured.title}</div>
+                                              <div className="text-xs text-slate-500 mt-0.5">{structured.subtitle}</div>
+                                            </div>
+                                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter border ${statusClass[status] || statusClass.skipped}`}>
+                                              {status === 'non-compliant' ? 'non-compliant' : status}
+                                            </span>
                                           </div>
-                                          <p className="text-slate-500 text-sm mt-1">{item.description}</p>
+
+                                          <div className="mt-3 grid md:grid-cols-2 gap-2">
+                                            {structured.subcards.map((card, cardIndex) => (
+                                              <ReportSubcard key={`${item.id}-${card.label}-${cardIndex}`} card={card} />
+                                            ))}
+                                          </div>
+
                                           {note && (
-                                            <div className="mt-4 p-4 bg-white border border-yellow-200 rounded-xl text-sm text-yellow-800 shadow-sm italic">
+                                            <div className="mt-4 p-4 bg-white border border-yellow-200 rounded-xl text-sm text-yellow-800 shadow-sm">
                                               <div className="flex items-center gap-2 mb-1 not-italic font-bold text-yellow-900 uppercase text-[10px]">Catatan Klinis:</div>
                                               {note}
+                                            </div>
+                                          )}
+                                          {variation?.variationReason && (
+                                            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-900 shadow-sm">
+                                              <div className="flex items-center gap-2 mb-1 font-bold text-blue-900 uppercase text-[10px]">Justifikasi Variasi:</div>
+                                              {variation.variationReason}
                                             </div>
                                           )}
                                         </div>
@@ -348,7 +383,7 @@ export default function PathwayReportPage() {
             </div>
 
             <div className="mt-20 pt-10 border-t border-slate-200">
-               {session.variations && session.variations.length > 0 ? (
+               {executionReport.compliance.status === 'variation' ? (
                 <div className="p-8 bg-orange-50 rounded-3xl border-2 border-orange-100 flex gap-6">
                   <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 shrink-0">
                     <AlertCircle className="w-8 h-8" />
@@ -360,7 +395,7 @@ export default function PathwayReportPage() {
                     </p>
                   </div>
                 </div>
-              ) : (
+              ) : executionReport.compliance.status === 'compliant' ? (
                 <div className="p-8 bg-teal-50 rounded-3xl border-2 border-teal-100 flex gap-6">
                   <div className="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center text-teal-600 shrink-0">
                     <CheckCircle2 className="w-8 h-8" />
@@ -369,6 +404,18 @@ export default function PathwayReportPage() {
                     <h4 className="font-bold text-teal-900 text-xl">Kepatuhan Penuh (Fully Compliant)</h4>
                     <p className="text-teal-800 mt-2 leading-relaxed">
                       Seluruh langkah penanganan dalam pedoman klinis <strong>{session.diseaseName}</strong> telah dilaksanakan sesuai standar tanpa variasi. Dokumentasi menunjukkan kepatuhan 100% terhadap protokol yang berlaku.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-8 bg-red-50 rounded-3xl border-2 border-red-100 flex gap-6">
+                  <div className="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 shrink-0">
+                    <ShieldAlert className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-red-900 text-xl">Belum Sesuai Clinical Pathway</h4>
+                    <p className="text-red-800 mt-2 leading-relaxed">
+                      Masih terdapat mandatory step yang belum dilakukan atau belum memiliki justifikasi. Lihat bagian audit log dan warning compliance untuk detail langkah yang perlu dilengkapi.
                     </p>
                   </div>
                 </div>
@@ -389,6 +436,156 @@ export default function PathwayReportPage() {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+function ReportSubcard({ card }: { card: StructuredSubcard }) {
+  const tone: Record<string, string> = {
+    assessment: 'bg-purple-50 border-purple-200 text-purple-900',
+    red_flag: 'bg-red-50 border-red-200 text-red-900',
+    decision: 'bg-orange-50 border-orange-200 text-orange-900',
+    immediate_action: 'bg-teal-50 border-teal-200 text-teal-900',
+    monitoring: 'bg-cyan-50 border-cyan-200 text-cyan-900',
+    medication: 'bg-violet-50 border-violet-200 text-violet-900',
+    documentation: 'bg-blue-50 border-blue-200 text-blue-900',
+    contraindication: 'bg-red-50 border-red-200 text-red-900',
+  };
+  return (
+    <div className={`rounded-xl border p-3 ${tone[card.kind] || 'bg-slate-50 border-slate-200 text-slate-900'}`}>
+      <div className="flex items-center gap-2 mb-1.5">
+        <ReportSubcardIcon kind={card.kind} />
+        <span className="text-[10px] font-black uppercase tracking-wide">{card.label}</span>
+        {card.priority === 'critical' && (
+          <span className="ml-auto rounded bg-red-600 text-white px-1.5 py-0.5 text-[9px] font-black">URGENT</span>
+        )}
+      </div>
+      {card.bullets.length > 0 ? (
+        <ul className="space-y-1">
+          {card.bullets.map((bullet) => (
+            <li key={bullet} className="flex gap-2 text-xs leading-relaxed text-slate-700">
+              <span className="text-slate-400">•</span>
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-xs leading-relaxed text-slate-700">{card.content}</p>
+      )}
+    </div>
+  );
+}
+
+function ReportSubcardIcon({ kind }: { kind: StructuredSubcard['kind'] }) {
+  if (kind === 'red_flag' || kind === 'contraindication') return <ShieldAlert className="w-3.5 h-3.5" />;
+  if (kind === 'decision') return <GitBranch className="w-3.5 h-3.5" />;
+  if (kind === 'immediate_action') return <Activity className="w-3.5 h-3.5" />;
+  if (kind === 'monitoring') return <ClipboardCheck className="w-3.5 h-3.5" />;
+  if (kind === 'medication') return <Pill className="w-3.5 h-3.5" />;
+  return <FileText className="w-3.5 h-3.5" />;
+}
+
+function ReportComplianceSummary({ report }: { report: ClinicalExecutionReport }) {
+  const statusClass = report.compliance.status === 'compliant'
+    ? 'bg-teal-50 text-teal-800 border-teal-200'
+    : report.compliance.status === 'variation'
+      ? 'bg-orange-50 text-orange-800 border-orange-200'
+      : 'bg-red-50 text-red-800 border-red-200';
+  const badgeClass: Record<string, string> = {
+    completed: 'bg-teal-100 text-teal-800 border-teal-200',
+    skipped: 'bg-slate-100 text-slate-700 border-slate-200',
+    variation: 'bg-orange-100 text-orange-800 border-orange-200',
+    justified: 'bg-blue-100 text-blue-800 border-blue-200',
+    'non-compliant': 'bg-red-100 text-red-800 border-red-200',
+    decision: 'bg-purple-100 text-purple-800 border-purple-200',
+  };
+
+  return (
+    <div className="mb-10 space-y-5 print:break-inside-avoid">
+      <div className={`rounded-2xl border-2 p-5 ${statusClass}`}>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs font-black uppercase tracking-widest opacity-70">Kesimpulan Kepatuhan</div>
+            <h2 className="text-xl font-black mt-1">{report.compliance.label}</h2>
+            <p className="text-sm mt-2 opacity-90">
+              Mandatory completed {report.compliance.mandatoryCompleted}/{report.compliance.mandatoryTotal};
+              variasi {report.compliance.variations}; non-compliant {report.compliance.nonCompliant}.
+            </p>
+          </div>
+          <div className="grid grid-cols-4 gap-2 text-center">
+            <MiniStat label="Done" value={report.compliance.completed} />
+            <MiniStat label="Skipped" value={report.compliance.skipped} />
+            <MiniStat label="Variation" value={report.compliance.variations} />
+            <MiniStat label="NC" value={report.compliance.nonCompliant} />
+          </div>
+        </div>
+      </div>
+
+      {report.actions.length > 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <h3 className="font-black text-slate-900 mb-3">Generated Clinical Action Request</h3>
+          <div className="grid gap-3">
+            {report.actions.slice(0, 8).map((action) => (
+              <div key={action.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="text-[10px] font-black uppercase rounded bg-slate-900 text-white px-2 py-0.5">{action.priority}</span>
+                  <span className="text-[10px] font-bold rounded bg-teal-50 text-teal-700 px-2 py-0.5">{action.subPathway}</span>
+                </div>
+                <div className="font-bold text-slate-900">{action.title}</div>
+                <ul className="mt-2 space-y-1">
+                  {action.actions.map((item) => <li key={item} className="text-sm text-slate-600">- {item}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="rounded-2xl border border-slate-200 p-5">
+        <h3 className="font-black text-slate-900 mb-3">Expandable Audit Log</h3>
+        <div className="space-y-2">
+          {report.timeline.map((entry) => (
+            <details key={entry.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <summary className="list-none cursor-pointer">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-bold text-slate-900">{entry.order}. {entry.title}</div>
+                    <div className="text-xs text-slate-500">{entry.subPathway}</div>
+                  </div>
+                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${badgeClass[entry.status]}`}>
+                    {entry.status}
+                  </span>
+                </div>
+              </summary>
+              <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-600 space-y-1">
+                {entry.note && <p><strong>Justifikasi/Catatan:</strong> {entry.note}</p>}
+                {entry.details.slice(0, 4).map((detail) => <p key={detail}>{detail}</p>)}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
+        <h3 className="font-black text-blue-900 mb-3">Metadata Guideline</h3>
+        <div className="grid md:grid-cols-2 gap-3">
+          {report.guidelines.map((guideline, index) => (
+            <div key={`${guideline.source}-${index}`} className="rounded-xl border border-blue-200 bg-white p-3">
+              <div className="font-bold text-blue-900 text-sm">{guideline.source}</div>
+              <div className="text-xs text-blue-700 mt-1">{guideline.year} - {guideline.version}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-xl bg-white/70 border border-current/10 px-3 py-2 min-w-[64px]">
+      <div className="text-[10px] font-black uppercase opacity-60">{label}</div>
+      <div className="text-xl font-black">{value}</div>
     </div>
   );
 }

@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions, PathwaySession } from '../hooks/usePathwaySessions';
+import { dynamicPathways } from '../lib/dynamicPathways';
+import { buildPathwayExecutionReport } from '../lib/clinicalPathwayEngine';
 import Navbar from '../components/Navbar';
 
 export default function PathwayHistoryPage() {
@@ -369,6 +371,17 @@ function SessionCard({
   const percentage = getCompletionPercentage(session);
   const isCompleted = session.status === 'completed';
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const pathway = dynamicPathways[session.diseaseId || session.disease_id || ''];
+  const compliance = pathway ? buildPathwayExecutionReport({
+    pathway,
+    currentNodeId: session.currentNodeId || session.current_node_id || pathway.startNodeId,
+    checkedSteps: session.checklist || {},
+    notes: session.notes || {},
+    decisions: session.decisions || [],
+    variations: session.variations || [],
+    pathwayHistory: session.pathwayHistory || session.pathway_history || [],
+    effectiveMode: 'full',
+  }).compliance : null;
 
   const statusColors = {
     in_progress: {
@@ -426,6 +439,17 @@ function SessionCard({
               <div className={`px-2 py-1 ${colors.badge} ${colors.text} rounded-lg font-semibold text-xs uppercase`}>
                 {session.status.replace('_', ' ')}
               </div>
+              {compliance && (
+                <div className={`px-2 py-1 rounded-lg font-semibold text-xs uppercase ${
+                  compliance.status === 'compliant'
+                    ? 'bg-green-100 text-green-700'
+                    : compliance.status === 'variation'
+                      ? 'bg-orange-100 text-orange-700'
+                      : 'bg-red-100 text-red-700'
+                }`}>
+                  {compliance.status === 'non_compliant' ? 'non-compliant' : compliance.status}
+                </div>
+              )}
             </div>
           </div>
 
