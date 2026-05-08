@@ -1,5 +1,5 @@
 import { toast } from 'sonner';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Users,
@@ -44,11 +44,16 @@ export default function AdminDashboardPage() {
     }
   }, [user, navigate]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async (signal?: AbortSignal) => {
+    if (!accessToken) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE}/admin`, {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+        signal,
       });
       const data = await res.json();
 
@@ -56,18 +61,25 @@ export default function AdminDashboardPage() {
         throw new Error(data.error || 'Failed to fetch users');
       }
 
+      if (signal?.aborted) return;
       setUsers(data.users || []);
     } catch (error: any) {
+      if (error.name === 'AbortError') return;
       console.error('Fetch users error:', error);
       toast.error('Failed to fetch users');
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
-  };
+  }, [accessToken]);
 
   useEffect(() => {
-    if (user) fetchUsers();
-  }, [user]);
+    if (!user) return;
+    const controller = new AbortController();
+    fetchUsers(controller.signal);
+    return () => controller.abort();
+  }, [fetchUsers, user]);
 
   const toggleAdminRole = async (targetUser: UserData) => {
     if (targetUser.id === user?.id) {
@@ -170,7 +182,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <button
-              onClick={fetchUsers}
+              onClick={() => fetchUsers()}
               disabled={loading}
               className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl hover:shadow-lg transition-all border border-slate-200 disabled:opacity-50"
             >

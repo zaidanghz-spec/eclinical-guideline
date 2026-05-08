@@ -9,14 +9,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
 
-  console.log(' ProtectedRoute check:', { 
-    user: user ? { email: user.email, name: user.name } : null, 
-    loading,
-    userExists: !!user 
-  });
-
   if (loading) {
-    console.log('⏳ [ProtectedRoute] Loading...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50">
         <div className="text-center">
@@ -28,14 +21,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!user) {
-    console.log(' [ProtectedRoute] No user, redirecting to /login');
     return <Navigate to="/login" replace />;
   }
 
-  console.log(' [ProtectedRoute] User authenticated, rendering protected content');
-  console.log(' [ProtectedRoute] User details:', { 
-    email: user.email, 
-    name: user.name
-  });
   return <>{children}</>;
 }

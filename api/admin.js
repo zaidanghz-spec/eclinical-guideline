@@ -1,9 +1,7 @@
-const { query, verifyToken } = require('./_lib/db');
+const { query, verifyToken, setCorsHeaders } = require('./_lib/db');
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
 
   const payload = verifyToken(req.headers.authorization || null);
@@ -44,6 +42,9 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid action' });
   } catch (error) {
     console.error('[ADMIN ERROR]', error);
-    return res.status(500).json({ error: 'Server error', detail: error.message });
+    return res.status(500).json({
+      error: 'Server error',
+      detail: process.env.NODE_ENV !== 'production' ? error.message : undefined,
+    });
   }
 };

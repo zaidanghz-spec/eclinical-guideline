@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { motion } from 'motion/react';
 import { Mail, Plus, Trash2, Shield, CheckCircle, ArrowLeft } from 'lucide-react';
@@ -13,6 +13,9 @@ interface WhitelistEntry {
   addedAt?: string;
 }
 
+const normalizeWhitelist = (items: unknown[]): WhitelistEntry[] =>
+  items.map((item) => typeof item === 'string' ? { email: item, addedAt: '' } : item as WhitelistEntry);
+
 export function WhitelistPage() {
   const { accessToken } = useAuth();
   const [whitelist, setWhitelist] = useState<WhitelistEntry[]>([]);
@@ -20,32 +23,41 @@ export function WhitelistPage() {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
 
-  useEffect(() => {
-    loadWhitelist();
-  }, []);
-
-  const loadWhitelist = async () => {
+  const loadWhitelist = useCallback(async (signal?: AbortSignal) => {
+    if (!accessToken) {
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch(`${API_BASE}/whitelist`, {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+        signal,
       });
       const data = await res.json();
 
+      if (signal?.aborted) return;
       if (data.whitelist && Array.isArray(data.whitelist)) {
-        setWhitelist(data.whitelist.map((item: any) =>
-          typeof item === 'string' ? { email: item, addedAt: '' } : item
-        ));
+        setWhitelist(normalizeWhitelist(data.whitelist));
       } else {
         setWhitelist([]);
       }
     } catch (error: any) {
+      if (error.name === 'AbortError') return;
       console.error('Failed to load whitelist:', error);
       toast.error('Failed to load whitelist');
       setWhitelist([]);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
-  };
+  }, [accessToken]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadWhitelist(controller.signal);
+    return () => controller.abort();
+  }, [loadWhitelist]);
 
   const handleAddEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,9 +101,7 @@ export function WhitelistPage() {
       }
 
       if (data.whitelist && Array.isArray(data.whitelist)) {
-        setWhitelist(data.whitelist.map((item: any) =>
-          typeof item === 'string' ? { email: item, addedAt: '' } : item
-        ));
+        setWhitelist(normalizeWhitelist(data.whitelist));
       }
       setNewEmail('');
       toast.success('Email added to whitelist!');
@@ -122,9 +132,7 @@ export function WhitelistPage() {
       }
 
       if (data.whitelist && Array.isArray(data.whitelist)) {
-        setWhitelist(data.whitelist.map((item: any) =>
-          typeof item === 'string' ? { email: item, addedAt: '' } : item
-        ));
+        setWhitelist(normalizeWhitelist(data.whitelist));
       }
       toast.success('Email removed from whitelist');
     } catch (error: any) {

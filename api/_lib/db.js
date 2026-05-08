@@ -46,7 +46,7 @@ function createToken(userId, email, role) {
   return jwt.sign({ userId, email, role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 }
 
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173').split(',').map(s => s.trim());
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173').split(',').map(s => s.trim());
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin;
