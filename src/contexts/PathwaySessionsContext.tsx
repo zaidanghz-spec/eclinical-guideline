@@ -121,6 +121,16 @@ function updateDevSession(sessionId: string, updater: (session: PathwaySession) 
   return updated.find((session) => session.id === sessionId) || null;
 }
 
+async function readApiJson(res: Response) {
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    return res.json();
+  }
+
+  const body = await res.text();
+  throw new Error(`Unexpected ${res.status} ${res.statusText || 'response'} from pathway API: ${body.slice(0, 140)}`);
+}
+
 // ─── Fix #9: mapSession — validasi ID, normalize ke camelCase ────────────────
 function mapSession(raw: unknown): PathwaySession {
   if (!raw || typeof raw !== 'object') {
@@ -173,6 +183,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
   const mountedRef = useRef(true);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
       mountedRef.current = false;
       fetchSeqRef.current += 1;
@@ -199,7 +210,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
           'Authorization': `Bearer ${accessToken}`,
         },
       });
-      const data = await res.json();
+      const data = await readApiJson(res);
       if (res.ok) {
         const mapped = (data.sessions || []).map(mapSession);
         if (!mountedRef.current || seq !== fetchSeqRef.current) return mapped;
@@ -212,15 +223,22 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         // Fix #24: user-facing error untuk fetch failure
         console.error('Error fetching sessions:', data.error);
         if (mountedRef.current && seq === fetchSeqRef.current) {
-          setAuthError(data.error || 'Gagal memuat sesi pathway');
+          const message = res.status === 401
+            ? 'Sesi login sudah tidak valid. Silakan logout lalu login ulang.'
+            : `Gagal memuat sesi pathway dari server (${res.status}). ${data.error || 'Coba refresh halaman.'}`;
+          setAuthError(message);
+          toast.error(message);
         }
       }
     } catch (error) {
       console.error('Error fetching sessions:', error);
       // Fix #24: user-facing notification
       if (mountedRef.current && seq === fetchSeqRef.current) {
-        setAuthError('Gagal memuat sesi. Periksa koneksi internet Anda.');
-        toast.error('Gagal memuat sesi. Periksa koneksi internet Anda.');
+        const message = error instanceof Error
+          ? `Gagal memuat sesi pathway. Masalahnya kemungkinan di API/server, bukan koneksi internet. Detail: ${error.message}`
+          : 'Gagal memuat sesi pathway. Masalahnya kemungkinan di API/server, bukan koneksi internet.';
+        setAuthError(message);
+        toast.error('Gagal memuat sesi pathway dari server.');
       }
     } finally {
       if (mountedRef.current && seq === fetchSeqRef.current) {
