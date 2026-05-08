@@ -301,12 +301,14 @@ export default function DynamicPathwayPage() {
         variations: s.variations,
       });
       if (currentHash === lastSavedHashRef.current) return; // fix #12: skip jika tidak ada perubahan
-      lastSavedHashRef.current = currentHash;
-      await saveDraftRef.current(sessionId, s.checkedSteps, s.stepNotes, s.currentNodeId, s.pathwayHistory, s.decisions, s.variations);
+      const saved = await saveDraftRef.current(sessionId, s.checkedSteps, s.stepNotes, s.currentNodeId, s.pathwayHistory, s.decisions, s.variations);
+      if (saved) {
+        lastSavedHashRef.current = currentHash;
+      }
     }, 2000);
     return () => clearTimeout(timer);
   // saveDraftRef stabil via ref — tidak perlu masuk dependency
-  }, [checkedSteps, stepNotes, pathwayHistory, currentNodeId, sessionId, showPatientCodeModal]);
+  }, [checkedSteps, stepNotes, pathwayHistory, currentNodeId, decisions, variations, sessionId, showPatientCodeModal]);
 
   const handleBranchSelect = (branchId: string, nextNodeId: string, branchTitle: string) => {
     // Check if previous node validation is needed

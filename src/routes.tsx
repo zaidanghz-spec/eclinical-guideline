@@ -1,5 +1,4 @@
 import { createBrowserRouter, Outlet } from "react-router";
-import { AuthProvider } from "./contexts/AuthContext";
 import { Toaster } from "sonner";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";

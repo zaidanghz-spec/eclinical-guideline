@@ -81,16 +81,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   // Ref untuk menghindari double-validation di Strict Mode
   const validatingRef = useRef(false);
+  const mountedRef = useRef(true);
 
   const isAdmin = user?.role === 'admin';
 
   // Validasi token ke server: pastikan token masih valid dan dapatkan user info terbaru
-  const validateToken = async (token: string) => {
+  const validateToken = async (token: string, signal?: AbortSignal) => {
     if (validatingRef.current) return;
     validatingRef.current = true;
     try {
       if (isDevToken(token)) {
         const email = token.replace('dev-token:', '');
+        if (!mountedRef.current || signal?.aborted) return;
         setUser(createDevUser(email));
         setAccessToken(token);
         setLoading(false);
@@ -98,33 +100,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       const res = await fetch(`${API_BASE}/auth?action=me`, {
         headers: { 'Authorization': `Bearer ${token}` },
+        signal,
       });
       if (!res.ok) throw new Error('Token tidak valid atau sudah expire');
       const data = await res.json();
+      if (!mountedRef.current || signal?.aborted) return;
       setUser(data.user);
       setAccessToken(token);
     } catch (error) {
+      if ((error as Error).name === 'AbortError') return;
       console.error('[AUTH] Validasi token gagal:', error);
       // Token tidak valid — bersihkan semua state
       localStorage.removeItem('auth_token');
+      if (!mountedRef.current) return;
       setAccessToken(null);
       setUser(null);
     } finally {
-      setLoading(false);
+      if (mountedRef.current && !signal?.aborted) {
+        setLoading(false);
+      }
       validatingRef.current = false;
     }
   };
 
   // Mount: cek localStorage, validasi ke server jika ada token
   useEffect(() => {
+    mountedRef.current = true;
+    const controller = new AbortController();
     const storedToken = localStorage.getItem('auth_token');
     if (storedToken) {
       // Token ada di localStorage, set ke memory dulu lalu validasi ke server
       setAccessToken(storedToken);
-      validateToken(storedToken);
+      validateToken(storedToken, controller.signal);
     } else {
       setLoading(false);
     }
+    return () => {
+      mountedRef.current = false;
+      controller.abort();
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

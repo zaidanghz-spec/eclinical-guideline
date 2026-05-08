@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router';
 import { motion } from 'motion/react';
 import { ArrowLeft, AlertCircle, Clock, TrendingUp, GitBranch, ClipboardList, ChevronRight } from 'lucide-react';
-import { diseases, organSystems } from '../lib/diseases';
+import { diseases } from '../lib/diseases';
 import { pathways } from '../lib/pathways';
 import { dynamicPathways } from '../lib/dynamicPathways';
 

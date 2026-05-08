@@ -14,57 +14,10 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
 import Navbar from '../components/Navbar';
-import { useEffect, useState } from 'react';
 
 export default function HomePage() {
   const { user } = useAuth();
   const { sessions, loading, authError } = usePathwaySessions();
-  const [hasError, setHasError] = useState(false);
-
-  console.log(' [HomePage] Rendering HomePage...');
-  console.log(' [HomePage] User:', user ? { email: user.email, name: user.name } : null);
-  console.log(' [HomePage] Sessions:', sessions ? sessions.length : 'null');
-  console.log(' [HomePage] Loading:', loading);
-  console.log(' [HomePage] Auth Error:', authError);
-  console.log(' [HomePage] Has error:', hasError);
-
-  // Catch any rendering errors
-  useEffect(() => {
-    console.log(' [HomePage] useEffect - Setting up error handler');
-    const errorHandler = (error: ErrorEvent) => {
-      console.error(' [HomePage] Rendering error:', error);
-      setHasError(true);
-    };
-    window.addEventListener('error', errorHandler);
-    return () => {
-      console.log(' [HomePage] useEffect - Cleaning up error handler');
-      window.removeEventListener('error', errorHandler);
-    };
-  }, []);
-
-  // If there's an error, show a simple fallback
-  if (hasError) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8 text-center">
-            <div className="text-red-600 mb-4">
-              <AlertCircle className="w-12 h-12 mx-auto" />
-            </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-            <p className="text-gray-600 mb-4">Please refresh the page or try again later.</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
-            >
-              Refresh Page
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Calculate stats from real sessions
   const completedSessions = sessions?.filter(s => s.status === 'completed') || [];
@@ -113,6 +66,12 @@ export default function HomePage() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {authError && (
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {authError}
+          </div>
+        )}
+
         {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

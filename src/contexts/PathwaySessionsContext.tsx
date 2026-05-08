@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 
@@ -73,8 +73,11 @@ export interface PathwaySession {
 interface PathwaySessionsContextType {
   sessions: PathwaySession[];
   loading: boolean;
+  authError: string | null;
   currentSession: PathwaySession | null;
-  refreshSessions: () => Promise<void>;
+  refreshSessions: () => Promise<PathwaySession[]>;
+  loadSession: (sessionId: string) => Promise<PathwaySession | null>;
+  getSessionsByPatientCode: (patientCode: string) => Promise<PathwaySession[]>;
   createSession: (diseaseId: string, diseaseName: string, patientCode?: string) => Promise<PathwaySession | null>;
   updateSession: (sessionId: string, updates: Partial<PathwaySession>) => Promise<boolean>;
   saveDraft: (
@@ -116,6 +119,16 @@ function updateDevSession(sessionId: string, updater: (session: PathwaySession) 
   const updated = sessions.map((session) => session.id === sessionId ? updater(session) : session);
   writeDevSessions(updated);
   return updated.find((session) => session.id === sessionId) || null;
+}
+
+async function readApiJson(res: Response) {
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    return res.json();
+  }
+
+  const body = await res.text();
+  throw new Error(`Unexpected ${res.status} ${res.statusText || 'response'} from pathway API: ${body.slice(0, 140)}`);
 }
 
 // ─── Fix #9: mapSession — validasi ID, normalize ke camelCase ────────────────
@@ -164,15 +177,30 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
   const { user, accessToken } = useAuth();
   const [sessions, setSessions] = useState<PathwaySession[]>([]);
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [currentSession, setCurrentSession] = useState<PathwaySession | null>(null);
+  const fetchSeqRef = useRef(0);
+  const mountedRef = useRef(true);
 
-  const fetchSessions = useCallback(async () => {
-    if (!user || !accessToken) return;
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      fetchSeqRef.current += 1;
+    };
+  }, []);
+
+  const fetchSessions = useCallback(async (): Promise<PathwaySession[]> => {
+    if (!user || !accessToken) return [];
+    const seq = ++fetchSeqRef.current;
     if (isDevToken(accessToken)) {
-      setSessions(readDevSessions());
-      setCurrentSession(readDevSessions().find(s => s.status === 'in_progress') || null);
+      const devSessions = readDevSessions();
+      if (!mountedRef.current || seq !== fetchSeqRef.current) return devSessions;
+      setSessions(devSessions);
+      setCurrentSession(devSessions.find(s => s.status === 'in_progress') || null);
+      setAuthError(null);
       setLoading(false);
-      return;
+      return devSessions;
     }
     setLoading(true);
     try {
@@ -182,23 +210,42 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
           'Authorization': `Bearer ${accessToken}`,
         },
       });
-      const data = await res.json();
+      const data = await readApiJson(res);
       if (res.ok) {
         const mapped = (data.sessions || []).map(mapSession);
+        if (!mountedRef.current || seq !== fetchSeqRef.current) return mapped;
         setSessions(mapped);
         const inProgress = mapped.find((s: PathwaySession) => s.status === 'in_progress');
         setCurrentSession(inProgress || null);
+        setAuthError(null);
+        return mapped;
       } else {
         // Fix #24: user-facing error untuk fetch failure
         console.error('Error fetching sessions:', data.error);
+        if (mountedRef.current && seq === fetchSeqRef.current) {
+          const message = res.status === 401
+            ? 'Sesi login sudah tidak valid. Silakan logout lalu login ulang.'
+            : `Gagal memuat sesi pathway dari server (${res.status}). ${data.error || 'Coba refresh halaman.'}`;
+          setAuthError(message);
+          toast.error(message);
+        }
       }
     } catch (error) {
       console.error('Error fetching sessions:', error);
       // Fix #24: user-facing notification
-      toast.error('Gagal memuat sesi. Periksa koneksi internet Anda.');
+      if (mountedRef.current && seq === fetchSeqRef.current) {
+        const message = error instanceof Error
+          ? `Gagal memuat sesi pathway. Masalahnya kemungkinan di API/server, bukan koneksi internet. Detail: ${error.message}`
+          : 'Gagal memuat sesi pathway. Masalahnya kemungkinan di API/server, bukan koneksi internet.';
+        setAuthError(message);
+        toast.error('Gagal memuat sesi pathway dari server.');
+      }
     } finally {
-      setLoading(false);
+      if (mountedRef.current && seq === fetchSeqRef.current) {
+        setLoading(false);
+      }
     }
+    return [];
   }, [user, accessToken]);
 
   useEffect(() => {
@@ -207,8 +254,42 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
     } else {
       setSessions([]);
       setCurrentSession(null);
+      setAuthError(null);
     }
   }, [user, accessToken, fetchSessions]);
+
+  const loadSession = useCallback(async (sessionId: string): Promise<PathwaySession | null> => {
+    if (!user || !accessToken || !sessionId) return null;
+    const localSession = sessions.find(session => session.id === sessionId);
+    if (localSession) {
+      setCurrentSession(localSession);
+      return localSession;
+    }
+
+    const latestSessions = await fetchSessions();
+    const refreshedSession = latestSessions.find(session => session.id === sessionId) || null;
+    if (refreshedSession) {
+      setCurrentSession(refreshedSession);
+      setAuthError(null);
+      return refreshedSession;
+    }
+
+    setAuthError('Sesi pathway tidak ditemukan atau tidak dapat diakses.');
+    return null;
+  }, [accessToken, fetchSessions, sessions, user]);
+
+  const getSessionsByPatientCode = useCallback(async (patientCode: string): Promise<PathwaySession[]> => {
+    if (!user || !accessToken) return [];
+    const normalizedCode = patientCode.trim().toLowerCase();
+    if (!normalizedCode) return [];
+
+    const latestSessions = await fetchSessions();
+    const sourceSessions = latestSessions.length > 0 ? latestSessions : sessions;
+    const matches = sourceSessions.filter(session =>
+      (session.patientCode || session.patient_code || '').trim().toLowerCase() === normalizedCode
+    );
+    return matches;
+  }, [accessToken, fetchSessions, sessions, user]);
 
   const createSession = async (diseaseId: string, diseaseName: string, patientCode?: string) => {
     if (!user || !accessToken) return null;
@@ -261,8 +342,9 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
       if (res.ok && data.session) {
         const session = mapSession(data.session);
-        setSessions(prev => [session, ...prev]);
+        setSessions(prev => [session, ...prev.filter(existing => existing.id !== session.id)]);
         setCurrentSession(session);
+        setAuthError(null);
         return session;
       }
       // Fix #24: error response handling
@@ -299,8 +381,11 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       if (res.ok && data.session) {
         const session = mapSession(data.session);
         setSessions(prev => prev.map(s => s.id === session.id ? session : s));
+        setCurrentSession(prev => prev?.id === session.id ? session : prev);
+        setAuthError(null);
         return true;
       }
+      setAuthError(data.error || 'Gagal memperbarui sesi pathway');
       return false;
     } catch (error) {
       console.error('Error updating session:', error);
@@ -351,6 +436,8 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       if (res.ok && data.session) {
         const session = mapSession(data.session);
         setSessions(prev => prev.map(s => s.id === session.id ? session : s));
+        setCurrentSession(prev => prev?.id === session.id ? session : prev);
+        setAuthError(null);
         toast.success('Draf berhasil disimpan');
         return true;
       }
@@ -429,6 +516,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
       if (res.ok && data.deleted) {
         setSessions(prev => prev.filter(s => s.id !== sessionId));
+        setCurrentSession(prev => prev?.id === sessionId ? null : prev);
         toast.success('Sesi berhasil dihapus');
         return true;
       }
@@ -470,6 +558,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       if (res.ok && data.session) {
         const session = mapSession(data.session);
         setSessions(prev => prev.map(s => s.id === session.id ? session : s));
+        setCurrentSession(prev => prev?.id === session.id ? session : prev);
         toast.success('Laporan berhasil dikirim ke Dokter!');
         return true;
       }
@@ -521,6 +610,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       if (res.ok && data.session) {
         const session = mapSession(data.session);
         setSessions(prev => prev.map(s => s.id === session.id ? session : s));
+        setCurrentSession(prev => prev?.id === session.id ? session : prev);
         toast.success('Instruksi dokter berhasil dikirim!');
         return true;
       }
@@ -535,7 +625,8 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
 
   return (
     <PathwaySessionsContext.Provider value={{
-      sessions, loading, currentSession, refreshSessions: fetchSessions,
+      sessions, loading, authError, currentSession, refreshSessions: fetchSessions,
+      loadSession, getSessionsByPatientCode,
       createSession, updateSession, saveDraft, completeSession, deleteSession,
       reportToDoctor, submitDoctorOrder,
     }}>

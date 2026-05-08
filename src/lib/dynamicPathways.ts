@@ -3,7 +3,6 @@
 
 import { dbdPathway } from'./pathways/dbd';
 import { hipertensiPathway } from './pathways/hipertensi';
-import { svtPathway } from'./pathways/svt';
 import { bppvPathway } from'./pathways/bppv';
 import { frakturPathway } from'./pathways/fraktur';
 import { tthPathway } from './pathways/tth';
@@ -14,7 +13,6 @@ import { diabetesMelitusPathway } from './pathways/diabetes-melitus';
 import { diareDewasaPathway } from './pathways/diare-dewasa';
 import { dispepsiaPathway } from './pathways/dispepsia';
 import { insectBitePathway } from './pathways/reaksi-gigitan-serangga';
-import { fibrilasiAtriumPathway } from './pathways/fibrilasi-atrium';
 import { otitisEksternaPathway } from './pathways/otitis-eksterna';
 import { konjungtivitisPathway } from './pathways/konjungtivitis';
 import { ispaPathway } from './pathways/ispa';

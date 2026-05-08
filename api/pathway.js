@@ -9,6 +9,8 @@ module.exports = async function handler(req, res) {
 
   const action = req.query.action;
   const body = req.body || {};
+  const hasField = (key) => Object.prototype.hasOwnProperty.call(body, key);
+  const jsonField = (key) => hasField(key) ? JSON.stringify(body[key] ?? null) : null;
 
   // Fix #21: Jangan expose error.message ke client di production
   const isDev = process.env.NODE_ENV !== 'production';
@@ -47,13 +49,13 @@ module.exports = async function handler(req, res) {
         WHERE id = $8
         RETURNING *`,
         [
-          checklist ? JSON.stringify(checklist) : null,
-          notes ? JSON.stringify(notes) : null,
-          currentNodeId || null,
-          pathwayHistory ? JSON.stringify(pathwayHistory) : null,
-          decisions ? JSON.stringify(decisions) : null,
-          variations ? JSON.stringify(variations) : null,
-          status || null,
+          jsonField('checklist'),
+          jsonField('notes'),
+          hasField('currentNodeId') ? currentNodeId : null,
+          jsonField('pathwayHistory'),
+          jsonField('decisions'),
+          jsonField('variations'),
+          hasField('status') ? status : null,
           sessionId
         ]
       );

@@ -76,7 +76,6 @@ function UrgencyBadge({ urgency }: { urgency: PathwaySuggestion['urgency'] }) {
 // MAIN PAGE COMPONENT
 // ──────────────────────────────────────────
 export default function GuidedAnamnesisPage() {
-  const navigate = useNavigate();
   const [step, setStep] = useState<StepId>('chief');
   const [data, setData] = useState<AnamnesisData>(initialData);
   const [showResults, setShowResults] = useState(false);
