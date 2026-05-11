@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
+import { consultationDoctorNames, isConsultationDoctor } from '../lib/doctorConsultation';
 
 // ─── Fix #14: Typed interfaces menggantikan any[] ───────────────────────────
 export interface ClinicalDecision {
@@ -252,6 +253,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
   const [currentSession, setCurrentSession] = useState<PathwaySession | null>(null);
   const fetchSeqRef = useRef(0);
   const mountedRef = useRef(true);
+  const sessionsLoadedRef = useRef(false);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -270,10 +272,13 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       setSessions(devSessions);
       setCurrentSession(devSessions.find(s => s.status === 'in_progress') || null);
       setAuthError(null);
+      sessionsLoadedRef.current = true;
       setLoading(false);
       return devSessions;
     }
-    setLoading(true);
+    if (!sessionsLoadedRef.current) {
+      setLoading(true);
+    }
     try {
       const res = await fetch('/api/pathway', {
         headers: {
@@ -290,6 +295,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         setCurrentSession(inProgress || null);
         const skippedCount = Array.isArray(data.sessions) ? data.sessions.length - mapped.length : 0;
         setAuthError(skippedCount > 0 ? `${skippedCount} sesi lama tidak ditampilkan karena ID data kosong. Sesi lain tetap bisa digunakan.` : null);
+        sessionsLoadedRef.current = true;
         return mapped;
       } else {
         // Fix #24: user-facing error untuk fetch failure
@@ -327,8 +333,19 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       setSessions([]);
       setCurrentSession(null);
       setAuthError(null);
+      sessionsLoadedRef.current = false;
     }
   }, [user, accessToken, fetchSessions]);
+
+  useEffect(() => {
+    if (!user || !accessToken) return;
+    if (!isConsultationDoctor(user.email) && user.role !== 'admin') return;
+
+    const interval = window.setInterval(() => {
+      fetchSessions();
+    }, 15000);
+    return () => window.clearInterval(interval);
+  }, [accessToken, fetchSessions, user]);
 
   const loadSession = useCallback(async (sessionId: string): Promise<PathwaySession | null> => {
     if (!user || !accessToken || !sessionId) return null;
@@ -614,7 +631,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
       }));
       if (!session) return false;
       setSessions(readDevSessions());
-      toast.success('Laporan berhasil dikirim ke Dokter!');
+      toast.success(`Laporan masuk ke Doctor Inbox ${consultationDoctorNames()}`);
       return true;
     }
     try {
@@ -631,7 +648,7 @@ export function PathwaySessionsProvider({ children }: { children: ReactNode }) {
         const session = mapSession(data.session);
         setSessions(prev => prev.map(s => s.id === session.id ? session : s));
         setCurrentSession(prev => prev?.id === session.id ? session : prev);
-        toast.success('Laporan berhasil dikirim ke Dokter!');
+        toast.success(`Laporan masuk ke Doctor Inbox ${consultationDoctorNames()}`);
         return true;
       }
       toast.error('Gagal mengirim laporan ke dokter');

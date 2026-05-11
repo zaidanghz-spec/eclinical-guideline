@@ -18,6 +18,7 @@ import DynamicPathwayPage from "./pages/DynamicPathwayPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import PathwayHistoryPage from "./pages/PathwayHistoryPage";
 import PathwayReportPage from "./pages/PathwayReportPage";
+import DoctorInboxPage from "./pages/DoctorInboxPage";
 import { WhitelistPage } from "./pages/WhitelistPage";
 import NotFound from "./pages/NotFound";
 
@@ -192,6 +193,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <PathwayReportPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "doctor-inbox",
+        element: (
+          <ProtectedRoute>
+            <DoctorInboxPage />
           </ProtectedRoute>
         ),
       },

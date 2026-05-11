@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowLeft, 
@@ -43,6 +43,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { usePathwaySessions } from '../hooks/usePathwaySessions';
 import type { DoctorOrder, ClinicalDecision, ClinicalVariation } from '../contexts/PathwaySessionsContext';
+import { consultationDoctorEmails, consultationDoctorNames, isConsultationDoctor } from '../lib/doctorConsultation';
 
 // ─── Fix #1 (XSS): Sanitasi semua string user sebelum diinjeksi ke HTML laporan ───
 function escapeHtml(unsafe: string): string {
@@ -69,8 +70,9 @@ type ClinicalRole = 'nurse' | 'doctor' | 'both';
 export default function DynamicPathwayPage() {
   const { diseaseId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
-  const { sessions, createSession, saveDraft, completeSession, reportToDoctor, submitDoctorOrder } = usePathwaySessions();
+  const { sessions, refreshSessions, createSession, saveDraft, completeSession, reportToDoctor, submitDoctorOrder } = usePathwaySessions();
   
   const disease = diseases.find(d => d.id === diseaseId);
   const pathway = dynamicPathways[diseaseId || ''];
@@ -126,6 +128,8 @@ export default function DynamicPathwayPage() {
   const hasResumedRef = useRef(false);
   // Fix #2: Ref untuk menyimpan nilai state terkini (mencegah stale closure di auto-save)
   const latestStateRef = useRef({ checkedSteps, stepNotes, currentNodeId, pathwayHistory, decisions, variations });
+  const lastRemoteUpdatedAtRef = useRef<string | null>(null);
+  const isDoctorLiveJoin = isConsultationDoctor(user?.email) || location.state?.role === 'doctor';
 
   const currentNode = pathway?.nodes[currentNodeId];
 
@@ -153,6 +157,11 @@ export default function DynamicPathwayPage() {
         hasResumedRef.current = true;
         setShowPatientCodeModal(false);
         setSessionId(targetSession.id);
+        lastRemoteUpdatedAtRef.current = targetSession.updatedAt || targetSession.updated_at || null;
+        if (isDoctorLiveJoin) {
+          setUserRole('doctor');
+          setDoctorPresent(true);
+        }
         
         // Fix #8: gunakan camelCase dari context yang sudah di-normalize
         setPatientCode(targetSession.patientCode || '');
@@ -169,7 +178,7 @@ export default function DynamicPathwayPage() {
         if (targetSession.doctorOrders) setDoctorOrders(targetSession.doctorOrders);
       }
     }
-  }, [sessions, diseaseId, pathway]);
+  }, [sessions, diseaseId, pathway, isDoctorLiveJoin]);
 
   const handlePatientCodeSubmit = async () => {
     if (!patientCode.trim()) { setPatientCodeError('Kode pasien wajib diisi'); return; }
@@ -203,6 +212,7 @@ export default function DynamicPathwayPage() {
       if (session) {
         setSessionId(session.id);
         setSessionStartedAt(session.startedAt || now);
+        lastRemoteUpdatedAtRef.current = session.updatedAt || session.updated_at || now;
         // Fix #8: gunakan camelCase yang sudah di-normalize di mapSession
         if (session.checklist) setCheckedSteps(session.checklist);
         if (session.notes) setStepNotes(session.notes);
@@ -230,6 +240,51 @@ export default function DynamicPathwayPage() {
       nodeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [currentNodeId]);
+
+  useEffect(() => {
+    if (!sessionId || !isDoctorLiveJoin || showPatientCodeModal) return;
+
+    const applyRemoteSession = (remoteSessionId: string) => {
+      const remote = sessions.find((session) => session.id === remoteSessionId);
+      if (!remote) return;
+      const remoteUpdatedAt = remote.updatedAt || remote.updated_at || '';
+      if (remoteUpdatedAt && lastRemoteUpdatedAtRef.current === remoteUpdatedAt) return;
+      lastRemoteUpdatedAtRef.current = remoteUpdatedAt || new Date().toISOString();
+
+      setCheckedSteps(remote.checklist || {});
+      setStepNotes(remote.notes || {});
+      setPathwayHistory(remote.pathwayHistory || []);
+      setDecisions(remote.decisions || []);
+      setVariations(remote.variations || []);
+      setConsultationStatus(remote.consultationStatus || 'waiting_doctor');
+      if (remote.doctorOrders) setDoctorOrders(remote.doctorOrders);
+      if (remote.currentNodeId && pathway?.nodes[remote.currentNodeId]) {
+        setCurrentNodeId(remote.currentNodeId);
+      }
+    };
+
+    applyRemoteSession(sessionId);
+    const interval = window.setInterval(async () => {
+      const latest = await refreshSessions();
+      const remote = latest.find((session) => session.id === sessionId);
+      if (!remote) return;
+      const remoteUpdatedAt = remote.updatedAt || remote.updated_at || '';
+      if (remoteUpdatedAt && lastRemoteUpdatedAtRef.current === remoteUpdatedAt) return;
+      lastRemoteUpdatedAtRef.current = remoteUpdatedAt || new Date().toISOString();
+      setCheckedSteps(remote.checklist || {});
+      setStepNotes(remote.notes || {});
+      setPathwayHistory(remote.pathwayHistory || []);
+      setDecisions(remote.decisions || []);
+      setVariations(remote.variations || []);
+      setConsultationStatus(remote.consultationStatus || 'waiting_doctor');
+      if (remote.doctorOrders) setDoctorOrders(remote.doctorOrders);
+      if (remote.currentNodeId && pathway?.nodes[remote.currentNodeId]) {
+        setCurrentNodeId(remote.currentNodeId);
+      }
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [isDoctorLiveJoin, pathway, refreshSessions, sessionId, sessions, showPatientCodeModal]);
 
   // Compute which day of the pathway we are currently on
   const currentDay = useMemo(() => {
@@ -422,7 +477,9 @@ export default function DynamicPathwayPage() {
     const ok = await reportToDoctor(sessionId, message);
     if (ok) {
       setConsultationStatus('waiting_doctor');
-      toast.success('Permintaan tindakan dinamis dikirim ke dokter');
+      toast.success(`Permintaan dikirim ke ${consultationDoctorNames()}`, {
+        description: consultationDoctorEmails().join(', '),
+      });
     }
   };
 
@@ -1359,6 +1416,9 @@ function ClinicalActionRequestPanel({
             <h3 className="font-bold text-slate-900">Permintaan Tindakan Klinis Dinamis</h3>
           </div>
           <p className="text-xs text-slate-500">Generated dari checklist aktual, decision node, variasi, dan subpathway aktif.</p>
+          <p className="text-[11px] text-violet-700 font-semibold mt-1">
+            Notifikasi in-app akan masuk ke {consultationDoctorNames()}.
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${statusClass}`}>{report.compliance.label}</span>
@@ -1368,7 +1428,7 @@ function ClinicalActionRequestPanel({
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-600 text-white text-xs font-bold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Stethoscope className="w-3.5 h-3.5" />
-            {consultationStatus === 'waiting_doctor' ? 'Menunggu Dokter' : 'Kirim ke Dokter'}
+            {consultationStatus === 'waiting_doctor' ? 'Menunggu Dokter' : 'Kirim ke dr. Firda/Mina'}
           </button>
         </div>
       </div>

@@ -12,29 +12,51 @@ import {
   Menu,
   X,
   Shield,
-  Mail
+  Mail,
+  Bell,
+  Stethoscope
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { usePathwaySessions } from '../hooks/usePathwaySessions';
+import { isConsultationDoctor } from '../lib/doctorConsultation';
+
+type NavItem = {
+  to: string;
+  label: string;
+  icon: typeof Home;
+  adminOnly?: boolean;
+  badge?: number;
+};
 
 export default function Navbar() {
   const location = useLocation();
   const { user, signOut, isAdmin } = useAuth();
+  const { sessions } = usePathwaySessions();
   const [isOpen, setIsOpen] = useState(false);
-  const baseNavItems = [
+  const pendingDoctorCount = sessions.filter(
+    (session) => session.consultationStatus === 'waiting_doctor' && session.status === 'in_progress'
+  ).length;
+  const canSeeDoctorInbox = isAdmin || isConsultationDoctor(user?.email);
+  const baseNavItems: NavItem[] = [
     { to: '/home', label: 'Home', icon: Home },
     { to: '/pathways', label: 'Pathways', icon: ClipboardList },
     { to: '/emergency', label: 'Emergency', icon: AlertCircle },
     { to: '/history', label: 'History', icon: History },
   ];
 
+  const doctorNavItems: NavItem[] = [
+    { to: '/doctor-inbox', label: 'Doctor Inbox', icon: Bell, badge: pendingDoctorCount },
+  ];
+
   // Admin-only items (only shown if user is admin OR email is admin1@gmail.com)
-  const adminNavItems = [
+  const adminNavItems: NavItem[] = [
     { to: '/whitelist', label: 'Whitelist', icon: Mail, adminOnly: true },
   ];
 
   // Combine nav items based on user role
   const navItems = [
     ...baseNavItems,
+    ...(canSeeDoctorInbox ? doctorNavItems : []),
     ...(isAdmin ? adminNavItems : [])
   ];
 
@@ -69,6 +91,11 @@ export default function Navbar() {
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.label}</span>
+                {item.badge !== undefined && item.badge > 0 && (
+                  <span className="min-w-5 h-5 px-1.5 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             ))}
           </div>
@@ -96,12 +123,14 @@ export default function Navbar() {
 
             <div className="flex items-center gap-2">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                isAdmin 
+                isAdmin
                   ? 'bg-gradient-to-br from-amber-100 to-orange-200'
                   : 'bg-gradient-to-br from-teal-100 to-teal-200'
               }`}>
                 {isAdmin ? (
                   <Shield className="w-5 h-5 text-orange-700" />
+                ) : isConsultationDoctor(user?.email) ? (
+                  <Stethoscope className="w-5 h-5 text-teal-700" />
                 ) : (
                   <User className="w-5 h-5 text-teal-700" />
                 )}
@@ -133,7 +162,7 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden border-t border-slate-200 px-4 py-2">
             <div className="flex justify-around">
-              {navItems.slice(0, 4).map((item) => (
+              {navItems.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
@@ -144,7 +173,14 @@ export default function Navbar() {
                   }`}
                 >
                   <item.icon className="w-5 h-5" />
-                  <span className="text-xs">{item.label}</span>
+                  <span className="text-xs flex items-center gap-1">
+                    {item.label}
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <span className="min-w-4 h-4 px-1 rounded-full bg-red-600 text-white text-[9px] font-black flex items-center justify-center">
+                        {item.badge}
+                      </span>
+                    )}
+                  </span>
                 </Link>
               ))}
             </div>
