@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { query, verifyToken, createToken, setCorsHeaders } = require('./_lib/db');
+const { isConsultationDoctorEmail } = require('./_lib/doctorAccounts');
 
 module.exports = async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -36,7 +37,7 @@ module.exports = async function handler(req, res) {
       const countResult = await query('SELECT COUNT(*) as count FROM users', []);
       const isFirstUser = parseInt(countResult[0].count) === 0;
 
-      if (!isFirstUser) {
+      if (!isFirstUser && !isConsultationDoctorEmail(normalizedEmail)) {
         const whitelisted = await query('SELECT id FROM whitelist WHERE email = $1', [normalizedEmail]);
         if (whitelisted.length === 0) {
           return res.status(403).json({ error: 'Email not authorized. Contact administrator to be added to whitelist.' });
